@@ -1,0 +1,52 @@
+# Fabrique l'application iPhone (.ipa NON signé) sur un Mac fourni par GitHub.
+# Le fichier obtenu s'installe ensuite avec Sideloadly et un identifiant Apple
+# gratuit : voir docs/INSTALLER_SUR_IPHONE.md.
+name: Construire l'appli iPhone
+
+on:
+  # Bouton « Run workflow » dans l'onglet Actions.
+  workflow_dispatch:
+  # Reconstruit automatiquement quand le code de l'appli change.
+  push:
+    paths:
+      - 'lib/**'
+      - 'ios/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/ios-build.yml'
+
+jobs:
+  ipa:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v5
+
+      - name: Installer Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Afficher la version de Flutter
+        run: flutter --version
+
+      - name: Télécharger les dépendances
+        run: flutter pub get
+
+      - name: Compiler pour iPhone (sans signature)
+        run: flutter build ios --release --no-codesign
+
+      - name: Emballer en fichier .ipa
+        run: |
+          mkdir -p Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -qry TennisTrack.ipa Payload
+
+      - name: Mettre le .ipa à disposition
+        uses: actions/upload-artifact@v5
+        with:
+          name: TennisTrack-iPhone
+          path: TennisTrack.ipa
+          retention-days: 30
