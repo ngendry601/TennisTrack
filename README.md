@@ -47,6 +47,13 @@ flutter run
 Plateformes visées : **Android et iOS**. L'application fonctionne aussi sur
 Windows/Linux pour le développement (via `sqflite_common_ffi`).
 
+### Sur iPhone, gratuitement
+
+Le workflow GitHub Actions `.github/workflows/ios-build.yml` fabrique un
+fichier `.ipa` non signé, à installer avec Sideloadly et un identifiant Apple
+gratuit. Le pas-à-pas est dans
+[docs/INSTALLER_SUR_IPHONE.md](docs/INSTALLER_SUR_IPHONE.md).
+
 ## Où sont les données ?
 
 Au premier lancement, l'application crée la base `tennistrack.db` dans le
