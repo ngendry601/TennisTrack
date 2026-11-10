@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../services/session_store.dart';
 import '../utils/formatters.dart';
-import 'session_detail_screen.dart';
-import 'session_form_screen.dart';
+import 'session/session_detail_screen.dart';
+import 'session/session_form_screen.dart';
 
 /// Calendrier mensuel : chaque jour contenant une séance est marqué, et un
 /// appui affiche les horaires, la durée totale et les thèmes du jour.

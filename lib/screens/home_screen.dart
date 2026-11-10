@@ -5,7 +5,7 @@ import '../services/session_store.dart';
 import '../utils/date_ranges.dart';
 import '../utils/formatters.dart';
 import '../widgets/confirm_delete_session.dart';
-import 'session_detail_screen.dart';
+import 'session/session_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.store, this.today});

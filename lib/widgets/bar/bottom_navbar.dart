@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../services/session_store.dart';
-import 'calendar_screen.dart';
-import 'home_screen.dart';
-import 'monthly_stats_screen.dart';
-import 'session_form_screen.dart';
-import 'sessions_screen.dart';
+import '../screens/calendar_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/monthly_stats_screen.dart';
+import '../screens/session_form_screen.dart';
+import '../screens/sessions_screen.dart';
+import 'appbar.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key, required this.store});
@@ -50,7 +51,12 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_titles[_selectedIndex])),
+      appBar: AppBar_Perso(
+        title: _titles[_selectedIndex],
+        onProfilePressed: () {
+          // Handle profile press
+        },
+      ),
       body: IndexedStack(index: _selectedIndex, children: _pages),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openNewSession,

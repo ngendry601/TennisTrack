@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:tennis_track/screens/main_shell.dart';
+import 'package:tennis_track/widgets/bottom_navbar.dart';
 
 import 'data/database_factory_init.dart';
 import 'services/session_store.dart';

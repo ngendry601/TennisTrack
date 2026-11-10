@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
-import '../services/session_store.dart';
-import '../utils/formatters.dart';
-import 'exercise_form_screen.dart';
+import '../../models/models.dart';
+import '../../services/session_store.dart';
+import '../../utils/formatters.dart';
+import '../seance/exercise_form_screen.dart';
 
 class SessionFormScreen extends StatefulWidget {
   const SessionFormScreen({

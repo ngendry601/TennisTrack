@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
-import '../services/session_store.dart';
-import '../utils/formatters.dart';
-import '../widgets/confirm_delete_session.dart';
+import '../../models/models.dart';
+import '../../services/session_store.dart';
+import '../../utils/formatters.dart';
+import '../../widgets/confirm_delete_session.dart';
 import 'session_detail_screen.dart';
 
 class SessionsScreen extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../models/models.dart';
+import '../../models/models.dart';
 
 /// Formulaire d'un exercice : nom, points à travailler, déroulement/matériel
 /// et image illustrative. L'image est renvoyée en bytes pour être stockée

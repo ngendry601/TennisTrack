@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import '../models/models.dart';
-import '../services/session_store.dart';
-import '../utils/formatters.dart';
+import '../../models/models.dart';
+import '../../services/session_store.dart';
+import '../../utils/formatters.dart';
 import 'session_form_screen.dart';
 
 /// Détails en lecture seule d'une séance.
