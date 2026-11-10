@@ -8,7 +8,8 @@ import 'package:tennis_track/models/models.dart';
 import 'package:tennis_track/screens/calendar_screen.dart';
 import 'package:tennis_track/screens/home_screen.dart';
 import 'package:tennis_track/screens/monthly_stats_screen.dart';
-import 'package:tennis_track/screens/sessions_screen.dart';
+import 'package:tennis_track/screens/session/session_form_screen.dart';
+import 'package:tennis_track/screens/session/sessions_screen.dart';
 import 'package:tennis_track/services/session_store.dart';
 
 void main() {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../services/session_store.dart';
-import '../screens/calendar_screen.dart';
-import '../screens/home_screen.dart';
-import '../screens/monthly_stats_screen.dart';
-import '../screens/session_form_screen.dart';
-import '../screens/sessions_screen.dart';
+import '../../services/session_store.dart';
+import '../../screens/calendar_screen.dart';
+import '../../screens/home_screen.dart';
+import '../../screens/monthly_stats_screen.dart';
+import '../../screens/session/session_form_screen.dart';
+import '../../screens/session/sessions_screen.dart';
 import 'appbar.dart';
 
 class MainShell extends StatefulWidget {
