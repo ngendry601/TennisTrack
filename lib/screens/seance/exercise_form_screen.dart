@@ -4,14 +4,31 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../models/models.dart';
+import '../../services/session_store.dart';
+import '../../widgets/exercise_widgets.dart';
 
-/// Formulaire d'un exercice : nom, points à travailler, déroulement/matériel
-/// et image illustrative. L'image est renvoyée en bytes pour être stockée
-/// dans SQLite avec l'exercice.
+/// Formulaire d'un exercice de la bibliothèque : nom, thèmes, couleurs de
+/// balle adaptées, points à travailler, déroulement et image.
+///
+/// La validation enregistre directement l'exercice et renvoie sa version
+/// enregistrée. Une modification s'applique à toutes ses séances.
 class ExerciseFormScreen extends StatefulWidget {
-  const ExerciseFormScreen({super.key, this.exercise});
+  const ExerciseFormScreen({
+    super.key,
+    required this.store,
+    this.exercise,
+    this.initialCategoryIds = const {},
+    this.initialBallColorId,
+  });
 
+  final SessionStore store;
   final Exercise? exercise;
+
+  /// Thèmes pré-cochés pour un nouvel exercice créé depuis une séance.
+  final Set<int> initialCategoryIds;
+
+  /// Couleur pré-cochée pour un nouvel exercice créé depuis une séance.
+  final int? initialBallColorId;
 
   @override
   State<ExerciseFormScreen> createState() => _ExerciseFormScreenState();
@@ -23,7 +40,10 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
   late final TextEditingController _name;
   late final TextEditingController _points;
   late final TextEditingController _execution;
+  late final Set<int> _categoryIds;
+  late final Set<int> _ballColorIds;
   Uint8List? _image;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -33,6 +53,13 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
     _points = TextEditingController(text: exercise?.pointsToWork ?? '');
     _execution = TextEditingController(text: exercise?.execution ?? '');
     _image = exercise?.image;
+    _categoryIds = exercise == null
+        ? {...widget.initialCategoryIds}
+        : {...exercise.categories.map((category) => category.id)};
+    final initialColor = widget.initialBallColorId;
+    _ballColorIds = exercise == null
+        ? {if (initialColor != null) initialColor}
+        : {...exercise.ballColors.map((color) => color.id)};
   }
 
   @override
@@ -57,46 +84,96 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
       setState(() => _image = bytes);
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Impossible de charger l’image : $error')),
-      );
+      _showMessage('Impossible de charger l’image : $error');
     }
   }
 
-  void _save() {
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Future<void> _save() async {
+    if (_saving) return;
+
     final name = _name.text.trim();
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Donne un nom à l’exercice.')),
-      );
+      _showMessage('Donne un nom à l’exercice.');
+      return;
+    }
+    if (_categoryIds.isEmpty) {
+      _showMessage('Choisis au moins un thème.');
+      return;
+    }
+    if (_ballColorIds.isEmpty) {
+      _showMessage('Choisis au moins une couleur de balle.');
       return;
     }
 
-    Navigator.of(context).pop(Exercise(
+    setState(() => _saving = true);
+    final saved = await widget.store.saveExercise(Exercise(
       id: widget.exercise?.id ?? 0,
       name: name,
       pointsToWork: _points.text.trim(),
       execution: _execution.text.trim(),
       image: _image,
+      categories: widget.store.categories
+          .where((category) => _categoryIds.contains(category.id))
+          .toList(),
+      ballColors: widget.store.ballColors
+          .where((color) => _ballColorIds.contains(color.id))
+          .toList(),
     ));
+    if (mounted) Navigator.of(context).pop(saved);
+  }
+
+  void _toggle(Set<int> ids, int id, bool selected) {
+    setState(() => selected ? ids.add(id) : ids.remove(id));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final exercise = widget.exercise;
+    final usage =
+        exercise == null ? 0 : widget.store.exerciseSessionCount(exercise.id);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.exercise == null
-            ? 'Nouvel exercice'
-            : 'Modifier l’exercice'),
+        title:
+            Text(exercise == null ? 'Nouvel exercice' : 'Modifier l’exercice'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          if (usage > 0) ...[
+            Card(
+              color: theme.colorScheme.primaryContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    const Icon(Icons.sync),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        usage == 1
+                            ? 'Tes changements s’appliqueront à la séance '
+                                'qui utilise cet exercice.'
+                            : 'Tes changements s’appliqueront aux $usage '
+                                'séances qui utilisent cet exercice.',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           TextField(
             controller: _name,
-            autofocus: widget.exercise == null,
+            autofocus: exercise == null,
             textCapitalization: TextCapitalization.sentences,
             decoration: const InputDecoration(
               labelText: 'Nom de l’exercice',
@@ -104,7 +181,42 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
               border: OutlineInputBorder(),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
+          Text('Thèmes', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final category in widget.store.categories)
+                FilterChip(
+                  label: Text(category.nom),
+                  showCheckmark: false,
+                  selected: _categoryIds.contains(category.id),
+                  onSelected: (selected) =>
+                      _toggle(_categoryIds, category.id, selected),
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text('Adapté aux balles', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final color in widget.store.ballColors)
+                FilterChip(
+                  avatar: BallDot(color: color),
+                  label: Text(color.nom),
+                  showCheckmark: false,
+                  selected: _ballColorIds.contains(color.id),
+                  onSelected: (selected) =>
+                      _toggle(_ballColorIds, color.id, selected),
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
           TextField(
             controller: _points,
             maxLines: 3,
@@ -166,7 +278,7 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
           ],
           const SizedBox(height: 24),
           FilledButton.icon(
-            onPressed: _save,
+            onPressed: _saving ? null : _save,
             icon: const Icon(Icons.check),
             label: const Text('Valider l’exercice'),
           ),

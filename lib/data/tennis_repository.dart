@@ -30,6 +30,77 @@ class TennisRepository {
     return rows.map(CalendarMonth.fromMap).toList();
   }
 
+  /// Bibliothèque complète, triée par nom.
+  Future<List<Exercise>> getExercises() async {
+    final rows = await db.query('exercice', orderBy: 'nom COLLATE NOCASE, id');
+
+    final categoryRows = await db.rawQuery('''
+      SELECT ec.exercice_id, c.id, c.nom
+      FROM exercice_categorie ec
+      JOIN categorie c ON c.id = ec.categorie_id
+      ORDER BY c.id
+    ''');
+    final categoriesByExercise = <int, List<TrainingCategory>>{};
+    for (final row in categoryRows) {
+      categoriesByExercise
+          .putIfAbsent(row['exercice_id'] as int, () => [])
+          .add(TrainingCategory.fromMap(row));
+    }
+
+    final colorRows = await db.rawQuery('''
+      SELECT ecb.exercice_id, c.id, c.nom
+      FROM exercice_couleur_balle ecb
+      JOIN couleur_balle c ON c.id = ecb.couleur_balle_id
+      ORDER BY c.id
+    ''');
+    final colorsByExercise = <int, List<BallColor>>{};
+    for (final row in colorRows) {
+      colorsByExercise
+          .putIfAbsent(row['exercice_id'] as int, () => [])
+          .add(BallColor.fromMap(row));
+    }
+
+    return rows.map((row) {
+      final id = row['id'] as int;
+      return Exercise.fromMap(row).copyWith(
+        categories: categoriesByExercise[id] ?? const [],
+        ballColors: colorsByExercise[id] ?? const [],
+      );
+    }).toList();
+  }
+
+  /// Ajoute un exercice à la bibliothèque et renvoie son id.
+  Future<int> insertExercise(Exercise exercise) =>
+      db.transaction((txn) => _insertExercise(txn, exercise));
+
+  /// Met à jour l'exercice : toutes ses séances voient la nouvelle version.
+  Future<void> updateExercise(Exercise exercise) {
+    return db.transaction((txn) async {
+      await txn.update(
+        'exercice',
+        _exerciseValues(exercise),
+        where: 'id = ?',
+        whereArgs: [exercise.id],
+      );
+      await txn.delete(
+        'exercice_categorie',
+        where: 'exercice_id = ?',
+        whereArgs: [exercise.id],
+      );
+      await txn.delete(
+        'exercice_couleur_balle',
+        where: 'exercice_id = ?',
+        whereArgs: [exercise.id],
+      );
+      await _insertExerciseLinks(txn, exercise.id, exercise);
+    });
+  }
+
+  /// Supprime l'exercice de la bibliothèque et de toutes ses séances
+  /// (ON DELETE CASCADE). Les séances elles-mêmes sont conservées.
+  Future<void> deleteExercise(int id) =>
+      db.delete('exercice', where: 'id = ?', whereArgs: [id]);
+
   Future<List<TrainingSession>> getSessions() async {
     final rows = await db.rawQuery('''
       SELECT s.id, s.date, s.duree_minutes, s.intensite, s.heure_debut,
@@ -56,14 +127,19 @@ class TennisRepository {
           .add(TrainingCategory.fromMap(row));
     }
 
-    // Les exercices (et leurs images) sont chargés en une seule requête.
-    final exerciseRows = await db.query('exercice', orderBy: 'id');
+    // Chaque exercice n'est chargé qu'une fois, puis partagé entre ses séances.
+    final exercisesById = {
+      for (final exercise in await getExercises()) exercise.id: exercise,
+    };
+    final exerciseLinks =
+        await db.query('seance_exercice', orderBy: 'seance_id, ordre');
     final exercisesBySession = <int, List<Exercise>>{};
-    for (final row in exerciseRows) {
-      final sessionId = row['seance_id'] as int;
+    for (final row in exerciseLinks) {
+      final exercise = exercisesById[row['exercice_id'] as int];
+      if (exercise == null) continue;
       exercisesBySession
-          .putIfAbsent(sessionId, () => [])
-          .add(Exercise.fromMap(row));
+          .putIfAbsent(row['seance_id'] as int, () => [])
+          .add(exercise);
     }
 
     return rows.map((row) {
@@ -89,7 +165,7 @@ class TennisRepository {
     return db.transaction((txn) async {
       final id = await txn.insert('seance', _sessionValues(session));
       await _insertCategories(txn, id, session.categories);
-      await _insertExercises(txn, id, session.exercises);
+      await _linkExercises(txn, id, session.exercises);
       return id;
     });
   }
@@ -109,14 +185,14 @@ class TennisRepository {
       );
       await _insertCategories(txn, session.id, session.categories);
 
-      // Les exercices sont remplacés en bloc : plus simple et sans risque
-      // d'identifiants obsolètes après une modification.
+      // Seuls les liens sont remplacés : un exercice retiré de la séance
+      // reste dans la bibliothèque.
       await txn.delete(
-        'exercice',
+        'seance_exercice',
         where: 'seance_id = ?',
         whereArgs: [session.id],
       );
-      await _insertExercises(txn, session.id, session.exercises);
+      await _linkExercises(txn, session.id, session.exercises);
     });
   }
 
@@ -136,18 +212,51 @@ class TennisRepository {
     }
   }
 
-  Future<void> _insertExercises(
+  /// Relie les exercices à la séance, dans l'ordre de la liste. Un exercice
+  /// sans id est d'abord ajouté à la bibliothèque.
+  Future<void> _linkExercises(
       Transaction txn, int sessionId, List<Exercise> exercises) async {
-    for (final exercise in exercises) {
-      await txn.insert('exercice', {
-        'seance_id': sessionId,
+    for (final (index, exercise) in exercises.indexed) {
+      final exerciseId =
+          exercise.id == 0 ? await _insertExercise(txn, exercise) : exercise.id;
+      await txn.insert(
+        'seance_exercice',
+        {'seance_id': sessionId, 'exercice_id': exerciseId, 'ordre': index},
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+  }
+
+  Future<int> _insertExercise(Transaction txn, Exercise exercise) async {
+    final id = await txn.insert('exercice', _exerciseValues(exercise));
+    await _insertExerciseLinks(txn, id, exercise);
+    return id;
+  }
+
+  Future<void> _insertExerciseLinks(
+      Transaction txn, int exerciseId, Exercise exercise) async {
+    for (final category in exercise.categories) {
+      await txn.insert(
+        'exercice_categorie',
+        {'exercice_id': exerciseId, 'categorie_id': category.id},
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+    for (final color in exercise.ballColors) {
+      await txn.insert(
+        'exercice_couleur_balle',
+        {'exercice_id': exerciseId, 'couleur_balle_id': color.id},
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+  }
+
+  Map<String, Object?> _exerciseValues(Exercise exercise) => {
         'nom': exercise.name,
         'points_travailles': exercise.pointsToWork,
         'deroulement': exercise.execution,
         'image': exercise.image,
-      });
-    }
-  }
+      };
 
   Map<String, Object?> _sessionValues(TrainingSession session) => {
         'date': _dateKey(session.date),

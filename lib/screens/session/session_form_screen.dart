@@ -4,6 +4,7 @@ import '../../models/models.dart';
 import '../../services/session_store.dart';
 import '../../utils/formatters.dart';
 import '../seance/exercise_form_screen.dart';
+import '../seance/exercise_picker_screen.dart';
 
 class SessionFormScreen extends StatefulWidget {
   const SessionFormScreen({
@@ -54,9 +55,56 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
     _exercises = [...?session?.exercises];
   }
 
+  /// Propose de choisir un exercice existant ou d'en créer un nouveau.
   Future<void> _addExercise() async {
+    final fromLibrary = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.fitness_center),
+              title: const Text('Choisir dans ma bibliothèque'),
+              onTap: () => Navigator.of(sheetContext).pop(true),
+            ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Créer un nouvel exercice'),
+              onTap: () => Navigator.of(sheetContext).pop(false),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (fromLibrary == null || !mounted) return;
+
+    if (fromLibrary) {
+      final picked = await Navigator.of(context).push<List<Exercise>>(
+        MaterialPageRoute(
+          builder: (_) => ExercisePickerScreen(
+            store: widget.store,
+            excludedIds: {..._exercises.map((exercise) => exercise.id)},
+            ballColorId: _ballColorId,
+            categoryIds: _categoryIds,
+          ),
+        ),
+      );
+      if (picked != null && mounted) {
+        setState(() => _exercises.addAll(picked));
+      }
+      return;
+    }
+
     final exercise = await Navigator.of(context).push<Exercise>(
-      MaterialPageRoute(builder: (_) => const ExerciseFormScreen()),
+      MaterialPageRoute(
+        builder: (_) => ExerciseFormScreen(
+          store: widget.store,
+          initialCategoryIds: _categoryIds,
+          initialBallColorId: _ballColorId,
+        ),
+      ),
     );
     if (exercise != null && mounted) {
       setState(() => _exercises.add(exercise));
@@ -66,7 +114,10 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
   Future<void> _editExercise(int index) async {
     final exercise = await Navigator.of(context).push<Exercise>(
       MaterialPageRoute(
-        builder: (_) => ExerciseFormScreen(exercise: _exercises[index]),
+        builder: (_) => ExerciseFormScreen(
+          store: widget.store,
+          exercise: _exercises[index],
+        ),
       ),
     );
     if (exercise != null && mounted) {
@@ -306,7 +357,7 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
                         onPressed: () => _editExercise(index),
                       ),
                       IconButton(
-                        tooltip: 'Retirer',
+                        tooltip: 'Retirer de la séance',
                         icon: const Icon(Icons.delete_outline),
                         onPressed: () => _removeExercise(index),
                       ),

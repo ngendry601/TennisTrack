@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Version du schéma. À incrémenter à chaque changement de structure,
 /// puis ajouter la migration correspondante dans [onUpgrade].
-const int kDatabaseVersion = 4;
+const int kDatabaseVersion = 5;
 
 const String _databaseName = 'tennistrack.db';
 
@@ -19,6 +19,8 @@ const List<String> kSeedCategories = [
   'Physique',
   'Positionnement / Replacement',
   'Tactique',
+  'Attaque',
+  'Défense',
 ];
 
 /// Couleurs de balle créées au premier lancement (niveau du joueur).
@@ -103,18 +105,6 @@ Future<Database> openAppDatabase({String? path}) async {
       ''');
 
         batch.execute('''
-        CREATE TABLE exercice (
-          id                 INTEGER PRIMARY KEY AUTOINCREMENT,
-          seance_id          INTEGER NOT NULL,
-          nom                TEXT NOT NULL,
-          points_travailles  TEXT NOT NULL DEFAULT '',
-          deroulement        TEXT NOT NULL DEFAULT '',
-          image              BLOB,
-          FOREIGN KEY (seance_id) REFERENCES seance(id) ON DELETE CASCADE
-        )
-      ''');
-
-        batch.execute('''
         CREATE TABLE seance_categorie (
           seance_id     INTEGER NOT NULL,
           categorie_id  INTEGER NOT NULL,
@@ -127,8 +117,6 @@ Future<Database> openAppDatabase({String? path}) async {
         batch.execute('CREATE INDEX idx_seance_date ON seance(date)');
         batch.execute(
             'CREATE INDEX idx_seance_categorie_categorie ON seance_categorie(categorie_id)');
-        batch
-            .execute('CREATE INDEX idx_exercice_seance ON exercice(seance_id)');
 
         // Supprimer une catégorie supprime aussi les séances liées.
         // Attention : une séance classée dans « Service » et « Physique »
@@ -155,6 +143,7 @@ Future<Database> openAppDatabase({String? path}) async {
 
         await batch.commit(noResult: true);
         await _createCalendarTables(db);
+        await _createExerciseTables(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         // v1 -> v2 : ajout de l'heure de début (facultative) pour le
@@ -177,6 +166,12 @@ Future<Database> openAppDatabase({String? path}) async {
         if (oldVersion < 4) {
           await _createCalendarTables(db);
         }
+
+        // v4 -> v5 : bibliothèque d'exercices partagés entre les séances,
+        // et nouvelles catégories Attaque et Défense.
+        if (oldVersion < 5) {
+          await _migrateExercisesToV5(db);
+        }
       },
     ),
   );
@@ -184,6 +179,122 @@ Future<Database> openAppDatabase({String? path}) async {
 
 /// Ferme la base (utile pour les tests).
 Future<void> closeAppDatabase(Database db) => db.close();
+
+/// Crée la bibliothèque d'exercices et ses liens.
+///
+/// Un exercice existe une seule fois : le modifier met à jour toutes les
+/// séances qui l'utilisent via `seance_exercice`.
+Future<void> _createExerciseTables(Database db) async {
+  final batch = db.batch();
+
+  batch.execute('''
+    CREATE TABLE exercice (
+      id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+      nom                TEXT NOT NULL,
+      points_travailles  TEXT NOT NULL DEFAULT '',
+      deroulement        TEXT NOT NULL DEFAULT '',
+      image              BLOB
+    )
+  ''');
+
+  batch.execute('''
+    CREATE TABLE seance_exercice (
+      seance_id    INTEGER NOT NULL,
+      exercice_id  INTEGER NOT NULL,
+      ordre        INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (seance_id, exercice_id),
+      FOREIGN KEY (seance_id)   REFERENCES seance(id)   ON DELETE CASCADE,
+      FOREIGN KEY (exercice_id) REFERENCES exercice(id) ON DELETE CASCADE
+    )
+  ''');
+
+  batch.execute('''
+    CREATE TABLE exercice_categorie (
+      exercice_id   INTEGER NOT NULL,
+      categorie_id  INTEGER NOT NULL,
+      PRIMARY KEY (exercice_id, categorie_id),
+      FOREIGN KEY (exercice_id)  REFERENCES exercice(id)  ON DELETE CASCADE,
+      FOREIGN KEY (categorie_id) REFERENCES categorie(id) ON DELETE CASCADE
+    )
+  ''');
+
+  batch.execute('''
+    CREATE TABLE exercice_couleur_balle (
+      exercice_id       INTEGER NOT NULL,
+      couleur_balle_id  INTEGER NOT NULL,
+      PRIMARY KEY (exercice_id, couleur_balle_id),
+      FOREIGN KEY (exercice_id)      REFERENCES exercice(id)      ON DELETE CASCADE,
+      FOREIGN KEY (couleur_balle_id) REFERENCES couleur_balle(id) ON DELETE CASCADE
+    )
+  ''');
+
+  batch.execute(
+      'CREATE INDEX idx_seance_exercice_exercice ON seance_exercice(exercice_id)');
+  batch.execute(
+      'CREATE INDEX idx_exercice_categorie_categorie ON exercice_categorie(categorie_id)');
+  batch.execute(
+      'CREATE INDEX idx_exercice_couleur_couleur ON exercice_couleur_balle(couleur_balle_id)');
+
+  await batch.commit(noResult: true);
+}
+
+/// Migration v4 -> v5 : chaque exercice lié à une séance rejoint la
+/// bibliothèque.
+///
+/// Les exercices au contenu strictement identique sont fusionnés. Chaque
+/// exercice hérite des catégories et des couleurs de balle de ses séances.
+Future<void> _migrateExercisesToV5(Database db) async {
+  await db.execute('ALTER TABLE exercice RENAME TO exercice_ancien');
+  await db.execute('DROP INDEX IF EXISTS idx_exercice_seance');
+  await _createExerciseTables(db);
+
+  await db.execute('''
+    CREATE TEMP TABLE exercice_correspondance AS
+    SELECT e.id AS ancien_id,
+           e.seance_id AS seance_id,
+           (SELECT MIN(d.id) FROM exercice_ancien d
+            WHERE d.nom = e.nom
+              AND d.points_travailles = e.points_travailles
+              AND d.deroulement = e.deroulement
+              AND d.image IS e.image) AS nouveau_id
+    FROM exercice_ancien e
+  ''');
+
+  await db.execute('''
+    INSERT INTO exercice (id, nom, points_travailles, deroulement, image)
+    SELECT id, nom, points_travailles, deroulement, image
+    FROM exercice_ancien
+    WHERE id IN (SELECT nouveau_id FROM exercice_correspondance)
+  ''');
+
+  await db.execute('''
+    INSERT OR IGNORE INTO seance_exercice (seance_id, exercice_id, ordre)
+    SELECT seance_id, nouveau_id, ancien_id
+    FROM exercice_correspondance
+    ORDER BY ancien_id
+  ''');
+
+  await db.execute('''
+    INSERT OR IGNORE INTO exercice_categorie (exercice_id, categorie_id)
+    SELECT c.nouveau_id, sc.categorie_id
+    FROM exercice_correspondance c
+    JOIN seance_categorie sc ON sc.seance_id = c.seance_id
+  ''');
+
+  await db.execute('''
+    INSERT OR IGNORE INTO exercice_couleur_balle (exercice_id, couleur_balle_id)
+    SELECT c.nouveau_id, s.couleur_balle_id
+    FROM exercice_correspondance c
+    JOIN seance s ON s.id = c.seance_id
+  ''');
+
+  await db.execute('DROP TABLE exercice_correspondance');
+  await db.execute('DROP TABLE exercice_ancien');
+
+  // OR IGNORE : ne crée pas de doublon si la catégorie existe déjà.
+  await db.execute("INSERT OR IGNORE INTO categorie (nom) VALUES ('Attaque')");
+  await db.execute("INSERT OR IGNORE INTO categorie (nom) VALUES ('Défense')");
+}
 
 /// Crée et remplit les tables `jour_semaine` et `mois`.
 Future<void> _createCalendarTables(Database db) async {

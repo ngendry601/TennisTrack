@@ -33,6 +33,8 @@ class TrainingCategory {
     'Physique': Icons.fitness_center,
     'Positionnement / Replacement': Icons.location_on,
     'Tactique': Icons.psychology,
+    'Attaque': Icons.bolt,
+    'Défense': Icons.shield,
   };
 }
 
@@ -99,10 +101,12 @@ class CalendarMonth {
       );
 }
 
-/// Un exercice appartenant à une séance.
+/// Un exercice de la bibliothèque, réutilisable dans plusieurs séances.
+/// Le modifier met à jour toutes les séances qui l'utilisent.
 ///
+/// `id == 0` signifie « pas encore enregistré ».
 /// L'image illustrative est stockée directement dans SQLite (BLOB), pour
-/// que la séance reste complète même si le fichier d'origine est supprimé.
+/// que l'exercice reste complet même si le fichier d'origine est supprimé.
 class Exercise {
   const Exercise({
     required this.id,
@@ -110,6 +114,8 @@ class Exercise {
     this.pointsToWork = '',
     this.execution = '',
     this.image,
+    this.categories = const [],
+    this.ballColors = const [],
   });
 
   final int id;
@@ -123,6 +129,12 @@ class Exercise {
 
   /// Image illustrative (JPEG/PNG…), ou `null`.
   final Uint8List? image;
+
+  /// Catégories travaillées (Service, Attaque…).
+  final List<TrainingCategory> categories;
+
+  /// Couleurs de balle pour lesquelles l'exercice est adapté.
+  final List<BallColor> ballColors;
 
   factory Exercise.fromMap(Map<String, Object?> map) => Exercise(
         id: map['id'] as int,
@@ -138,6 +150,8 @@ class Exercise {
     String? pointsToWork,
     String? execution,
     Uint8List? image,
+    List<TrainingCategory>? categories,
+    List<BallColor>? ballColors,
   }) {
     return Exercise(
       id: id ?? this.id,
@@ -145,6 +159,8 @@ class Exercise {
       pointsToWork: pointsToWork ?? this.pointsToWork,
       execution: execution ?? this.execution,
       image: image ?? this.image,
+      categories: categories ?? this.categories,
+      ballColors: ballColors ?? this.ballColors,
     );
   }
 }

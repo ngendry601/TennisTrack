@@ -4,6 +4,8 @@ import '../../services/session_store.dart';
 import '../../screens/calendar_screen.dart';
 import '../../screens/home_screen.dart';
 import '../../screens/monthly_stats_screen.dart';
+import '../../screens/seance/exercise_form_screen.dart';
+import '../../screens/seance/exercise_library_screen.dart';
 import '../../screens/session/session_form_screen.dart';
 import '../../screens/session/sessions_screen.dart';
 import 'appbar.dart';
@@ -23,9 +25,12 @@ class _MainShellState extends State<MainShell> {
   static const _titles = [
     'TennisTrack',
     'Séances',
+    'Exercices',
     'Calendrier',
     'Statistiques',
   ];
+
+  static const _exercisesIndex = 2;
 
   // IndexedStack conserve l'état des onglets (recherche, filtres)
   // quand on passe de l'un à l'autre.
@@ -37,6 +42,7 @@ class _MainShellState extends State<MainShell> {
     _pages = [
       HomeScreen(store: widget.store),
       SessionsScreen(store: widget.store),
+      ExerciseLibraryScreen(store: widget.store),
       CalendarScreen(store: widget.store),
       MonthlyStatsScreen(store: widget.store),
     ];
@@ -48,8 +54,16 @@ class _MainShellState extends State<MainShell> {
     ));
   }
 
+  void _openNewExercise() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => ExerciseFormScreen(store: widget.store),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final onExercises = _selectedIndex == _exercisesIndex;
+
     return Scaffold(
       appBar: AppBar_Perso(
         title: _titles[_selectedIndex],
@@ -59,9 +73,9 @@ class _MainShellState extends State<MainShell> {
       ),
       body: IndexedStack(index: _selectedIndex, children: _pages),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openNewSession,
+        onPressed: onExercises ? _openNewExercise : _openNewSession,
         icon: const Icon(Icons.add),
-        label: const Text('Séance'),
+        label: Text(onExercises ? 'Exercice' : 'Séance'),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
@@ -76,6 +90,10 @@ class _MainShellState extends State<MainShell> {
               icon: Icon(Icons.sports_tennis_outlined),
               selectedIcon: Icon(Icons.sports_tennis),
               label: 'Séances'),
+          NavigationDestination(
+              icon: Icon(Icons.fitness_center_outlined),
+              selectedIcon: Icon(Icons.fitness_center),
+              label: 'Exercices'),
           NavigationDestination(
               icon: Icon(Icons.calendar_month_outlined),
               selectedIcon: Icon(Icons.calendar_month),

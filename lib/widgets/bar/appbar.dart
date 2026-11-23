@@ -15,7 +15,7 @@ class AppBar_Perso extends StatefulWidget implements PreferredSizeWidget {
 
   @override
   State<AppBar_Perso> createState() => _AppBar_PersoState();
-  
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
@@ -36,7 +36,7 @@ class _AppBar_PersoState extends State<AppBar_Perso> {
     super.didUpdateWidget(oldWidget);
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return AppBar(
       flexibleSpace: const DecoratedBox(

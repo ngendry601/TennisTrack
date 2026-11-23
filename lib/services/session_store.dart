@@ -19,6 +19,7 @@ class SessionStore extends ChangeNotifier {
   List<BallColor> _ballColors = const [];
   List<CalendarWeekday> _weekdays = const [];
   List<CalendarMonth> _months = const [];
+  List<Exercise> _exercises = const [];
 
   /// Jours du calendrier lus en base, du lundi au dimanche.
   List<CalendarWeekday> get weekdays => List.unmodifiable(_weekdays);
@@ -52,6 +53,15 @@ class SessionStore extends ChangeNotifier {
   List<TrainingCategory> get categories => List.unmodifiable(_categories);
   List<BallColor> get ballColors => List.unmodifiable(_ballColors);
 
+  /// Bibliothèque d'exercices, triée par nom.
+  List<Exercise> get exercises => List.unmodifiable(_exercises);
+
+  /// Nombre de séances qui utilisent cet exercice.
+  int exerciseSessionCount(int exerciseId) => _sessions
+      .where((session) =>
+          session.exercises.any((exercise) => exercise.id == exerciseId))
+      .length;
+
   int get totalMinutes =>
       _sessions.fold(0, (sum, session) => sum + session.durationMinutes);
 
@@ -65,10 +75,7 @@ class SessionStore extends ChangeNotifier {
     _ballColors = await repository.getBallColors();
     _weekdays = await repository.getWeekdays();
     _months = await repository.getMonths();
-    _sessions
-      ..clear()
-      ..addAll(await repository.getSessions());
-    _sort();
+    await _reloadExercisesAndSessions(repository);
     notifyListeners();
   }
 
@@ -77,23 +84,50 @@ class SessionStore extends ChangeNotifier {
   Future<void> upsert(TrainingSession session) async {
     final repository = _requireRepository();
 
-    final TrainingSession saved;
     if (session.id == 0) {
-      final id = await repository.insertSession(session);
-      saved = session.copyWith(id: id);
+      await repository.insertSession(session);
     } else {
       await repository.updateSession(session);
-      saved = session;
     }
 
-    final index = _sessions.indexWhere((item) => item.id == saved.id);
-    if (index >= 0) {
-      _sessions[index] = saved;
-    } else {
-      _sessions.add(saved);
-    }
-    _sort();
+    // Relecture : une séance peut avoir ajouté un exercice à la bibliothèque.
+    await _reloadExercisesAndSessions(repository);
     notifyListeners();
+  }
+
+  /// Crée l'exercice si `exercise.id == 0`, sinon le met à jour dans toutes
+  /// ses séances. Renvoie la version enregistrée.
+  Future<Exercise> saveExercise(Exercise exercise) async {
+    final repository = _requireRepository();
+
+    final Exercise saved;
+    if (exercise.id == 0) {
+      saved = exercise.copyWith(id: await repository.insertExercise(exercise));
+    } else {
+      await repository.updateExercise(exercise);
+      saved = exercise;
+    }
+
+    await _reloadExercisesAndSessions(repository);
+    notifyListeners();
+    return saved;
+  }
+
+  /// Supprime l'exercice de la bibliothèque et de ses séances.
+  Future<void> removeExercise(int id) async {
+    final repository = _requireRepository();
+    await repository.deleteExercise(id);
+    await _reloadExercisesAndSessions(repository);
+    notifyListeners();
+  }
+
+  Future<void> _reloadExercisesAndSessions(TennisRepository repository) async {
+    _exercises = await repository.getExercises();
+    final sessions = await repository.getSessions();
+    _sessions
+      ..clear()
+      ..addAll(sessions);
+    _sort();
   }
 
   Future<void> remove(int id) async {
