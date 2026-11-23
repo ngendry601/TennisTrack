@@ -94,7 +94,7 @@ void main() {
 
     expect(find.text('1'), findsOneWidget);
     expect(find.text('1h30min'), findsOneWidget);
-    expect(find.text('Aucune séance cette semaine 🎾'), findsOneWidget);
+    expect(find.text('Aucune séance cette semaine'), findsOneWidget);
     expect(find.textContaining('24 oct.'), findsNothing);
   });
 
@@ -122,9 +122,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Octobre 2026'), findsOneWidget);
+    for (final (_, abreviation) in kSeedWeekdays) {
+      expect(find.text(abreviation), findsOneWidget);
+    }
 
     await tester.tap(find.byKey(const Key('calendar-day-2026-10-24')));
     await tester.pumpAndSettle();
+
+    expect(find.text('Samedi 24 octobre 2026'), findsOneWidget);
 
     expect(find.text('18h00 – 19h30 · 1h30min'), findsOneWidget);
     expect(find.text('Service'), findsWidgets);

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../models/models.dart';
 import '../../services/session_store.dart';
+import '../../theme/app_theme.dart';
 import '../../utils/formatters.dart';
 import '../../widgets/confirm_delete_session.dart';
+import '../../widgets/session_card_frame.dart';
 import 'session_detail_screen.dart';
 
 class SessionsScreen extends StatefulWidget {
@@ -321,66 +323,70 @@ class _SessionTile extends StatelessWidget {
           child: const Icon(Icons.delete, color: Colors.white)),
       confirmDismiss: (_) => confirmDismiss(),
       onDismissed: (_) => onDismissed(),
-      child: ListTile(
-        isThreeLine: true,
-        leading: CircleAvatar(
-          child: Icon(session.categories.isEmpty
-              ? Icons.sports_tennis
-              : session.categories.first.icon),
-        ),
-        title: Text(
-          session.categories.isEmpty
-              ? 'Sans catégorie'
-              : session.categories.map((category) => category.nom).join(' · '),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '$date · ${formatTimeRange(session.startTime, session.durationMinutes)}'
-              '${session.exercises.isEmpty ? '' : ' · ${session.exercises.length} exo${session.exercises.length > 1 ? 's' : ''}'}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: session.ballColor.color,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black26, width: 0.5),
+      child: SessionCardFrame(
+        child: ListTile(
+          isThreeLine: true,
+          leading: CircleAvatar(
+            child: Icon(session.categories.isEmpty
+                ? Icons.sports_tennis
+                : session.categories.first.icon),
+          ),
+          title: Text(
+            session.categories.isEmpty
+                ? 'Sans catégorie'
+                : session.categories
+                    .map((category) => category.nom)
+                    .join(' · '),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$date · ${formatTimeRange(session.startTime, session.durationMinutes)}'
+                '${session.exercises.isEmpty ? '' : ' · ${session.exercises.length} exo${session.exercises.length > 1 ? 's' : ''}'}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: session.ballColor.color,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.black26, width: 0.5),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  session.ballColor.nom,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(width: 12),
-                ...List.generate(
-                    5,
-                    (index) => Icon(
-                        index < session.intensity
-                            ? Icons.local_fire_department
-                            : Icons.local_fire_department_outlined,
-                        size: 14,
-                        color: Colors.orange)),
-              ],
-            ),
-          ],
+                  const SizedBox(width: 6),
+                  Text(
+                    session.ballColor.nom,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(width: 12),
+                  ...List.generate(
+                      5,
+                      (index) => Icon(
+                          index < session.intensity
+                              ? Icons.local_fire_department
+                              : Icons.local_fire_department_outlined,
+                          size: 14,
+                          color: AppColors.indigo)),
+                ],
+              ),
+            ],
+          ),
+          trailing: IconButton(
+            tooltip: 'Supprimer',
+            icon: const Icon(Icons.delete_outline),
+            onPressed: onDelete,
+          ),
+          onTap: onTap,
         ),
-        trailing: IconButton(
-          tooltip: 'Supprimer',
-          icon: const Icon(Icons.delete_outline),
-          onPressed: onDelete,
-        ),
-        onTap: onTap,
       ),
     );
   }

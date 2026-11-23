@@ -20,6 +20,16 @@ class TennisRepository {
     return rows.map(BallColor.fromMap).toList();
   }
 
+  Future<List<CalendarWeekday>> getWeekdays() async {
+    final rows = await db.query('jour_semaine', orderBy: 'id');
+    return rows.map(CalendarWeekday.fromMap).toList();
+  }
+
+  Future<List<CalendarMonth>> getMonths() async {
+    final rows = await db.query('mois', orderBy: 'id');
+    return rows.map(CalendarMonth.fromMap).toList();
+  }
+
   Future<List<TrainingSession>> getSessions() async {
     final rows = await db.rawQuery('''
       SELECT s.id, s.date, s.duree_minutes, s.intensite, s.heure_debut,

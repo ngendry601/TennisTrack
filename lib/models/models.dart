@@ -59,6 +59,46 @@ class BallColor {
       };
 }
 
+/// Jour de la semaine (table `jour_semaine`).
+/// `id` suit `DateTime.weekday` : 1 = lundi … 7 = dimanche.
+class CalendarWeekday {
+  const CalendarWeekday({
+    required this.id,
+    required this.nom,
+    required this.abreviation,
+  });
+
+  final int id;
+  final String nom;
+  final String abreviation;
+
+  factory CalendarWeekday.fromMap(Map<String, Object?> map) => CalendarWeekday(
+        id: map['id'] as int,
+        nom: map['nom'] as String,
+        abreviation: map['abreviation'] as String,
+      );
+}
+
+/// Mois de l'année (table `mois`).
+/// `id` suit `DateTime.month` : 1 = janvier … 12 = décembre.
+class CalendarMonth {
+  const CalendarMonth({
+    required this.id,
+    required this.nom,
+    required this.abreviation,
+  });
+
+  final int id;
+  final String nom;
+  final String abreviation;
+
+  factory CalendarMonth.fromMap(Map<String, Object?> map) => CalendarMonth(
+        id: map['id'] as int,
+        nom: map['nom'] as String,
+        abreviation: map['abreviation'] as String,
+      );
+}
+
 /// Un exercice appartenant à une séance.
 ///
 /// L'image illustrative est stockée directement dans SQLite (BLOB), pour

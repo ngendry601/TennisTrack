@@ -22,14 +22,11 @@ class MonthlyStatsScreen extends StatelessWidget {
           return const Center(child: Text('Aucune séance enregistrée'));
         }
 
-        final maxMinutes = months
-            .map((month) => month.totalMinutes)
-            .reduce((a, b) => a > b ? a : b);
-
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
           children: [
             Card(
+              color: Theme.of(context).colorScheme.primary,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -63,7 +60,10 @@ class MonthlyStatsScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             for (final month in months) ...[
-              _MonthCard(month: month, maxMinutes: maxMinutes),
+              _MonthCard(
+                month: month,
+                label: store.monthYearLabel(DateTime(month.year, month.month)),
+              ),
               const SizedBox(height: 8),
             ],
           ],
@@ -125,36 +125,26 @@ class _MonthData {
 }
 
 class _MonthCard extends StatelessWidget {
-  const _MonthCard({required this.month, required this.maxMinutes});
+  const _MonthCard({required this.month, required this.label});
 
   final _MonthData month;
-  final int maxMinutes;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
-    final label = MaterialLocalizations.of(context)
-        .formatMonthYear(DateTime(month.year, month.month));
     final categories = month.minutesByCategory.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
     return Card(
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
-        title: Text(_capitalize(label)),
+        title: Text(label),
         subtitle: Text(
           '${month.sessions.length} séance${month.sessions.length > 1 ? 's' : ''}'
           ' · ${formatDuration(month.totalMinutes)}',
         ),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: maxMinutes == 0 ? 0 : month.totalMinutes / maxMinutes,
-              minHeight: 8,
-            ),
-          ),
-          const SizedBox(height: 12),
           for (final category in categories)
             Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -172,11 +162,6 @@ class _MonthCard extends StatelessWidget {
       ),
     );
   }
-
-  String _capitalize(String value) {
-    if (value.isEmpty) return value;
-    return '${value[0].toUpperCase()}${value.substring(1)}';
-  }
 }
 
 class _Total extends StatelessWidget {
@@ -187,10 +172,15 @@ class _Total extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       children: [
-        Text(value, style: Theme.of(context).textTheme.headlineMedium),
-        Text(label),
+        Text(
+          value,
+          style: theme.textTheme.headlineMedium
+              ?.copyWith(color: theme.colorScheme.onPrimary),
+        ),
+        Text(label, style: const TextStyle(color: Colors.white)),
       ],
     );
   }

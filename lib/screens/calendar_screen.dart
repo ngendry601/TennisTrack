@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 import '../services/session_store.dart';
+import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
 import 'session/session_detail_screen.dart';
 import 'session/session_form_screen.dart';
@@ -115,7 +116,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
           children: [
             _MonthHeader(
-              month: _visibleMonth,
+              label: widget.store.monthYearLabel(_visibleMonth),
               sessionCount: monthSessions.length,
               totalMinutes: monthMinutes,
               onPrevious: () => _changeMonth(-1, byDay),
@@ -123,7 +124,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               onToday: _goToToday,
             ),
             const SizedBox(height: 8),
-            const _WeekdayHeader(),
+            _WeekdayHeader(weekdays: widget.store.weekdays),
             const SizedBox(height: 4),
             _MonthGrid(
               month: _visibleMonth,
@@ -133,7 +134,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
             const SizedBox(height: 20),
             _DayDetails(
-              day: _selectedDay,
+              dayLabel: widget.store.fullDateLabel(_selectedDay),
               sessions: byDay[_selectedDay] ?? const [],
               onOpen: _openDetails,
               onAdd: () => _openForm(date: _selectedDay),
@@ -147,7 +148,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
 class _MonthHeader extends StatelessWidget {
   const _MonthHeader({
-    required this.month,
+    required this.label,
     required this.sessionCount,
     required this.totalMinutes,
     required this.onPrevious,
@@ -155,7 +156,7 @@ class _MonthHeader extends StatelessWidget {
     required this.onToday,
   });
 
-  final DateTime month;
+  final String label;
   final int sessionCount;
   final int totalMinutes;
   final VoidCallback onPrevious;
@@ -164,10 +165,12 @@ class _MonthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = MaterialLocalizations.of(context).formatMonthYear(month);
     final theme = Theme.of(context);
+    final accent = theme.colorScheme.onPrimary;
+    const onHeader = Colors.white;
 
     return Card(
+      color: theme.colorScheme.primary,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Column(
@@ -176,6 +179,7 @@ class _MonthHeader extends StatelessWidget {
               children: [
                 IconButton(
                   tooltip: 'Mois précédent',
+                  color: accent,
                   icon: const Icon(Icons.chevron_left),
                   onPressed: onPrevious,
                 ),
@@ -183,8 +187,9 @@ class _MonthHeader extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        _capitalize(label),
-                        style: theme.textTheme.titleLarge,
+                        label,
+                        style: theme.textTheme.titleLarge
+                            ?.copyWith(color: onHeader),
                         textAlign: TextAlign.center,
                       ),
                       Text(
@@ -192,7 +197,8 @@ class _MonthHeader extends StatelessWidget {
                             ? 'Aucune séance ce mois'
                             : '$sessionCount séance${sessionCount > 1 ? 's' : ''}'
                                 ' · ${formatDuration(totalMinutes)}',
-                        style: theme.textTheme.bodySmall,
+                        style: theme.textTheme.bodySmall
+                            ?.copyWith(color: onHeader),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -200,6 +206,7 @@ class _MonthHeader extends StatelessWidget {
                 ),
                 IconButton(
                   tooltip: 'Mois suivant',
+                  color: accent,
                   icon: const Icon(Icons.chevron_right),
                   onPressed: onNext,
                 ),
@@ -208,6 +215,7 @@ class _MonthHeader extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton.icon(
+                style: TextButton.styleFrom(foregroundColor: accent),
                 onPressed: onToday,
                 icon: const Icon(Icons.today, size: 18),
                 label: const Text("Aujourd'hui"),
@@ -221,19 +229,19 @@ class _MonthHeader extends StatelessWidget {
 }
 
 class _WeekdayHeader extends StatelessWidget {
-  const _WeekdayHeader();
+  const _WeekdayHeader({required this.weekdays});
 
-  static const _labels = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+  final List<CalendarWeekday> weekdays;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        for (final label in _labels)
+        for (final weekday in weekdays)
           Expanded(
             child: Center(
               child: Text(
-                label,
+                weekday.abreviation,
                 style: Theme.of(context).textTheme.labelMedium,
               ),
             ),
@@ -318,7 +326,11 @@ class _DayCell extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(2),
       child: Material(
-        color: selected ? colors.primary : Colors.transparent,
+        color: selected
+            ? colors.primary
+            : sessionCount > 0
+                ? colors.primaryContainer
+                : Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: isToday && !selected
@@ -368,20 +380,19 @@ class _DayCell extends StatelessWidget {
 
 class _DayDetails extends StatelessWidget {
   const _DayDetails({
-    required this.day,
+    required this.dayLabel,
     required this.sessions,
     required this.onOpen,
     required this.onAdd,
   });
 
-  final DateTime day;
+  final String dayLabel;
   final List<TrainingSession> sessions;
   final ValueChanged<TrainingSession> onOpen;
   final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
-    final localizations = MaterialLocalizations.of(context);
     final theme = Theme.of(context);
     final totalMinutes =
         sessions.fold(0, (sum, session) => sum + session.durationMinutes);
@@ -396,7 +407,7 @@ class _DayDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _capitalize(localizations.formatFullDate(day)),
+                    dayLabel,
                     style: theme.textTheme.titleLarge,
                   ),
                   const SizedBox(height: 2),
@@ -544,7 +555,7 @@ class _SessionCard extends StatelessWidget {
                           ? Icons.local_fire_department
                           : Icons.local_fire_department_outlined,
                       size: 15,
-                      color: Colors.orange,
+                      color: AppColors.indigo,
                     ),
                   ),
                   const Spacer(),
@@ -564,8 +575,3 @@ class _SessionCard extends StatelessWidget {
 
 bool _isSameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
-
-String _capitalize(String value) {
-  if (value.isEmpty) return value;
-  return '${value[0].toUpperCase()}${value.substring(1)}';
-}

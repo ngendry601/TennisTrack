@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Version du schéma. À incrémenter à chaque changement de structure,
 /// puis ajouter la migration correspondante dans [onUpgrade].
-const int kDatabaseVersion = 3;
+const int kDatabaseVersion = 4;
 
 const String _databaseName = 'tennistrack.db';
 
@@ -23,6 +23,35 @@ const List<String> kSeedCategories = [
 
 /// Couleurs de balle créées au premier lancement (niveau du joueur).
 const List<String> kSeedBallColors = ['Rouge', 'Orange', 'Vert', 'Jaune'];
+
+/// Jours du calendrier (nom, abréviation). L'id en base suit
+/// `DateTime.weekday` : 1 = lundi … 7 = dimanche.
+const List<(String, String)> kSeedWeekdays = [
+  ('Lundi', 'Lun'),
+  ('Mardi', 'Mar'),
+  ('Mercredi', 'Mer'),
+  ('Jeudi', 'Jeu'),
+  ('Vendredi', 'Ven'),
+  ('Samedi', 'Sam'),
+  ('Dimanche', 'Dim'),
+];
+
+/// Mois du calendrier (nom, abréviation). L'id en base suit
+/// `DateTime.month` : 1 = janvier … 12 = décembre.
+const List<(String, String)> kSeedMonths = [
+  ('Janvier', 'Janv.'),
+  ('Février', 'Févr.'),
+  ('Mars', 'Mars'),
+  ('Avril', 'Avr.'),
+  ('Mai', 'Mai'),
+  ('Juin', 'Juin'),
+  ('Juillet', 'Juil.'),
+  ('Août', 'Août'),
+  ('Septembre', 'Sept.'),
+  ('Octobre', 'Oct.'),
+  ('Novembre', 'Nov.'),
+  ('Décembre', 'Déc.'),
+];
 
 /// Ouvre (et crée si besoin) la base SQLite de l'application.
 ///
@@ -125,6 +154,7 @@ Future<Database> openAppDatabase({String? path}) async {
         }
 
         await batch.commit(noResult: true);
+        await _createCalendarTables(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         // v1 -> v2 : ajout de l'heure de début (facultative) pour le
@@ -141,6 +171,12 @@ Future<Database> openAppDatabase({String? path}) async {
         if (oldVersion < 3) {
           await _migrateSeanceToV3(db);
         }
+
+        // v3 -> v4 : jours et mois du calendrier en base. Les séances
+        // existantes ne sont pas touchées.
+        if (oldVersion < 4) {
+          await _createCalendarTables(db);
+        }
       },
     ),
   );
@@ -148,6 +184,38 @@ Future<Database> openAppDatabase({String? path}) async {
 
 /// Ferme la base (utile pour les tests).
 Future<void> closeAppDatabase(Database db) => db.close();
+
+/// Crée et remplit les tables `jour_semaine` et `mois`.
+Future<void> _createCalendarTables(Database db) async {
+  final batch = db.batch();
+
+  batch.execute('''
+    CREATE TABLE jour_semaine (
+      id          INTEGER PRIMARY KEY CHECK (id BETWEEN 1 AND 7),
+      nom         TEXT NOT NULL UNIQUE,
+      abreviation TEXT NOT NULL UNIQUE
+    )
+  ''');
+
+  batch.execute('''
+    CREATE TABLE mois (
+      id          INTEGER PRIMARY KEY CHECK (id BETWEEN 1 AND 12),
+      nom         TEXT NOT NULL UNIQUE,
+      abreviation TEXT NOT NULL UNIQUE
+    )
+  ''');
+
+  for (final (index, (nom, abreviation)) in kSeedWeekdays.indexed) {
+    batch.insert('jour_semaine',
+        {'id': index + 1, 'nom': nom, 'abreviation': abreviation});
+  }
+  for (final (index, (nom, abreviation)) in kSeedMonths.indexed) {
+    batch.insert(
+        'mois', {'id': index + 1, 'nom': nom, 'abreviation': abreviation});
+  }
+
+  await batch.commit(noResult: true);
+}
 
 /// Migration v2 -> v3 : nouvelle table `seance` sans `lieu`/`notes`.
 ///

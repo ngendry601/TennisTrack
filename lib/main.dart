@@ -4,6 +4,7 @@ import 'package:tennis_track/widgets/bar/bottom_navbar.dart';
 
 import 'data/database_factory_init.dart';
 import 'services/session_store.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,10 +23,7 @@ class TennisTrackApp extends StatelessWidget {
     return MaterialApp(
       title: 'TennisTrack',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: const Color(0xFF7CB518), // vert balle de tennis
-        useMaterial3: true,
-      ),
+      theme: buildAppTheme(),
       locale: const Locale('fr'),
       supportedLocales: const [Locale('fr')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,

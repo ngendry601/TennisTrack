@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/app_theme.dart';
+
 class AppBar_Perso extends StatefulWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget> actions;
@@ -37,6 +39,23 @@ class _AppBar_PersoState extends State<AppBar_Perso> {
  @override
   Widget build(BuildContext context) {
     return AppBar(
+      flexibleSpace: const DecoratedBox(
+        decoration: BoxDecoration(gradient: AppColors.headerGradient),
+      ),
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 10, top: 6, bottom: 6),
+        // Le logo est foncé : son fond clair le garde lisible sur l'en-tête.
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.asset(
+            'assets/images/logo.png',
+            fit: BoxFit.cover,
+            semanticLabel: 'Logo TennisTrack',
+          ),
+        ),
+      ),
+      leadingWidth: 54,
+      centerTitle: true,
       title: Text(widget.title),
       actions: <Widget>[
         IconButton(

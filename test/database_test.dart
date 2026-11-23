@@ -35,6 +35,20 @@ void main() {
     expect(colors.map((color) => color.nom), kSeedBallColors);
   });
 
+  test('crée les jours et les mois du calendrier', () async {
+    final weekdays = await repository.getWeekdays();
+    final months = await repository.getMonths();
+
+    expect(weekdays.first.id, DateTime.monday);
+    expect(weekdays.first.nom, 'Lundi');
+    expect(weekdays.last.id, DateTime.sunday);
+    expect(weekdays.last.abreviation, 'Dim');
+    expect(months.first.id, DateTime.january);
+    expect(months.first.nom, 'Janvier');
+    expect(months.last.id, DateTime.december);
+    expect(months.last.nom, 'Décembre');
+  });
+
   test('enregistre, relit, modifie et supprime une séance', () async {
     final categories = await repository.getCategories();
     final colors = await repository.getBallColors();
@@ -179,7 +193,9 @@ void main() {
     final migratedRepository = TennisRepository(migrated);
     final sessions = await migratedRepository.getSessions();
 
-    expect(await migrated.getVersion(), 3);
+    expect(await migrated.getVersion(), kDatabaseVersion);
+    expect(await migratedRepository.getWeekdays(), hasLength(7));
+    expect(await migratedRepository.getMonths(), hasLength(12));
     expect(sessions, hasLength(1));
     expect(sessions.single.date, DateTime(2026, 10, 24));
     expect(sessions.single.durationMinutes, 90);

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/models.dart';
 import '../../services/session_store.dart';
+import '../../theme/app_theme.dart';
 import '../../utils/formatters.dart';
 import 'session_form_screen.dart';
 
@@ -136,7 +137,7 @@ class _SessionSummary extends StatelessWidget {
             Row(
               children: [
                 const Icon(Icons.local_fire_department,
-                    size: 18, color: Colors.orange),
+                    size: 18, color: AppColors.indigo),
                 const SizedBox(width: 8),
                 Text('Intensité : ${session.intensity} / 5'),
                 const SizedBox(width: 8),
@@ -147,7 +148,7 @@ class _SessionSummary extends StatelessWidget {
                         ? Icons.local_fire_department
                         : Icons.local_fire_department_outlined,
                     size: 16,
-                    color: Colors.orange,
+                    color: AppColors.indigo,
                   ),
                 ),
               ],
