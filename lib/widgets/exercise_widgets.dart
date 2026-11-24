@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
+import '../utils/formatters.dart';
 
 /// Deux lignes de filtres : couleur de balle, puis catégorie.
 class ExerciseFilterBar extends StatelessWidget {
@@ -152,6 +153,7 @@ class ExerciseMeta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final count = usage;
+    final duration = exercise.durationMinutes;
     final style = Theme.of(context).textTheme.bodySmall;
 
     return Row(
@@ -170,7 +172,14 @@ class ExerciseMeta extends StatelessWidget {
             style: style,
           ),
         ),
-        // Hors de la zone tronquée : le nombre de séances reste toujours lisible.
+        // Hors de la zone tronquée : durée et nombre de séances restent
+        // toujours lisibles.
+        if (duration != null) ...[
+          const SizedBox(width: 6),
+          Icon(Icons.timer_outlined, size: 13, color: style?.color),
+          const SizedBox(width: 2),
+          Text(formatDuration(duration), style: style),
+        ],
         if (count != null) ...[
           const SizedBox(width: 6),
           Text('$count séance${count > 1 ? 's' : ''}', style: style),

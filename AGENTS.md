@@ -9,7 +9,7 @@ Le détail fonctionnel et le schéma complet sont dans [README.md](README.md).
 - Cibles : **Android et iOS**. Windows/Linux servent au développement
   (`sqflite_common_ffi`).
 - Données : **SQLite locale** (`sqflite`), base `tennistrack.db`, version
-  actuelle du schéma : **5** (`kDatabaseVersion` dans `lib/data/database.dart`).
+  actuelle du schéma : **6** (`kDatabaseVersion` dans `lib/data/database.dart`).
 - Pas de backend, pas de synchronisation, pas de `shared_preferences`.
 - Dépendances : `sqflite`, `sqflite_common_ffi`, `path`, `image_picker`,
   `file_picker` (import du fichier d'images), `flutter_localizations`. N'en ajoute pas sans raison claire.
@@ -63,6 +63,10 @@ SQLite (data/database.dart)   schéma, données de départ, migrations
 - Les exercices sont **partagés** (bibliothèque) : modifier un exercice le
   modifie dans toutes ses séances. Supprimer une séance garde ses exercices ;
   supprimer un exercice le retire de toutes les séances.
+- Un exercice a une durée **facultative** (`durationMinutes`, 1 à 240 min),
+  la même dans toutes ses séances. Le total des exercices d'une séance est
+  indicatif (`lib/utils/exercise_durations.dart`) : il peut dépasser la durée
+  de la séance, et ne bloque jamais l'enregistrement.
 - Le choix d'exercices dans une séance démarre filtré sur la couleur de balle
   de la séance.
 - Les images sont stockées en **BLOB** dans SQLite (pas de chemin de fichier),

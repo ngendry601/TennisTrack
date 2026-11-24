@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/models.dart';
 import '../../services/session_store.dart';
+import '../../utils/exercise_durations.dart';
 import '../../utils/formatters.dart';
 import '../seance/exercise_form_screen.dart';
 import '../seance/exercise_picker_screen.dart';
@@ -308,6 +309,9 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
               ),
             ],
           ),
+          if (exercisesTotalLabel(_exercises, _duration.round())
+              case final total?)
+            _ExercisesTotal(label: total),
           const SizedBox(height: 4),
           if (_exercises.isEmpty)
             Padding(
@@ -337,9 +341,13 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
                         ),
                   title: Text(_exercises[index].name),
                   subtitle: Text(
-                    _exercises[index].pointsToWork.isEmpty
-                        ? 'Points à travailler à compléter'
-                        : _exercises[index].pointsToWork,
+                    [
+                      if (_exercises[index].durationMinutes case final minutes?)
+                        formatDuration(minutes),
+                      _exercises[index].pointsToWork.isEmpty
+                          ? 'Points à travailler à compléter'
+                          : _exercises[index].pointsToWork,
+                    ].join(' · '),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -371,6 +379,28 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
               onPressed: _save,
               icon: const Icon(Icons.check),
               label: const Text('Enregistrer')),
+        ],
+      ),
+    );
+  }
+}
+
+/// Total des durées des exercices, comparé à la durée de la séance.
+class _ExercisesTotal extends StatelessWidget {
+  const _ExercisesTotal({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.bodySmall;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          Icon(Icons.timer_outlined, size: 16, color: style?.color),
+          const SizedBox(width: 4),
+          Expanded(child: Text(label, style: style)),
         ],
       ),
     );

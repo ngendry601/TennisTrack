@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../models/models.dart';
 import '../../services/session_store.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/exercise_durations.dart';
 import '../../utils/formatters.dart';
 import 'session_form_screen.dart';
 
@@ -67,6 +68,23 @@ class SessionDetailScreen extends StatelessWidget {
                 'Exercices (${current.exercises.length})',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
+              if (exercisesTotalLabel(
+                      current.exercises, current.durationMinutes)
+                  case final total?) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.timer_outlined,
+                        size: 16,
+                        color: Theme.of(context).textTheme.bodySmall?.color),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(total,
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 8),
               if (current.exercises.isEmpty)
                 Text(
@@ -283,6 +301,12 @@ class _ExerciseDetails extends StatelessWidget {
                         style: theme.textTheme.titleMedium,
                       ),
                     ),
+                    if (exercise.durationMinutes case final minutes?)
+                      Chip(
+                        avatar: const Icon(Icons.timer_outlined, size: 16),
+                        label: Text(formatDuration(minutes)),
+                        visualDensity: VisualDensity.compact,
+                      ),
                   ],
                 ),
                 if (exercise.pointsToWork.isNotEmpty) ...[

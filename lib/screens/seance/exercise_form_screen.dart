@@ -1,10 +1,11 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../models/models.dart';
 import '../../services/session_store.dart';
+import '../../utils/exercise_durations.dart';
+import '../../utils/formatters.dart';
 import '../../widgets/exercise_widgets.dart';
 
 /// Formulaire d'un exercice de la bibliothèque : nom, thèmes, couleurs de
@@ -38,6 +39,7 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
   final ImagePicker _picker = ImagePicker();
 
   late final TextEditingController _name;
+  late final TextEditingController _duration;
   late final TextEditingController _points;
   late final TextEditingController _execution;
   late final Set<int> _categoryIds;
@@ -50,6 +52,9 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
     super.initState();
     final exercise = widget.exercise;
     _name = TextEditingController(text: exercise?.name ?? '');
+    _duration = TextEditingController(
+        text: exercise?.durationMinutes?.toString() ?? '');
+    _duration.addListener(() => setState(() {}));
     _points = TextEditingController(text: exercise?.pointsToWork ?? '');
     _execution = TextEditingController(text: exercise?.execution ?? '');
     _image = exercise?.image;
@@ -65,6 +70,7 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
   @override
   void dispose() {
     _name.dispose();
+    _duration.dispose();
     _points.dispose();
     _execution.dispose();
     super.dispose();
@@ -102,6 +108,14 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
       _showMessage('Donne un nom à l’exercice.');
       return;
     }
+    final durationText = _duration.text.trim();
+    final duration = int.tryParse(durationText);
+    if (durationText.isNotEmpty &&
+        (duration == null || duration <= 0 || duration > kMaxExerciseMinutes)) {
+      _showMessage('La durée doit être comprise entre 1 et '
+          '$kMaxExerciseMinutes minutes.');
+      return;
+    }
     if (_categoryIds.isEmpty) {
       _showMessage('Choisis au moins un thème.');
       return;
@@ -118,6 +132,7 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
       pointsToWork: _points.text.trim(),
       execution: _execution.text.trim(),
       image: _image,
+      durationMinutes: durationText.isEmpty ? null : duration,
       categories: widget.store.categories
           .where((category) => _categoryIds.contains(category.id))
           .toList(),
@@ -126,6 +141,13 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
           .toList(),
     ));
     if (mounted) Navigator.of(context).pop(saved);
+  }
+
+  /// « 1h15min » sous le champ, pour vérifier une durée en minutes.
+  String? _durationHelper() {
+    final minutes = int.tryParse(_duration.text.trim());
+    if (minutes == null || minutes < 60) return null;
+    return formatDuration(minutes);
   }
 
   void _toggle(Set<int> ids, int id, bool selected) {
@@ -179,6 +201,20 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
               labelText: 'Nom de l’exercice',
               hintText: 'Ex. : Service extérieur',
               border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _duration,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: 'Durée (facultatif)',
+              hintText: 'Ex. : 15',
+              suffixText: 'min',
+              helperText: _durationHelper(),
+              prefixIcon: const Icon(Icons.timer_outlined),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 20),

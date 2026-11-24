@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Version du schéma. À incrémenter à chaque changement de structure,
 /// puis ajouter la migration correspondante dans [onUpgrade].
-const int kDatabaseVersion = 5;
+const int kDatabaseVersion = 6;
 
 const String _databaseName = 'tennistrack.db';
 
@@ -144,6 +144,7 @@ Future<Database> openAppDatabase({String? path}) async {
         await batch.commit(noResult: true);
         await _createCalendarTables(db);
         await _createExerciseTables(db);
+        await _addExerciseDuration(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         // v1 -> v2 : ajout de l'heure de début (facultative) pour le
@@ -171,6 +172,12 @@ Future<Database> openAppDatabase({String? path}) async {
         // et nouvelles catégories Attaque et Défense.
         if (oldVersion < 5) {
           await _migrateExercisesToV5(db);
+        }
+
+        // v5 -> v6 : durée facultative des exercices. Les exercices
+        // existants n'ont pas de durée (`NULL`).
+        if (oldVersion < 6) {
+          await _addExerciseDuration(db);
         }
       },
     ),
@@ -237,6 +244,15 @@ Future<void> _createExerciseTables(Database db) async {
 
   await batch.commit(noResult: true);
 }
+
+/// Ajoute la durée de l'exercice, en minutes (facultative).
+///
+/// Volontairement séparée de [_createExerciseTables] : la migration v4 -> v5
+/// recrée la table au format v5, puis la v6 ajoute la colonne.
+Future<void> _addExerciseDuration(Database db) => db.execute(
+      'ALTER TABLE exercice ADD COLUMN duree_minutes INTEGER '
+      'CHECK (duree_minutes IS NULL OR duree_minutes > 0)',
+    );
 
 /// Migration v4 -> v5 : chaque exercice lié à une séance rejoint la
 /// bibliothèque.

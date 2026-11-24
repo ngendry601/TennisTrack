@@ -273,6 +273,7 @@ class TennisRepository {
         'points_travailles': exercise.pointsToWork,
         'deroulement': exercise.execution,
         'image': exercise.image,
+        'duree_minutes': exercise.durationMinutes,
       };
 
   Map<String, Object?> _sessionValues(TrainingSession session) => {

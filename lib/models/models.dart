@@ -116,10 +116,15 @@ class Exercise {
     this.image,
     this.categories = const [],
     this.ballColors = const [],
+    this.durationMinutes,
   });
 
   final int id;
   final String name;
+
+  /// Durée de l'exercice en minutes, ou `null` si elle n'est pas renseignée.
+  /// Elle est la même dans toutes les séances qui utilisent l'exercice.
+  final int? durationMinutes;
 
   /// Points techniques / objectifs à travailler.
   final String pointsToWork;
@@ -142,6 +147,7 @@ class Exercise {
         pointsToWork: map['points_travailles'] as String? ?? '',
         execution: map['deroulement'] as String? ?? '',
         image: map['image'] as Uint8List?,
+        durationMinutes: map['duree_minutes'] as int?,
       );
 
   Exercise copyWith({
@@ -152,6 +158,7 @@ class Exercise {
     Uint8List? image,
     List<TrainingCategory>? categories,
     List<BallColor>? ballColors,
+    int? durationMinutes,
   }) {
     return Exercise(
       id: id ?? this.id,
@@ -161,6 +168,7 @@ class Exercise {
       image: image ?? this.image,
       categories: categories ?? this.categories,
       ballColors: ballColors ?? this.ballColors,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
     );
   }
 }

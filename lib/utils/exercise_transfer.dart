@@ -28,6 +28,7 @@ String exportExercisesJson(List<Exercise> exercises) {
           'nom': exercise.name,
           'points_travailles': exercise.pointsToWork,
           'deroulement': exercise.execution,
+          'duree_minutes': exercise.durationMinutes,
           'themes': [for (final c in exercise.categories) c.nom],
           'couleurs_balle': [for (final c in exercise.ballColors) c.nom],
           'a_une_image': exercise.image != null,

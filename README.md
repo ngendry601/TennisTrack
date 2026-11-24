@@ -27,7 +27,8 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
 
 - Un exercice existe **une seule fois** et peut être utilisé dans plusieurs
   séances : le modifier met à jour **toutes** les séances qui l'utilisent.
-- Chaque exercice a un nom, des points à travailler, un déroulement (matériel
+- Chaque exercice a un nom, une **durée facultative** (en minutes, la même
+  dans toutes les séances), des points à travailler, un déroulement (matériel
   compris), une **image illustrative importée depuis la galerie** (stockée en
   BLOB dans SQLite), des **thèmes** (catégories) et les **couleurs de balle**
   pour lesquelles il est adapté.
@@ -47,6 +48,10 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
   chaque image à son exercice (par id + nom, ou par nom unique). Les schémas
   sont générés avec `tools/schemas/` (voir
   [tools/schemas/README.md](tools/schemas/README.md)).
+- Dans une séance (formulaire et détails), chaque exercice affiche sa durée,
+  et le **total des exercices** est comparé à la durée de la séance :
+  `Exercices : 1h10min sur 1h30min`, avec « dépasse de … » si le total est
+  plus long, et le nombre d'exercices sans durée.
 - Supprimer une séance **garde** ses exercices dans la bibliothèque.
   Supprimer un exercice de la bibliothèque le retire de toutes ses séances.
 
@@ -117,7 +122,7 @@ SQLite, créée sur le téléphone.
 - **Jours** (`id` = `DateTime.weekday`, 1 = lundi) et **mois**
   (`id` = `DateTime.month`, 1 = janvier), avec nom et abréviation.
 
-## Schéma (version 5)
+## Schéma (version 6)
 
 ```text
 categorie(id, nom UNIQUE)
@@ -132,7 +137,8 @@ seance(
 seance_categorie(seance_id, categorie_id)      -- plusieurs catégories par séance
 
 exercice(
-  id, nom, points_travailles, deroulement, image BLOB NULL
+  id, nom, points_travailles, deroulement, image BLOB NULL,
+  duree_minutes > 0 NULL
 )
 seance_exercice(seance_id, exercice_id, ordre) -- exercices partagés
 exercice_categorie(exercice_id, categorie_id)  -- thèmes de l'exercice
@@ -172,6 +178,7 @@ INDEX sur exercice_couleur_balle(couleur_balle_id)
 | v2 → v3 | Suppression de `lieu` et `notes` (reconstruction de `seance` en conservant séances et liens de catégories) et ajout de la table `exercice` (un exercice par séance). |
 | v3 → v4 | Ajout des tables `jour_semaine` et `mois` pour le calendrier. |
 | v4 → v5 | Bibliothèque d'exercices : les exercices deviennent partagés (`seance_exercice`). Les exercices au contenu strictement identique sont fusionnés ; chacun hérite des catégories et de la couleur de balle de ses séances. Ajout des catégories Attaque et Défense. |
+| v5 → v6 | Ajout de `exercice.duree_minutes` (facultative). Les exercices existants n'ont pas de durée (`NULL`). |
 
 ## Ajouter une catégorie ou une couleur
 
@@ -207,6 +214,7 @@ lib/
 │   ├── home_stats.dart               répartition par catégorie, dernière séance,
 │   │                                 comparaison avec le mois précédent
 │   ├── exercise_filters.dart         filtre texte / thème / couleur de balle
+│   ├── exercise_durations.dart       total des durées des exercices d'une séance
 │   └── exercise_transfer.dart        export de la liste d'exercices, lecture
 │                                     et association des images importées
 ├── widgets/
@@ -243,6 +251,9 @@ Les tests utilisent une base SQLite en mémoire (`sqflite_common_ffi`).
   jour d'un exercice dans toutes ses séances, suppression séance/exercice
   indépendante, migration `v4 → v5`, filtres de la bibliothèque, choix
   démarrant sur la couleur de balle de la séance.
+- `test/exercise_duration_test.dart` : total des durées et libellé,
+  enregistrement et contrainte en base, saisie dans la fiche d'exercice,
+  total dans les détails d'une séance, migration `v5 → v6`.
 - `test/exercise_transfer_test.dart` : export de la liste, lecture du
   fichier d'images (et refus des fichiers invalides), association par id +
   nom ou nom unique, enregistrement en base, import depuis l'onglet
