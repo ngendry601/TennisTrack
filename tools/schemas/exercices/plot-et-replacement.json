@@ -1,0 +1,121 @@
+{
+  "titre": "Toucher un plot puis se replacer sur la pastille",
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        -2.06,
+        -7.6
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        2.06,
+        7.6
+      ]
+    }
+  ],
+  "plots": [
+    [
+      -4.115,
+      -6.4
+    ],
+    [
+      0,
+      -6.4
+    ],
+    [
+      0,
+      6.4
+    ],
+    [
+      4.115,
+      6.4
+    ]
+  ],
+  "pastilles": [
+    [
+      -2.06,
+      -7.6
+    ],
+    [
+      2.06,
+      7.6
+    ]
+  ],
+  "balles": [
+    {
+      "de": [
+        -2.06,
+        -7.6
+      ],
+      "a": [
+        2.06,
+        7.6
+      ],
+      "courbe": -0.06,
+      "numero": 1,
+      "ecartDebut": 40,
+      "ecartFin": 40,
+      "posNumero": 0.2
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        -2.06,
+        -7.6
+      ],
+      "a": [
+        -4.115,
+        -6.4
+      ],
+      "courbe": 0.55,
+      "numero": 2
+    },
+    {
+      "de": [
+        -4.115,
+        -6.4
+      ],
+      "a": [
+        -2.06,
+        -7.6
+      ],
+      "courbe": 0.55,
+      "numero": 3,
+      "ecartDebut": 22,
+      "ecartFin": 38
+    },
+    {
+      "de": [
+        2.06,
+        7.6
+      ],
+      "a": [
+        0,
+        6.4
+      ],
+      "courbe": 0.55
+    },
+    {
+      "de": [
+        0,
+        6.4
+      ],
+      "a": [
+        2.06,
+        7.6
+      ],
+      "courbe": 0.55,
+      "ecartDebut": 22,
+      "ecartFin": 38
+    }
+  ],
+  "etapes": [
+    "Le joueur frappe la balle",
+    "Il va toucher un des deux plots",
+    "Il se replace sur sa pastille"
+  ]
+}
