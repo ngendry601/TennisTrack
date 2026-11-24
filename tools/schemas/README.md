@@ -42,5 +42,13 @@ la flèche), `ecartDebut` / `ecartFin` (px) raccourcissent les extrémités.
 
 La légende n'affiche que les éléments utilisés.
 
-Vocabulaire : un **demi-terrain** est une moitié dans la largeur (couloir
-simple → ligne médiane), sur toute la longueur du terrain.
+## Vocabulaire
+
+- **Grand terrain** : le terrain de simple entier (entre les deux lignes de
+  couloir simple, x de -4,115 à +4,115), sur toute la longueur. Les couloirs
+  de double sont hors jeu : les griser avec `masques`.
+- **Demi-terrain** : une moitié du terrain de simple dans la largeur (couloir
+  simple → ligne médiane, ex. x de -4,115 à 0), sur toute la longueur.
+- **Plot** : cône (rond orange). **Pastille** : disque plat de replacement.
+  **Languette** : bande plate au sol (pointillés). **Porte** : base avec un
+  jalon dedans (triangle).

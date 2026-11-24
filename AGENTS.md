@@ -115,3 +115,16 @@ flutter test
 - Mettre à jour le README quand une fonctionnalité, le schéma ou la
   structure des fichiers change, ainsi que ce fichier si une convention
   évolue.
+
+## Schémas d'exercices
+
+Les images d'illustration des exercices se génèrent avec
+`tools/schemas/generer.js` à partir de fichiers JSON (voir
+`tools/schemas/README.md`). Vocabulaire de l'utilisateur :
+
+- **Grand terrain** = terrain de simple entier, sur toute la longueur.
+- **Demi-terrain** = moitié du terrain de simple **dans la largeur**
+  (couloir simple → ligne médiane), sur toute la longueur.
+- Plot = cône, pastille = disque de replacement, languette = bande au sol,
+  porte = base avec un jalon.
+- Gauche / droite : du point de vue du joueur qui frappe, face au filet.
