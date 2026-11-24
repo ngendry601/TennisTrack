@@ -293,30 +293,50 @@ function construireSvg(spec) {
   </svg>`;
 }
 
-async function main() {
-  const fichiers = process.argv.slice(2).length
-    ? process.argv.slice(2).map((f) => path.resolve(f))
+// Côté le plus long des images, comme les images importées dans l'appli.
+const COTE_MAX = 1600;
+
+/// Liste les fichiers JSON d'exercices (tous, ou ceux passés en argument).
+function fichiersExercices(args = []) {
+  return args.length
+    ? args.map((f) => path.resolve(f))
     : fs.readdirSync(path.join(DOSSIER, 'exercices'))
         .filter((f) => f.endsWith('.json'))
+        .sort()
         .map((f) => path.join(DOSSIER, 'exercices', f));
+}
 
+/// Rend chaque fichier en PNG dans images/ et renvoie [{ fichier, spec, png }].
+async function rendre(fichiers) {
   const navigateur = await chromium.launch();
-  const page = await navigateur.newPage({ deviceScaleFactor: 1.5 });
   fs.mkdirSync(path.join(DOSSIER, 'images'), { recursive: true });
+  const resultats = [];
 
   for (const fichier of fichiers) {
     const spec = JSON.parse(fs.readFileSync(fichier, 'utf8'));
     const svg = construireSvg(spec);
-    const nom = path.basename(fichier, '.json');
+    const largeur = Number(svg.match(/width="([\d.]+)"/)[1]);
+    const hauteur = Number(svg.match(/height="([\d.]+)"/)[1]);
+    const echelle = Math.min(1.5, COTE_MAX / Math.max(largeur, hauteur));
+
+    const page = await navigateur.newPage({ deviceScaleFactor: echelle });
     await page.setContent(`<html><body style="margin:0">${svg}</body></html>`);
+    const nom = path.basename(fichier, '.json');
     const cible = path.join(DOSSIER, 'images', `${nom}.png`);
     await page.locator('svg').screenshot({ path: cible });
+    await page.close();
     console.log(`✔ ${path.relative(process.cwd(), cible)}`);
+    resultats.push({ fichier, spec, png: cible });
   }
   await navigateur.close();
+  return resultats;
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+module.exports = { construireSvg, fichiersExercices, rendre, DOSSIER };
+
+if (require.main === module) {
+  rendre(fichiersExercices(process.argv.slice(2))).catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}

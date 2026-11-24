@@ -121,6 +121,15 @@ class SessionStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Enregistre les images importées (schémas) : id d'exercice → image.
+  Future<void> setExerciseImages(Map<int, Uint8List> images) async {
+    if (images.isEmpty) return;
+    final repository = _requireRepository();
+    await repository.updateExerciseImages(images);
+    await _reloadExercisesAndSessions(repository);
+    notifyListeners();
+  }
+
   Future<void> _reloadExercisesAndSessions(TennisRepository repository) async {
     _exercises = await repository.getExercises();
     final sessions = await repository.getSessions();

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -93,6 +95,21 @@ class TennisRepository {
         whereArgs: [exercise.id],
       );
       await _insertExerciseLinks(txn, exercise.id, exercise);
+    });
+  }
+
+  /// Remplace l'image de plusieurs exercices en une seule transaction
+  /// (import des schémas). Les autres champs ne sont pas modifiés.
+  Future<void> updateExerciseImages(Map<int, Uint8List> images) {
+    return db.transaction((txn) async {
+      for (final MapEntry(key: id, value: image) in images.entries) {
+        await txn.update(
+          'exercice',
+          {'image': image},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+      }
     });
   }
 

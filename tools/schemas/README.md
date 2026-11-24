@@ -9,7 +9,30 @@ node tools/schemas/generer.js tools/schemas/exercices/plot-et-replacement.json
 ```
 
 Nécessite Node et Playwright (Chromium). Les images sortent dans
-`tools/schemas/images/`.
+`tools/schemas/images/`, 1600 px au plus sur le côté le plus long (comme les
+images importées depuis la galerie).
+
+## Ajouter les images dans l'appli (en une fois)
+
+1. Dans l'appli : onglet **Exercices → ⋮ → Copier la liste des exercices**,
+   puis coller le texte dans la conversation avec Claude.
+2. Claude crée un fichier `exercices/<nom>.json` par exercice, avec la clé
+   `"exercice": { "id": 12, "nom": "Nom exact dans l'appli" }` reprise de la
+   liste, puis lance :
+
+   ```bash
+   node tools/schemas/paquet.js
+   ```
+
+   Résultat : `tools/schemas/paquets/images-AAAA-MM-JJ.json`.
+3. Enregistrer ce fichier sur le téléphone (app **Fichiers**), puis dans
+   l'appli : **Exercices → ⋮ → Importer les images**. Un résumé s'affiche
+   avant l'import.
+
+Chaque image est associée par **id + nom** de l'exercice, ou par le **nom
+seul** s'il est unique dans la bibliothèque. Une image sans correspondance
+sûre est ignorée et signalée. Renommer un exercice dans l'appli après l'export
+empêche donc l'association : refaire l'export dans ce cas.
 
 ## Décrire un exercice
 
@@ -33,6 +56,7 @@ origine au centre du filet, terrain vu du dessus et vertical :
 | `deplacements` | flèches | trait blanc |
 | `masques` | `[[[x1, y1], [x2, y2]], …]` | assombrit une partie non utilisée (ex. l'autre demi-terrain) |
 | `tailleSymboles` | nombre (1 par défaut) | réduit les symboles pour un espace étroit (ex. 0.75) |
+| `exercice` | `{ "id": 12, "nom": "…" }` | lie le schéma à un exercice de l'appli (pour `paquet.js`) |
 | `etapes` | `["texte", …]` | liste numérotée sous la légende |
 
 Une flèche : `{ "de": [x, y], "a": [x, y], "courbe": 0.3, "numero": 2 }`.

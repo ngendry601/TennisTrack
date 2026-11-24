@@ -40,6 +40,13 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
     durs ;
   - **Créer un nouvel exercice** : les thèmes de la séance sont pré-cochés,
     et l'exercice rejoint la bibliothèque.
+- **Schémas illustratifs en lot** : menu **⋮** de l'onglet Exercices.
+  « Copier la liste des exercices » copie la bibliothèque (sans les images)
+  pour l'envoyer à Claude ; « Importer les images » lit le fichier `.json`
+  d'images renvoyé (choisi dans l'app Fichiers) et, après un résumé, associe
+  chaque image à son exercice (par id + nom, ou par nom unique). Les schémas
+  sont générés avec `tools/schemas/` (voir
+  [tools/schemas/README.md](tools/schemas/README.md)).
 - Supprimer une séance **garde** ses exercices dans la bibliothèque.
   Supprimer un exercice de la bibliothèque le retire de toutes ses séances.
 
@@ -199,7 +206,9 @@ lib/
 │   ├── date_ranges.dart              semaine lundi→dimanche, mois civil
 │   ├── home_stats.dart               répartition par catégorie, dernière séance,
 │   │                                 comparaison avec le mois précédent
-│   └── exercise_filters.dart         filtre texte / thème / couleur de balle
+│   ├── exercise_filters.dart         filtre texte / thème / couleur de balle
+│   └── exercise_transfer.dart        export de la liste d'exercices, lecture
+│                                     et association des images importées
 ├── widgets/
 │   ├── bar/bottom_navbar.dart        MainShell : 5 onglets + bouton flottant
 │   ├── bar/appbar.dart               barre du haut
@@ -214,6 +223,8 @@ lib/
     ├── session/                      liste, détails et formulaire de séance
     └── seance/                       bibliothèque, choix et formulaire
                                       d'exercice
+
+tools/schemas/                        générateur des schémas d'exercices (Node)
 ```
 
 ## Tests
@@ -232,6 +243,10 @@ Les tests utilisent une base SQLite en mémoire (`sqflite_common_ffi`).
   jour d'un exercice dans toutes ses séances, suppression séance/exercice
   indépendante, migration `v4 → v5`, filtres de la bibliothèque, choix
   démarrant sur la couleur de balle de la séance.
+- `test/exercise_transfer_test.dart` : export de la liste, lecture du
+  fichier d'images (et refus des fichiers invalides), association par id +
+  nom ou nom unique, enregistrement en base, import depuis l'onglet
+  Exercices.
 - `test/formatters_test.dart` : format `1h15min` et plages horaires.
 - `test/date_ranges_test.dart` : bornes de la semaine (lundi → dimanche) et
   du mois.
@@ -246,6 +261,8 @@ Les tests utilisent une base SQLite en mémoire (`sqflite_common_ffi`).
 
 L'image est choisie avec `image_picker` depuis la galerie, redimensionnée
 (max. 1600 px, qualité 80) puis enregistrée en BLOB dans la table `exercice`.
+L'import en lot des schémas utilise `file_picker` pour choisir le fichier
+`.json` (iOS 14 minimum ; le projet cible iOS 15).
 Sur iOS, la clé `NSPhotoLibraryUsageDescription` est déclarée dans
 `ios/Runner/Info.plist`.
 

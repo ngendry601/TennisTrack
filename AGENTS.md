@@ -12,7 +12,7 @@ Le détail fonctionnel et le schéma complet sont dans [README.md](README.md).
   actuelle du schéma : **5** (`kDatabaseVersion` dans `lib/data/database.dart`).
 - Pas de backend, pas de synchronisation, pas de `shared_preferences`.
 - Dépendances : `sqflite`, `sqflite_common_ffi`, `path`, `image_picker`,
-  `flutter_localizations`. N'en ajoute pas sans raison claire.
+  `file_picker` (import du fichier d'images), `flutter_localizations`. N'en ajoute pas sans raison claire.
 
 ## Langue
 
@@ -120,7 +120,15 @@ flutter test
 
 Les images d'illustration des exercices se génèrent avec
 `tools/schemas/generer.js` à partir de fichiers JSON (voir
-`tools/schemas/README.md`). Vocabulaire de l'utilisateur :
+`tools/schemas/README.md`).
+
+Quand l'utilisateur colle une liste au format `tennistrack-exercices`
+(copiée depuis l'onglet Exercices) : créer un `exercices/<nom>.json` par
+exercice avec la clé `"exercice": { "id", "nom" }` **recopiée exactement**,
+lancer `node tools/schemas/paquet.js`, puis lui envoyer le fichier de
+`tools/schemas/paquets/` à importer (Exercices → ⋮ → Importer les images).
+Ignorer les exercices dont `a_une_image` vaut `true`, sauf demande contraire.
+Poser des questions quand la disposition d'un exercice n'est pas claire. Vocabulaire de l'utilisateur :
 
 - **Grand terrain** = terrain de simple entier, sur toute la longueur.
 - **Demi-terrain** = moitié du terrain de simple **dans la largeur**
