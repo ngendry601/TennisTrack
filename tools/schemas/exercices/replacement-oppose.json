@@ -1,0 +1,158 @@
+{
+  "titre": "Se replacer du côté opposé à la balle",
+  "languettes": [
+    [
+      [
+        0,
+        -11.885
+      ],
+      [
+        0,
+        -6.4
+      ]
+    ],
+    [
+      [
+        0,
+        6.4
+      ],
+      [
+        0,
+        11.885
+      ]
+    ]
+  ],
+  "textes": [
+    {
+      "pos": [
+        -2.06,
+        -9.6
+      ],
+      "texte": "GAUCHE"
+    },
+    {
+      "pos": [
+        2.06,
+        -9.6
+      ],
+      "texte": "DROITE"
+    },
+    {
+      "pos": [
+        -2.06,
+        9.0
+      ],
+      "texte": "GAUCHE",
+      "taille": 22,
+      "opacite": 0.35
+    },
+    {
+      "pos": [
+        2.06,
+        9.0
+      ],
+      "texte": "DROITE",
+      "taille": 22,
+      "opacite": 0.35
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        11.0
+      ],
+      "couleur": "#E53935"
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        -11.0
+      ],
+      "couleur": "#8E24AA"
+    },
+    {
+      "nom": "A",
+      "pos": [
+        2.3,
+        10.2
+      ],
+      "couleur": "#E53935",
+      "fantome": true
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.3,
+        10.2
+      ],
+      "couleur": "#E53935",
+      "fantome": true
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        11.0
+      ],
+      "a": [
+        -2.4,
+        -7.6
+      ],
+      "courbe": -0.04,
+      "numero": 1,
+      "posNumero": 0.8,
+      "ecartFin": 12
+    },
+    {
+      "de": [
+        0,
+        11.0
+      ],
+      "a": [
+        2.4,
+        -7.6
+      ],
+      "courbe": 0.04,
+      "numero": 2,
+      "posNumero": 0.8,
+      "ecartFin": 12
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0,
+        11.0
+      ],
+      "a": [
+        2.3,
+        10.2
+      ],
+      "courbe": -0.25,
+      "numero": 1,
+      "ecartFin": 32
+    },
+    {
+      "de": [
+        0,
+        11.0
+      ],
+      "a": [
+        -2.3,
+        10.2
+      ],
+      "courbe": 0.25,
+      "numero": 2,
+      "ecartFin": 32
+    }
+  ],
+  "etapes": [
+    "Balle dans la zone gauche : A se place à droite",
+    "Balle dans la zone droite : A se place à gauche",
+    "B applique la même règle quand il frappe"
+  ]
+}

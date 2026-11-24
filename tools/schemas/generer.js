@@ -92,9 +92,11 @@ const porte = (cx, cy, angle = 0) => `
     <circle r="4" fill="#FFFFFF"/>
   </g>`;
 
-const joueur = (cx, cy, nom, couleur) => `
-  <g transform="translate(${cx} ${cy})">
-    <circle r="24" fill="${couleur}" stroke="#FFFFFF" stroke-width="4"/>
+// `fantome` : position visée (joueur en transparence, contour pointillé).
+const joueur = (cx, cy, nom, couleur, fantome = false) => `
+  <g transform="translate(${cx} ${cy})" ${fantome ? 'opacity="0.55"' : ''}>
+    <circle r="24" fill="${couleur}" stroke="#FFFFFF" stroke-width="4"
+            ${fantome ? 'stroke-dasharray="7 5"' : ''}/>
     <text y="8" text-anchor="middle" font-size="22" font-weight="700"
           fill="#FFFFFF">${nom}</text>
   </g>`;
@@ -186,6 +188,7 @@ function fleche({ de, a, courbe = 0, couleur, pointilles, numero, posNumero = 0.
 function legende(spec) {
   const items = [];
   if (spec.joueurs?.length) items.push(['joueur', 'Joueur']);
+  if (spec.joueurs?.some((j) => j.fantome)) items.push(['fantome', 'Placement visé']);
   if (spec.plots?.length) items.push(['plot', 'Plot']);
   if (spec.pastilles?.length) items.push(['pastille', 'Pastille']);
   if (spec.languettes?.length) items.push(['languette', 'Languette']);
@@ -201,6 +204,7 @@ function legende(spec) {
   const symbole = (type, x, y) => {
     switch (type) {
       case 'joueur': return joueur(x, y, 'A', COULEURS.joueurs[0]);
+      case 'fantome': return joueur(x, y, 'A', COULEURS.joueurs[0], true);
       case 'plot': return plot(x, y);
       case 'pastille': return pastille(x, y, 19);
       case 'languette': return languette(x - 26, y, x + 26, y);
@@ -248,6 +252,12 @@ function construireSvg(spec) {
   for (const [[x1, y1], [x2, y2]] of spec.languettes ?? []) {
     corps += languette(px(x1), py(y1), px(x2), py(y2));
   }
+  // Textes posés sur le terrain (noms de zones…).
+  for (const t of spec.textes ?? []) {
+    corps += `<text x="${px(t.pos[0])}" y="${py(t.pos[1])}" text-anchor="middle"
+      dominant-baseline="middle" font-size="${t.taille ?? 30}" font-weight="700"
+      letter-spacing="3" fill="#FFFFFF" opacity="${t.opacite ?? 0.55}">${t.texte}</text>`;
+  }
   for (const [x, y] of spec.pastilles ?? []) corps += pastille(px(x), py(y));
   for (const b of spec.balles ?? []) {
     corps += fleche({ ...b, couleur: COULEURS.balle, pointilles: true, ecartDebut: b.ecartDebut ?? 30, ecartFin: b.ecartFin ?? 30 });
@@ -258,7 +268,7 @@ function construireSvg(spec) {
   for (const [x, y] of spec.plots ?? []) corps += plot(px(x), py(y));
   for (const [x, y, angle] of spec.portes ?? []) corps += porte(px(x), py(y), angle);
   (spec.joueurs ?? []).forEach((j, i) => {
-    corps += joueur(px(j.pos[0]), py(j.pos[1]), j.nom, couleurJoueur(j, i));
+    corps += joueur(px(j.pos[0]), py(j.pos[1]), j.nom, couleurJoueur(j, i), j.fantome);
   });
   for (const b of spec.balles ?? []) {
     if (b.icone) corps += balleIcone(px(b.icone[0]), py(b.icone[1]));

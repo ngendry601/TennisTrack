@@ -23,7 +23,8 @@ origine au centre du filet, terrain vu du dessus et vertical :
 
 | Clé | Format | Dessin |
 | --- | --- | --- |
-| `joueurs` | `[{ "nom": "A", "pos": [x, y], "couleur"?: "#hex" }]` | jeton de couleur |
+| `joueurs` | `[{ "nom": "A", "pos": [x, y], "couleur"?: "#hex", "fantome"?: true }]` | jeton de couleur (`fantome` : placement visé, en transparence) |
+| `textes` | `[{ "pos": [x, y], "texte": "GAUCHE", "taille"?: 30, "opacite"?: 0.55 }]` | texte posé sur le terrain |
 | `plots` | `[[x, y], …]` | plot orange |
 | `pastilles` | `[[x, y], …]` | disque jaune (replacement) |
 | `languettes` | `[[[x1, y1], [x2, y2]], …]` | trait blanc en pointillés |
