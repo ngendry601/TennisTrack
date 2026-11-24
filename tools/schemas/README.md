@@ -24,13 +24,15 @@ origine au centre du filet, terrain vu du dessus et vertical :
 | Clé | Format | Dessin |
 | --- | --- | --- |
 | `joueurs` | `[{ "nom": "A", "pos": [x, y], "couleur"?: "#hex", "fantome"?: true }]` | jeton de couleur (`fantome` : placement visé, en transparence) |
-| `textes` | `[{ "pos": [x, y], "texte": "GAUCHE", "taille"?: 30, "opacite"?: 0.55 }]` | texte posé sur le terrain |
+| `textes` | `[{ "pos": [x, y], "texte": "GAUCHE", "taille"?: 30, "opacite"?: 0.55, "espacement"?: 3 }]` | texte posé sur le terrain |
 | `plots` | `[[x, y], …]` | plot orange |
 | `pastilles` | `[[x, y], …]` | disque jaune (replacement) |
 | `languettes` | `[[[x1, y1], [x2, y2]], …]` | trait blanc en pointillés |
 | `portes` | `[[x, y, angle?], …]` | triangle rose (base + jalon) |
 | `balles` | flèches (voir ci-dessous) | pointillés jaunes |
 | `deplacements` | flèches | trait blanc |
+| `masques` | `[[[x1, y1], [x2, y2]], …]` | assombrit une partie non utilisée (ex. l'autre demi-terrain) |
+| `tailleSymboles` | nombre (1 par défaut) | réduit les symboles pour un espace étroit (ex. 0.75) |
 | `etapes` | `["texte", …]` | liste numérotée sous la légende |
 
 Une flèche : `{ "de": [x, y], "a": [x, y], "courbe": 0.3, "numero": 2 }`.
@@ -39,3 +41,6 @@ pastille numérotée à côté (`posNumero` de 0 à 1 pour la déplacer le long 
 la flèche), `ecartDebut` / `ecartFin` (px) raccourcissent les extrémités.
 
 La légende n'affiche que les éléments utilisés.
+
+Vocabulaire : un **demi-terrain** est une moitié dans la largeur (couloir
+simple → ligne médiane), sur toute la longueur du terrain.

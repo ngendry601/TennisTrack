@@ -1,23 +1,45 @@
 {
-  "titre": "Se replacer du côté opposé à la balle",
-  "languettes": [
+  "titre": "Se replacer du côté opposé à la balle (demi-terrain)",
+  "masques": [
     [
       [
-        0,
-        -11.885
+        -6.885,
+        -13.285
       ],
       [
-        0,
-        -6.4
+        -4.115,
+        13.285
       ]
     ],
     [
       [
         0,
-        6.4
+        -13.285
       ],
       [
-        0,
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "languettes": [
+    [
+      [
+        -2.0575,
+        -11.885
+      ],
+      [
+        -2.0575,
+        -0.35
+      ]
+    ],
+    [
+      [
+        -2.0575,
+        0.35
+      ],
+      [
+        -2.0575,
         11.885
       ]
     ]
@@ -25,50 +47,58 @@
   "textes": [
     {
       "pos": [
-        -2.06,
-        -9.6
-      ],
-      "texte": "GAUCHE"
-    },
-    {
-      "pos": [
-        2.06,
-        -9.6
-      ],
-      "texte": "DROITE"
-    },
-    {
-      "pos": [
-        -2.06,
-        9.0
+        -3.09,
+        -9.4
       ],
       "texte": "GAUCHE",
-      "taille": 22,
-      "opacite": 0.35
+      "taille": 15,
+      "espacement": 1,
+      "opacite": 0.8
     },
     {
       "pos": [
-        2.06,
-        9.0
+        -1.03,
+        -9.4
       ],
       "texte": "DROITE",
-      "taille": 22,
-      "opacite": 0.35
+      "taille": 15,
+      "espacement": 1,
+      "opacite": 0.8
+    },
+    {
+      "pos": [
+        -3.09,
+        7.8
+      ],
+      "texte": "GAUCHE",
+      "taille": 13,
+      "espacement": 1,
+      "opacite": 0.5
+    },
+    {
+      "pos": [
+        -1.03,
+        7.8
+      ],
+      "texte": "DROITE",
+      "taille": 13,
+      "espacement": 1,
+      "opacite": 0.5
     }
   ],
   "joueurs": [
     {
       "nom": "A",
       "pos": [
-        0,
-        11.0
+        -2.0575,
+        11.3
       ],
       "couleur": "#E53935"
     },
     {
       "nom": "B",
       "pos": [
-        0,
+        -2.0575,
         -11.0
       ],
       "couleur": "#8E24AA"
@@ -76,8 +106,8 @@
     {
       "nom": "A",
       "pos": [
-        2.3,
-        10.2
+        -0.85,
+        9.3
       ],
       "couleur": "#E53935",
       "fantome": true
@@ -85,8 +115,8 @@
     {
       "nom": "A",
       "pos": [
-        -2.3,
-        10.2
+        -3.25,
+        9.3
       ],
       "couleur": "#E53935",
       "fantome": true
@@ -95,64 +125,71 @@
   "balles": [
     {
       "de": [
-        0,
-        11.0
+        -2.0575,
+        11.3
       ],
       "a": [
-        -2.4,
-        -7.6
+        -3.1,
+        -7.4
       ],
-      "courbe": -0.04,
+      "courbe": -0.03,
       "numero": 1,
-      "posNumero": 0.8,
-      "ecartFin": 12
+      "posNumero": 0.75,
+      "ecartDebut": 22,
+      "ecartFin": 10
     },
     {
       "de": [
-        0,
-        11.0
+        -2.0575,
+        11.3
       ],
       "a": [
-        2.4,
-        -7.6
+        -1.0,
+        -7.4
       ],
-      "courbe": 0.04,
+      "courbe": 0.03,
       "numero": 2,
-      "posNumero": 0.8,
-      "ecartFin": 12
+      "posNumero": 0.75,
+      "ecartDebut": 22,
+      "ecartFin": 10
     }
   ],
   "deplacements": [
     {
       "de": [
-        0,
-        11.0
+        -2.0575,
+        11.3
       ],
       "a": [
-        2.3,
-        10.2
+        -0.85,
+        9.3
       ],
-      "courbe": -0.25,
+      "courbe": 0.3,
       "numero": 1,
-      "ecartFin": 32
+      "posNumero": 0.55,
+      "ecartDebut": 24,
+      "ecartFin": 24
     },
     {
       "de": [
-        0,
-        11.0
+        -2.0575,
+        11.3
       ],
       "a": [
-        -2.3,
-        10.2
+        -3.25,
+        9.3
       ],
-      "courbe": 0.25,
+      "courbe": -0.3,
       "numero": 2,
-      "ecartFin": 32
+      "posNumero": 0.55,
+      "ecartDebut": 24,
+      "ecartFin": 24
     }
   ],
   "etapes": [
     "Balle dans la zone gauche : A se place à droite",
     "Balle dans la zone droite : A se place à gauche",
     "B applique la même règle quand il frappe"
-  ]
+  ],
+  "tailleSymboles": 0.75
 }

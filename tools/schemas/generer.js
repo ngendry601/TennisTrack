@@ -14,6 +14,8 @@ const { chromium } = require('playwright');
 
 const DOSSIER = __dirname;
 const S = 50; // pixels par mètre
+// Taille des symboles sur le terrain (option `tailleSymboles` du JSON).
+let K = 1;
 const RECUL = 1.4; // marge autour du terrain (m)
 const DEMI_L = 10.97 / 2;
 const DEMI_H = 23.77 / 2;
@@ -70,12 +72,12 @@ function terrain() {
 
 const plot = (cx, cy) => `
   <g transform="translate(${cx} ${cy})">
-    <circle r="15" fill="${COULEURS.plot}" stroke="#7A3A00" stroke-width="3"/>
-    <circle r="6" fill="#FFFFFF" opacity="0.9"/>
+    <circle r="${15 * K}" fill="${COULEURS.plot}" stroke="#7A3A00" stroke-width="3"/>
+    <circle r="${6 * K}" fill="#FFFFFF" opacity="0.9"/>
   </g>`;
 
 // Plus large qu'un joueur : reste visible quand un joueur est dessus.
-const pastille = (cx, cy, r = 33) => `
+const pastille = (cx, cy, r = 33 * K) => `
   <circle cx="${cx}" cy="${cy}" r="${r}" fill="${COULEURS.pastille}"
           stroke="${COULEURS.encre}" stroke-width="3"/>`;
 
@@ -95,9 +97,9 @@ const porte = (cx, cy, angle = 0) => `
 // `fantome` : position visée (joueur en transparence, contour pointillé).
 const joueur = (cx, cy, nom, couleur, fantome = false) => `
   <g transform="translate(${cx} ${cy})" ${fantome ? 'opacity="0.55"' : ''}>
-    <circle r="24" fill="${couleur}" stroke="#FFFFFF" stroke-width="4"
+    <circle r="${24 * K}" fill="${couleur}" stroke="#FFFFFF" stroke-width="${4 * K}"
             ${fantome ? 'stroke-dasharray="7 5"' : ''}/>
-    <text y="8" text-anchor="middle" font-size="22" font-weight="700"
+    <text y="${8 * K}" text-anchor="middle" font-size="${22 * K}" font-weight="700"
           fill="#FFFFFF">${nom}</text>
   </g>`;
 
@@ -110,8 +112,8 @@ const balleIcone = (cx, cy) => `
 
 const badge = (cx, cy, texte) => `
   <g transform="translate(${cx} ${cy})">
-    <circle r="15" fill="${COULEURS.encre}" stroke="#FFFFFF" stroke-width="3"/>
-    <text y="6" text-anchor="middle" font-size="17" font-weight="700"
+    <circle r="${15 * K}" fill="${COULEURS.encre}" stroke="#FFFFFF" stroke-width="3"/>
+    <text y="${6 * K}" text-anchor="middle" font-size="${17 * K}" font-weight="700"
           fill="#FFFFFF">${texte}</text>
   </g>`;
 
@@ -155,28 +157,28 @@ function fleche({ de, a, courbe = 0, couleur, pointilles, numero, posNumero = 0.
 
   // Pointe de flèche orientée selon la tangente finale.
   const angle = Math.atan2(by - qy, bx - qx);
-  const t = 18;
+  const t = 18 * K;
   const pointe = [
     [bx, by],
     [bx - t * Math.cos(angle - 0.45), by - t * Math.sin(angle - 0.45)],
     [bx - t * Math.cos(angle + 0.45), by - t * Math.sin(angle + 0.45)],
   ];
   // Le trait s'arrête à la base de la pointe.
-  const fx = bx - 12 * Math.cos(angle);
-  const fy = by - 12 * Math.sin(angle);
+  const fx = bx - 12 * K * Math.cos(angle);
+  const fy = by - 12 * K * Math.sin(angle);
 
   // Numéro posé à côté du trait (côté extérieur de la courbe) pour ne pas
   // cacher la flèche.
   const [nx, ny] = [-dy / long, dx / long];
   const sens = courbe < 0 ? -1 : 1;
   const [px0, py0] = point(posNumero);
-  const [mx, my] = [px0 + nx * sens * 26, py0 + ny * sens * 26];
+  const [mx, my] = [px0 + nx * sens * 26 * K, py0 + ny * sens * 26 * K];
   return `
   <path d="M ${ax} ${ay} Q ${qx} ${qy} ${fx} ${fy}" fill="none" stroke="#000"
-        stroke-opacity="0.25" stroke-width="${epaisseur + 4}"
+        stroke-opacity="0.25" stroke-width="${epaisseur * K + 4}"
         ${pointilles ? 'stroke-dasharray="14 10"' : ''} stroke-linecap="round"/>
   <path d="M ${ax} ${ay} Q ${qx} ${qy} ${fx} ${fy}" fill="none" stroke="${couleur}"
-        stroke-width="${epaisseur}" ${pointilles ? 'stroke-dasharray="14 10"' : ''}
+        stroke-width="${epaisseur * K}" ${pointilles ? 'stroke-dasharray="14 10"' : ''}
         stroke-linecap="round"/>
   <polygon points="${pointe.map((p) => p.join(',')).join(' ')}" fill="${couleur}"
            stroke="#000" stroke-opacity="0.25" stroke-width="2"/>
@@ -246,17 +248,24 @@ function legende(spec) {
 // --- Assemblage -----------------------------------------------------------
 
 function construireSvg(spec) {
+  K = spec.tailleSymboles ?? 1;
   const couleurJoueur = (j, i) => j.couleur ?? COULEURS.joueurs[i % COULEURS.joueurs.length];
   let corps = terrain();
 
   for (const [[x1, y1], [x2, y2]] of spec.languettes ?? []) {
     corps += languette(px(x1), py(y1), px(x2), py(y2));
   }
+  // Parties du terrain non utilisées, assombries : [[x1, y1], [x2, y2]].
+  for (const [[x1, y1], [x2, y2]] of spec.masques ?? []) {
+    corps += `<rect x="${px(Math.min(x1, x2))}" y="${py(Math.min(y1, y2))}"
+      width="${Math.abs(x2 - x1) * S}" height="${Math.abs(y2 - y1) * S}"
+      fill="#0B1530" opacity="0.5"/>`;
+  }
   // Textes posés sur le terrain (noms de zones…).
   for (const t of spec.textes ?? []) {
     corps += `<text x="${px(t.pos[0])}" y="${py(t.pos[1])}" text-anchor="middle"
       dominant-baseline="middle" font-size="${t.taille ?? 30}" font-weight="700"
-      letter-spacing="3" fill="#FFFFFF" opacity="${t.opacite ?? 0.55}">${t.texte}</text>`;
+      letter-spacing="${t.espacement ?? 3}" fill="#FFFFFF" opacity="${t.opacite ?? 0.55}">${t.texte}</text>`;
   }
   for (const [x, y] of spec.pastilles ?? []) corps += pastille(px(x), py(y));
   for (const b of spec.balles ?? []) {
@@ -274,6 +283,7 @@ function construireSvg(spec) {
     if (b.icone) corps += balleIcone(px(b.icone[0]), py(b.icone[1]));
   }
 
+  K = 1; // la légende garde toujours la même taille
   const { svg: svgLegende, hauteur } = legende(spec);
   const hauteurTotale = HAUTEUR_TERRAIN + hauteur;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${LARGEUR}" height="${hauteurTotale}"
