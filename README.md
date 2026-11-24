@@ -2,7 +2,7 @@
 
 Application Flutter pour référencer et catégoriser mes séances d'entraînement
 de tennis : date, heure, durée, intensité, catégories, couleur de balle et
-exercices avec image illustrative.
+exercices issus d'une **bibliothèque d'exercices** réutilisables.
 
 Les données sont stockées dans une **base SQLite locale**, sur le téléphone.
 Il n'y a plus de liste de séances écrite en dur dans le code ni de
@@ -10,32 +10,60 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
 
 ## Fonctionnalités
 
-- Séances avec date, **heure de début facultative**, durée, intensité,
-  plusieurs catégories et couleur de balle.
-- **Exercices illimités par séance** (bouton « Exo + ») : nom, points à
-  travailler, déroulement avec le matériel, et **image illustrative importée
-  depuis la galerie**. L'image est stockée directement dans SQLite (BLOB),
-  pas seulement un chemin de fichier.
-- Durées affichées au format **`1h15min`** (jamais `1,3 h`).
-- **Onglet Calendrier** : grille mensuelle (semaine du lundi au dimanche) avec
-  un point sur chaque jour contenant une séance. Un appui sur un jour affiche
-  les horaires (`18h00 – 19h30`), la durée totale et les thèmes du jour.
-  Les mois se parcourent avec les flèches, et le bouton « Ajouter » crée une
-  séance directement à la date sélectionnée.
-- **Accueil** : nombre de séances et heures du **mois en cours**, et liste
-  limitée aux séances de la **semaine en cours** (lundi → dimanche). Toutes
-  les séances restent disponibles dans l'onglet Séances.
-- **Bouton « Séance » global** : il reste visible sur tous les onglets pour
-  ajouter une séance depuis n'importe quel écran.
-- **Onglet Statistiques** : total général (toutes les séances) et total
-  d'heures par mois, nombre de séances, barre de comparaison et répartition
-  des heures par catégorie.
-- **Suppression d'une séance** dans l'onglet Séances : icône corbeille avec
-  confirmation, ou glissement vers la gauche (avec confirmation également).
+### Séances
+
+- Date, **heure de début facultative**, durée, intensité (1 à 5), plusieurs
+  catégories et couleur de balle.
+- Durées affichées au format **`1h15min`** (jamais `1,3 h`), plages horaires
+  au format `18h00 – 19h30`.
 - **Détails d'une séance** : un appui sur une séance (accueil, liste ou
   calendrier) affiche ses informations et ses exercices en lecture seule.
   Le bouton **Modifier** ouvre ensuite le formulaire d'édition.
+- **Suppression** dans l'onglet Séances : icône corbeille avec confirmation,
+  ou glissement vers la gauche (avec confirmation également).
 - Filtres par catégorie, intensité et durée, recherche libre.
+
+### Bibliothèque d'exercices
+
+- Un exercice existe **une seule fois** et peut être utilisé dans plusieurs
+  séances : le modifier met à jour **toutes** les séances qui l'utilisent.
+- Chaque exercice a un nom, des points à travailler, un déroulement (matériel
+  compris), une **image illustrative importée depuis la galerie** (stockée en
+  BLOB dans SQLite), des **thèmes** (catégories) et les **couleurs de balle**
+  pour lesquelles il est adapté.
+- **Onglet Exercices** : liste de la bibliothèque avec recherche et filtres
+  par thème et couleur de balle, création, modification et suppression
+  (avec confirmation).
+- Dans une séance, le bouton d'ajout d'exercice propose :
+  - **Choisir dans ma bibliothèque** : le filtre démarre sur la couleur de
+    balle de la séance (modifiable), pour ne pas proposer d'exercices trop
+    durs ;
+  - **Créer un nouvel exercice** : les thèmes de la séance sont pré-cochés,
+    et l'exercice rejoint la bibliothèque.
+- Supprimer une séance **garde** ses exercices dans la bibliothèque.
+  Supprimer un exercice de la bibliothèque le retire de toutes ses séances.
+
+### Écrans
+
+- **Accueil** :
+  - nombre de séances et heures du **mois en cours** ;
+  - bande **L M M J V S D** de la semaine en cours (jours joués en évidence,
+    aujourd'hui repéré par un point) ;
+  - répartition du mois par catégorie (« Les plus travaillées ») et
+    comparaison avec le mois précédent (`+2h30min par rapport à octobre`) ;
+  - dernière séance jouée (les séances futures sont ignorées) ;
+  - liste des séances de la **semaine en cours** (lundi → dimanche).
+- **Séances** : toutes les séances, avec filtres et recherche.
+- **Exercices** : la bibliothèque d'exercices.
+- **Calendrier** : grille mensuelle (lundi → dimanche) avec un point sur
+  chaque jour contenant une séance. Un appui sur un jour affiche les
+  horaires, la durée totale et les thèmes du jour. Les mois se parcourent
+  avec les flèches, et le bouton « Ajouter » crée une séance directement à
+  la date sélectionnée. Les noms des jours et des mois viennent de la base.
+- **Statistiques** : total général et total d'heures par mois, nombre de
+  séances, barre de comparaison et répartition des heures par catégorie.
+- **Bouton flottant global** : « Séance » sur tous les onglets, sauf
+  l'onglet Exercices où il devient « Exercice ».
 
 ## Lancer l'application
 
@@ -51,68 +79,92 @@ Windows/Linux pour le développement (via `sqflite_common_ffi`).
 
 Le workflow GitHub Actions `.github/workflows/ios-build.yml` fabrique un
 fichier `.ipa` non signé, à installer avec Sideloadly et un identifiant Apple
-gratuit. Le pas-à-pas est dans
+gratuit. Il se lance à la main (« Run workflow ») ou à chaque push qui
+modifie `lib/`, `ios/` ou `pubspec.*`. Le pas-à-pas est dans
 [docs/INSTALLER_SUR_IPHONE.md](docs/INSTALLER_SUR_IPHONE.md).
 
 ## Où sont les données ?
 
 Au premier lancement, l'application crée la base `tennistrack.db` dans le
-dossier de bases de données privé de l'application, puis insère les
-catégories et les couleurs de balle de départ.
+dossier de bases de données privé de l'application, puis insère les données
+de départ : 10 catégories, 4 couleurs de balle, les 7 jours et les 12 mois.
 
 - La base est **propre à chaque téléphone**.
 - Elle est **persistante** : fermer l'application ne l'efface pas.
-- Elle est **modifiable** : ajout, modification et suppression de séances
-  passent par SQLite.
+- Elle est **modifiable** : ajout, modification et suppression de séances et
+  d'exercices passent par SQLite.
 - Les modifications ne sont **pas synchronisées** entre deux téléphones.
 - Désinstaller l'application supprime la base.
 
-Pourquoi ne pas livrer un fichier `app.db` dans les assets ? Le seul contenu
-à pré-remplir représente 12 lignes (8 catégories + 4 couleurs). Les créer
-dans `onCreate` évite d'embarquer un fichier binaire, d'avoir deux définitions
-du schéma à maintenir, et de devoir gérer une copie « premier lancement ».
-Le résultat est identique : une vraie base SQLite, créée sur le téléphone.
+Pourquoi ne pas livrer un fichier `app.db` dans les assets ? Le contenu à
+pré-remplir est minime. Le créer dans `onCreate` évite d'embarquer un fichier
+binaire, d'avoir deux définitions du schéma à maintenir, et de devoir gérer
+une copie « premier lancement ». Le résultat est identique : une vraie base
+SQLite, créée sur le téléphone.
 
-## Schéma
+### Données de départ
+
+- **Catégories** : Service, Coup droit, Revers, Volée / Filet, Jeu de jambes,
+  Physique, Positionnement / Replacement, Tactique, Attaque, Défense.
+- **Couleurs de balle** (niveau du joueur) : Rouge, Orange, Vert, Jaune.
+- **Jours** (`id` = `DateTime.weekday`, 1 = lundi) et **mois**
+  (`id` = `DateTime.month`, 1 = janvier), avec nom et abréviation.
+
+## Schéma (version 5)
 
 ```text
 categorie(id, nom UNIQUE)
 couleur_balle(id, nom UNIQUE)
+jour_semaine(id 1..7, nom UNIQUE, abreviation UNIQUE)
+mois(id 1..12, nom UNIQUE, abreviation UNIQUE)
 
 seance(
-  id, date 'YYYY-MM-DD', duree_minutes, intensite 1..5,
+  id, date 'YYYY-MM-DD', duree_minutes > 0, intensite 1..5,
   couleur_balle_id, heure_debut 'HH:mm' NULL
 )
+seance_categorie(seance_id, categorie_id)      -- plusieurs catégories par séance
 
 exercice(
-  id, seance_id, nom, points_travailles, deroulement, image BLOB NULL
+  id, nom, points_travailles, deroulement, image BLOB NULL
 )
-
-seance_categorie(seance_id, categorie_id)   -- plusieurs catégories par séance
+seance_exercice(seance_id, exercice_id, ordre) -- exercices partagés
+exercice_categorie(exercice_id, categorie_id)  -- thèmes de l'exercice
+exercice_couleur_balle(exercice_id, couleur_balle_id)
 
 INDEX sur seance(date)
 INDEX sur seance_categorie(categorie_id)
-INDEX sur exercice(seance_id)
+INDEX sur seance_exercice(exercice_id)
+INDEX sur exercice_categorie(categorie_id)
+INDEX sur exercice_couleur_balle(couleur_balle_id)
 ```
 
-- `PRAGMA foreign_keys = ON` est exécuté à chaque ouverture.
-- Supprimer une séance supprime automatiquement ses liens de catégories.
+- `PRAGMA foreign_keys = ON` est exécuté à chaque ouverture (sans lui, les
+  `ON DELETE CASCADE` ne fonctionnent pas).
+- Supprimer une séance supprime ses liens de catégories et d'exercices, mais
+  **pas** les exercices eux-mêmes.
+- Supprimer un exercice supprime ses liens avec les séances, les catégories
+  et les couleurs.
 - Supprimer une catégorie supprime aussi les séances liées (trigger
-  `supprime_seances_de_categorie`). C'est le comportement demandé ; il n'y a
-  pas encore d'écran de suppression de catégorie.
+  `supprime_seances_de_categorie`), même si elles ont d'autres catégories.
+  C'est le comportement demandé ; il n'y a pas encore d'écran de suppression
+  de catégorie.
+- Une couleur de balle utilisée par une séance ne peut pas être supprimée
+  (`ON DELETE RESTRICT`).
 - La date de la séance est directement dans `seance.date`. Une table
   `planification` séparée n'est utile que si tu veux placer **la même**
   séance sur plusieurs jours. Ce n'est pas le cas aujourd'hui ; on pourra
   l'ajouter plus tard via une migration.
-- `heure_debut` est facultative : les séances enregistrées avant la version 2
-  de la base gardent `NULL` et affichent uniquement leur durée. La migration
-  `v1 → v2` ajoute la colonne sans toucher aux séances existantes.
-- La version 3 supprime `lieu` et `notes` de `seance` (reconstruction de la
-  table avec conservation des séances et des liens de catégories) et ajoute
-  la table `exercice`. Les images sont des BLOB : une sauvegarde de
-  `tennistrack.db` contient donc aussi les images.
-- Supprimer une séance supprime automatiquement ses exercices
-  (`ON DELETE CASCADE`).
+- Les images sont des BLOB : une sauvegarde de `tennistrack.db` contient
+  donc aussi les images.
+
+### Historique des migrations
+
+| Version | Changement |
+| ------- | ---------- |
+| v1 → v2 | Ajout de `seance.heure_debut` (facultative). Les anciennes séances gardent `NULL` et affichent uniquement leur durée. |
+| v2 → v3 | Suppression de `lieu` et `notes` (reconstruction de `seance` en conservant séances et liens de catégories) et ajout de la table `exercice` (un exercice par séance). |
+| v3 → v4 | Ajout des tables `jour_semaine` et `mois` pour le calendrier. |
+| v4 → v5 | Bibliothèque d'exercices : les exercices deviennent partagés (`seance_exercice`). Les exercices au contenu strictement identique sont fusionnés ; chacun hérite des catégories et de la couleur de balle de ses séances. Ajout des catégories Attaque et Défense. |
 
 ## Ajouter une catégorie ou une couleur
 
@@ -121,26 +173,47 @@ outil comme **DB Browser for SQLite** en ouvrant le fichier `tennistrack.db`
 du téléphone (nécessite un téléphone rooté ou une copie via `adb`), ou ajouter
 plus tard un écran d'administration dans l'application.
 
-L'icône d'une catégorie est associée à son **nom** dans
-`lib/models/models.dart`. Une catégorie inconnue reçoit l'icône tennis.
+Pour une nouvelle installation, ajoute aussi le nom dans `kSeedCategories`
+(ou `kSeedBallColors`) de `lib/data/database.dart`, et prévois un
+`INSERT OR IGNORE` dans une migration pour les bases existantes.
+
+L'icône d'une catégorie et la teinte d'une couleur de balle sont associées à
+leur **nom** dans `lib/models/models.dart`. Une catégorie inconnue reçoit
+l'icône tennis, une couleur inconnue s'affiche en gris.
 
 ## Structure
 
 ```text
 lib/
-├── main.dart                       ouverture de la base + lancement
-├── models/models.dart              TrainingCategory, BallColor, TrainingSession
+├── main.dart                         ouverture de la base + lancement (locale fr)
+├── models/models.dart                TrainingCategory, BallColor, CalendarWeekday,
+│                                     CalendarMonth, Exercise, TrainingSession
 ├── data/
-│   ├── database.dart               création du schéma + données de départ
-│   ├── tennis_repository.dart      requêtes SQL (CRUD)
-│   ├── database_factory_init*.dart SQLite sur Windows/Linux (dev)
-├── services/session_store.dart     cache mémoire + notifications UI
-├── utils/formatters.dart           format 1h15min + plages horaires
-├── utils/date_ranges.dart          semaine lundi→dimanche, mois civil
-├── widgets/                        boîte de confirmation de suppression
-└── screens/                        accueil, liste, détails et formulaire de
-                                    séance, formulaire d'exercice, calendrier,
-                                    statistiques mensuelles
+│   ├── database.dart                 schéma, données de départ, migrations
+│   ├── tennis_repository.dart        requêtes SQL (CRUD séances et exercices)
+│   └── database_factory_init*.dart   SQLite sur Windows/Linux (dev)
+├── services/session_store.dart       cache mémoire + notifications UI
+├── theme/app_theme.dart              palette (AppColors) et thème
+├── utils/
+│   ├── formatters.dart               format 1h15min + plages horaires
+│   ├── date_ranges.dart              semaine lundi→dimanche, mois civil
+│   ├── home_stats.dart               répartition par catégorie, dernière séance,
+│   │                                 comparaison avec le mois précédent
+│   └── exercise_filters.dart         filtre texte / thème / couleur de balle
+├── widgets/
+│   ├── bar/bottom_navbar.dart        MainShell : 5 onglets + bouton flottant
+│   ├── bar/appbar.dart               barre du haut
+│   ├── home_cards.dart               cartes de l'accueil
+│   ├── exercise_widgets.dart         affichage commun des exercices
+│   ├── session_card_frame.dart       cadre des cartes de séance
+│   └── confirm_delete_session.dart   boîte de confirmation de suppression
+└── screens/
+    ├── home_screen.dart              accueil
+    ├── calendar_screen.dart          calendrier mensuel
+    ├── monthly_stats_screen.dart     statistiques
+    ├── session/                      liste, détails et formulaire de séance
+    └── seance/                       bibliothèque, choix et formulaire
+                                      d'exercice
 ```
 
 ## Tests
@@ -150,17 +223,24 @@ flutter analyze
 flutter test
 ```
 
-Les tests de `test/database_test.dart` utilisent une base SQLite en mémoire
-et vérifient la création du schéma, l'ajout/modification/suppression d'une
-séance, les exercices et leur image BLOB, les horaires de début/fin, le
-trigger de suppression par catégorie et les migrations `v1 → v3`.
-`test/formatters_test.dart` vérifie le format `1h15min` et les plages
-horaires. `test/date_ranges_test.dart` vérifie les bornes de la semaine
-(lundi → dimanche) et du mois. `test/screens_test.dart` vérifie les stats du
-mois et la liste de la semaine sur l'accueil, l'affichage des heures par
-mois, le détail d'un jour dans le calendrier, l'ouverture des détails d'une
-séance puis de sa modification, et la suppression d'une séance depuis
-l'onglet Séances.
+Les tests utilisent une base SQLite en mémoire (`sqflite_common_ffi`).
+
+- `test/database_test.dart` : création du schéma et des données de départ
+  (catégories, couleurs, jours, mois), ajout/modification/suppression d'une
+  séance, trigger de suppression par catégorie, migration `v1 → v3`.
+- `test/exercise_library_test.dart` : catégories Attaque et Défense, mise à
+  jour d'un exercice dans toutes ses séances, suppression séance/exercice
+  indépendante, migration `v4 → v5`, filtres de la bibliothèque, choix
+  démarrant sur la couleur de balle de la séance.
+- `test/formatters_test.dart` : format `1h15min` et plages horaires.
+- `test/date_ranges_test.dart` : bornes de la semaine (lundi → dimanche) et
+  du mois.
+- `test/home_stats_test.dart` : répartition par catégorie, dernière séance,
+  comparaison avec le mois précédent.
+- `test/screens_test.dart` et `test/widget_test.dart` : stats et liste de la
+  semaine sur l'accueil, heures par mois, détail d'un jour du calendrier,
+  détails puis modification d'une séance, suppression depuis l'onglet
+  Séances, navigation et recherche.
 
 ## Import d'image
 
@@ -172,12 +252,15 @@ Sur iOS, la clé `NSPhotoLibraryUsageDescription` est déclarée dans
 ## Faire évoluer le schéma
 
 1. Incrémenter `kDatabaseVersion` dans `lib/data/database.dart`.
-2. Ajouter le `ALTER TABLE` / `CREATE TABLE` correspondant dans `onUpgrade`.
-3. Ne jamais supprimer la base de l'utilisateur pour « réinitialiser » :
+2. Ajouter la migration correspondante dans `onUpgrade`
+   (`if (oldVersion < N) { … }`), et mettre à jour `onCreate` pour les
+   nouvelles installations.
+3. Ajouter un test de migration depuis la version précédente.
+4. Ne jamais supprimer la base de l'utilisateur pour « réinitialiser » :
    cela effacerait ses séances.
 
 ## Anciennes données
 
 L'ancienne version stockait les séances dans `shared_preferences`
 (clé `sessions_v1`). Comme convenu, il n'y a pas de migration automatique :
-la nouvelle base démarre avec les catégories et les couleurs, sans séance.
+la nouvelle base démarre avec les données de départ, sans séance.
