@@ -9,11 +9,18 @@ import '../models/models.dart';
 ///
 /// Les écrans écoutent ce [ChangeNotifier] et se reconstruisent après
 /// chaque ajout / modification / suppression.
+// PRINCIPE : les écrans ne lisent jamais la base directement. Ils lisent les
+// listes gardées ici en mémoire (rapide), et appellent les méthodes du store
+// pour modifier quelque chose. Chaque modification suit toujours le même
+// schéma : 1) écrire dans SQLite via le repository, 2) relire les données,
+// 3) notifyListeners() pour que les écrans se redessinent.
 class SessionStore extends ChangeNotifier {
   SessionStore({TennisRepository? repository}) : _repository = repository;
 
   TennisRepository? _repository;
 
+  // Copies en mémoire des données de la base. Les « _ » les rendent privées :
+  // de l'extérieur, on passe par les getters en lecture seule plus bas.
   final List<TrainingSession> _sessions = [];
   List<TrainingCategory> _categories = const [];
   List<BallColor> _ballColors = const [];
@@ -49,6 +56,7 @@ class SessionStore extends ChangeNotifier {
           .firstOrNull ??
       month.toString().padLeft(2, '0');
 
+  // unmodifiable : un écran peut lire la liste mais pas la modifier par erreur.
   List<TrainingSession> get sessions => List.unmodifiable(_sessions);
   List<TrainingCategory> get categories => List.unmodifiable(_categories);
   List<BallColor> get ballColors => List.unmodifiable(_ballColors);
@@ -62,6 +70,8 @@ class SessionStore extends ChangeNotifier {
           session.exercises.any((exercise) => exercise.id == exerciseId))
       .length;
 
+  // Temps total de toutes les séances (préparation + cours + rangement).
+  // fold additionne : on part de 0 et on ajoute chaque séance.
   int get totalMinutes =>
       _sessions.fold(0, (sum, session) => sum + session.totalMinutes);
 
@@ -69,8 +79,13 @@ class SessionStore extends ChangeNotifier {
   /// À appeler une seule fois, avant `runApp`.
   Future<void> load() async {
     final repository =
+        // `??=` : on n'ouvre la base que si aucun repository n'a été fourni
+        // (les tests en fournissent un, branché sur une base en mémoire).
         _repository ??= TennisRepository(await openAppDatabase());
 
+    // Chaque « await » attend la réponse de SQLite avant de passer à la suite.
+    // À la fin, notifyListeners() prévient tous les écrans qui écoutent le store
+    // (ListenableBuilder) : ils se redessinent avec les nouvelles données.
     _categories = await repository.getCategories();
     _ballColors = await repository.getBallColors();
     _weekdays = await repository.getWeekdays();
@@ -84,6 +99,7 @@ class SessionStore extends ChangeNotifier {
   Future<void> upsert(TrainingSession session) async {
     final repository = _requireRepository();
 
+    // id == 0 : séance pas encore en base, on l'insère. Sinon on la met à jour.
     if (session.id == 0) {
       await repository.insertSession(session);
     } else {
@@ -102,6 +118,8 @@ class SessionStore extends ChangeNotifier {
 
     final Exercise saved;
     if (exercise.id == 0) {
+      // copyWith crée une copie de l'exercice avec le nouvel id donné par SQLite
+      // (les modèles sont immuables : on ne modifie jamais un objet existant).
       saved = exercise.copyWith(id: await repository.insertExercise(exercise));
     } else {
       await repository.updateExercise(exercise);
@@ -160,6 +178,8 @@ class SessionStore extends ChangeNotifier {
     return repository;
   }
 
+  // Tri des séances : les plus récentes d'abord, puis la dernière créée en
+  // premier pour un même jour.
   void _sort() => _sessions.sort((a, b) {
         final byDate = b.date.compareTo(a.date);
         return byDate != 0 ? byDate : b.id.compareTo(a.id);

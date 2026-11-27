@@ -74,6 +74,11 @@ Future<Database> openAppDatabase({String? path}) async {
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
+      // onCreate n'est appelé qu'UNE FOIS : au tout premier lancement, quand le
+      // fichier tennistrack.db n'existe pas encore. On y crée toutes les tables
+      // dans leur version la plus récente, puis les données de départ.
+      // Le « batch » ci-dessous regroupe plusieurs commandes SQL envoyées d'un
+      // coup (plus rapide que de les envoyer une par une).
       onCreate: (db, version) async {
         final batch = db.batch();
 
@@ -134,6 +139,8 @@ Future<Database> openAppDatabase({String? path}) async {
         END
       ''');
 
+        // Données de départ : couleurs de balle et catégories (listes en haut du
+        // fichier).
         for (final nom in kSeedBallColors) {
           batch.insert('couleur_balle', {'nom': nom});
         }
@@ -147,6 +154,10 @@ Future<Database> openAppDatabase({String? path}) async {
         await _addExerciseDuration(db);
         await _addSessionSetupAndPackUp(db);
       },
+      // onUpgrade est appelé quand l'appli mise à jour attend une version de base
+      // plus récente que celle du téléphone (kDatabaseVersion). Chaque bloc
+      // « if (oldVersion < N) » applique une étape, dans l'ordre : une base en
+      // version 3 passe par 4, 5, 6 puis 7, sans perdre les données.
       onUpgrade: (db, oldVersion, newVersion) async {
         // v1 -> v2 : ajout de l'heure de début (facultative) pour le
         // calendrier. Les séances existantes gardent `NULL` et affichent

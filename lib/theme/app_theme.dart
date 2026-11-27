@@ -23,7 +23,11 @@ abstract final class AppColors {
 
 /// Thème clair : en-tête indigo, cartes blanches, tuiles lavande et
 /// boutons indigo à texte jaune fluo.
+// Le thème centralise couleurs, polices et formes de tous les widgets :
+// pour changer l'apparence de l'appli, c'est ici (et dans AppColors).
 ThemeData buildAppTheme() {
+  // fromSeed génère une palette complète à partir de l'indigo, puis copyWith
+  // remplace certaines couleurs par celles de la charte.
   final colorScheme = ColorScheme.fromSeed(
     seedColor: AppColors.indigo,
     brightness: Brightness.light,

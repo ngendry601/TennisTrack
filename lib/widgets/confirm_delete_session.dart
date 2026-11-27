@@ -6,6 +6,8 @@ import '../models/models.dart';
 Future<bool> confirmDeleteSession(
     BuildContext context, TrainingSession session) async {
   final localizations = MaterialLocalizations.of(context);
+  // showDialog affiche une boîte de dialogue et `await` attend la réponse :
+  // true (Supprimer), false (Annuler) ou null (appui à côté de la boîte).
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (dialogContext) => AlertDialog(
@@ -26,5 +28,6 @@ Future<bool> confirmDeleteSession(
       ],
     ),
   );
+  // `??` : si la réponse est null (boîte fermée sans choisir), on ne supprime pas.
   return confirmed ?? false;
 }

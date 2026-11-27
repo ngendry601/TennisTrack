@@ -8,6 +8,8 @@ import '../../widgets/confirm_delete_session.dart';
 import '../../widgets/session_card_frame.dart';
 import 'session_detail_screen.dart';
 
+// ONGLET SÉANCES : toutes les séances, avec recherche libre et filtres
+// (catégorie, intensité, durée). Suppression par corbeille ou glissement.
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({super.key, required this.store});
 
@@ -18,18 +20,25 @@ class SessionsScreen extends StatefulWidget {
 }
 
 class _SessionsScreenState extends State<SessionsScreen> {
+  // Contrôleur du champ de recherche : il contient le texte tapé.
   final _searchController = TextEditingController();
+  // Filtres actifs ; null = pas de filtre. `int?` : un entier qui peut être null.
   int? _categoryId;
   int? _intensity;
+  // Filtre durée : 60 = moins d'1h, 90 = de 1h à 1h30, 120 = plus d'1h30
+  // (durée du cours, sans préparation ni rangement).
   int? _duration;
 
   @override
   void initState() {
     super.initState();
+    // À chaque lettre tapée, _refresh redessine la liste filtrée.
     _searchController.addListener(_refresh);
   }
 
   @override
+  // dispose est appelé quand l'écran disparaît : on libère le contrôleur
+  // pour ne pas garder de mémoire inutilement.
   void dispose() {
     _searchController
       ..removeListener(_refresh)
@@ -39,6 +48,8 @@ class _SessionsScreenState extends State<SessionsScreen> {
 
   void _refresh() => setState(() {});
 
+  // Garde les séances qui passent TOUS les filtres. La recherche porte sur
+  // les catégories, les exercices (nom, points, déroulement) et la balle.
   List<TrainingSession> _filteredSessions() {
     final query = _searchController.text.trim().toLowerCase();
     return widget.store.sessions.where((session) {
@@ -79,6 +90,8 @@ class _SessionsScreenState extends State<SessionsScreen> {
 
   Future<void> _deleteSession(TrainingSession session) async {
     final confirmed = await confirmDeleteSession(context, session);
+    // `mounted` : vérifie que l'écran est toujours affiché après l'attente de
+    // la boîte de dialogue (sinon on ne doit plus utiliser son contexte).
     if (!confirmed || !mounted) return;
     await widget.store.remove(session.id);
   }
@@ -132,6 +145,8 @@ class _SessionsScreenState extends State<SessionsScreen> {
                       child: Text(widget.store.sessions.isEmpty
                           ? 'Aucune séance enregistrée'
                           : 'Aucune séance ne correspond aux filtres'))
+                  // ListView.builder ne construit que les cartes visibles à l'écran :
+                  // la liste reste fluide même avec des centaines de séances.
                   : ListView.builder(
                       padding: const EdgeInsets.only(bottom: 96),
                       itemCount: sessions.length,
@@ -155,6 +170,8 @@ class _SessionsScreenState extends State<SessionsScreen> {
   }
 }
 
+// Rangées de puces de filtres. Elle ne garde rien elle-même : elle affiche
+// les valeurs reçues et prévient l'écran (callbacks) quand on en change.
 class _FiltersBar extends StatelessWidget {
   const _FiltersBar({
     required this.categories,
@@ -293,6 +310,8 @@ class _FiltersBar extends StatelessWidget {
   }
 }
 
+// Une carte de séance dans la liste : glissable pour supprimer, appui pour
+// ouvrir les détails.
 class _SessionTile extends StatelessWidget {
   const _SessionTile({
     required this.session,
@@ -314,6 +333,8 @@ class _SessionTile extends StatelessWidget {
         MaterialLocalizations.of(context).formatMediumDate(session.date);
 
     return Dismissible(
+      // La clé permet à Flutter de savoir quelle carte a été glissée, même si la
+      // liste change ensuite.
       key: ValueKey(session.id),
       direction: DismissDirection.endToStart,
       background: Container(

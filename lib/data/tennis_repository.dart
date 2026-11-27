@@ -7,12 +7,17 @@ import '../models/models.dart';
 
 /// Toutes les lectures/écritures SQL de l'application.
 /// L'interface ne parle qu'à [SessionStore], qui utilise ce repository.
+// RÔLE : traduire entre la base SQLite (tables et colonnes en français :
+// seance, exercice…) et les objets Dart (TrainingSession, Exercise…).
+// Aucune autre partie de l'appli n'écrit de SQL.
 class TennisRepository {
   TennisRepository(this.db);
 
   final Database db;
 
   Future<List<TrainingCategory>> getCategories() async {
+    // db.query renvoie des lignes sous forme de Map { 'colonne': valeur } ;
+    // fromMap transforme chaque ligne en objet Dart.
     final rows = await db.query('categorie', orderBy: 'id');
     return rows.map(TrainingCategory.fromMap).toList();
   }
@@ -36,6 +41,8 @@ class TennisRepository {
   Future<List<Exercise>> getExercises() async {
     final rows = await db.query('exercice', orderBy: 'nom COLLATE NOCASE, id');
 
+    // Les thèmes de TOUS les exercices sont lus en une seule requête (plutôt
+    // qu'une requête par exercice), puis rangés par id d'exercice.
     final categoryRows = await db.rawQuery('''
       SELECT ec.exercice_id, c.id, c.nom
       FROM exercice_categorie ec
@@ -146,6 +153,8 @@ class TennisRepository {
     }
 
     // Chaque exercice n'est chargé qu'une fois, puis partagé entre ses séances.
+    // Un exercice partagé par plusieurs séances est le même objet partout :
+    // le modifier une fois change toutes ses séances.
     final exercisesById = {
       for (final exercise in await getExercises()) exercise.id: exercise,
     };
@@ -181,8 +190,13 @@ class TennisRepository {
   }
 
   /// Insère une séance et renvoie l'id attribué par SQLite.
+  // TRANSACTION : toutes les écritures ci-dessous réussissent ensemble, ou
+  // aucune n'est gardée. On ne peut pas se retrouver avec une séance sans
+  // ses catégories si le téléphone s'éteint au milieu.
   Future<int> insertSession(TrainingSession session) {
     return db.transaction((txn) async {
+      // SQLite choisit l'id de la nouvelle séance et le renvoie : il sert ensuite
+      // à créer les liens avec les catégories et les exercices.
       final id = await txn.insert('seance', _sessionValues(session));
       await _insertCategories(txn, id, session.categories);
       await _linkExercises(txn, id, session.exercises);
@@ -190,6 +204,10 @@ class TennisRepository {
     });
   }
 
+  // Modifier une séance : on met à jour sa ligne, puis on remplace tous ses
+  // liens (catégories, exercices) par ceux du formulaire.
+  // Dans « where: 'id = ?' », le « ? » est remplacé par la valeur de
+  // whereArgs : SQLite l'insère lui-même, sans risque d'erreur de syntaxe.
   Future<void> updateSession(TrainingSession session) {
     return db.transaction((txn) async {
       await txn.update(
@@ -234,6 +252,8 @@ class TennisRepository {
 
   /// Relie les exercices à la séance, dans l'ordre de la liste. Un exercice
   /// sans id est d'abord ajouté à la bibliothèque.
+  // Table de liaison seance_exercice : une ligne par (séance, exercice),
+  // avec « ordre » pour garder l'ordre choisi dans la séance.
   Future<void> _linkExercises(
       Transaction txn, int sessionId, List<Exercise> exercises) async {
     for (final (index, exercise) in exercises.indexed) {
@@ -271,6 +291,7 @@ class TennisRepository {
     }
   }
 
+  // Objet Dart → colonnes SQL. Les noms à gauche sont ceux de la table.
   Map<String, Object?> _exerciseValues(Exercise exercise) => {
         'nom': exercise.name,
         'points_travailles': exercise.pointsToWork,

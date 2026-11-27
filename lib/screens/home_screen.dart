@@ -11,6 +11,9 @@ import '../widgets/home_cards.dart';
 import '../widgets/session_card_frame.dart';
 import 'session/session_detail_screen.dart';
 
+// ÉCRAN D'ACCUEIL, de haut en bas : stats du mois, bande de la semaine,
+// répartition du mois, séances du dernier jour, puis séances de la semaine
+// avec un filtre par catégorie.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.store, this.today});
 
@@ -25,8 +28,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Catégorie choisie dans le filtre de la semaine (null = « Toutes »).
   int? _filterCategoryId;
 
+  // Ouvre l'écran de détails d'une séance par-dessus l'accueil.
   void _openDetails(TrainingSession session) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) =>
@@ -36,9 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ListenableBuilder écoute le store : dès qu'une séance est ajoutée,
+    // modifiée ou supprimée (notifyListeners), le contenu est recalculé.
     return ListenableBuilder(
       listenable: widget.store,
       builder: (context, _) {
+        // Date de référence : aujourd'hui, ou une date fixe dans les tests.
+        // `widget.` donne accès aux paramètres du widget depuis son State.
         final reference = widget.today ?? DateTime.now();
         final all = widget.store.sessions;
 
@@ -74,12 +83,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 previousMonthName:
                     widget.store.monthNameLower(previousMonth.month),
               );
+        // Toutes les séances du dernier jour joué (tous les groupes), pour la
+        // section « Dernier jour ». Voir lib/utils/home_stats.dart.
         final lastDay = latestSessionDay(all, reference);
         final lastDayMinutes =
             lastDay.fold<int>(0, (sum, session) => sum + session.totalMinutes);
 
         // Plus de Scaffold/AppBar ici : c'est MainShell qui les fournit,
         // ainsi que le bouton d'ajout de séance global.
+        // Toute la page défile d'un bloc ; la Column empile les sections.
         return SingleChildScrollView(
           padding: const EdgeInsets.only(top: 16, bottom: 96),
           child: Column(
@@ -190,6 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Aucune séance ne correspond à ce filtre cette semaine')
               else
                 for (final session in shown)
+                  // Dismissible : glisser la carte vers la gauche pour supprimer la séance.
                   Dismissible(
                     key: ValueKey(session.id),
                     direction: DismissDirection.endToStart,
@@ -199,8 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.only(right: 24),
                       child: const Icon(Icons.delete, color: Colors.white),
                     ),
+                    // Demande confirmation avant : si on annule, la carte revient en place.
                     confirmDismiss: (_) =>
                         confirmDeleteSession(context, session),
+                    // Confirmé : le store retire la séance de la liste et de la base.
                     onDismissed: (_) => widget.store.remove(session.id),
                     child: SessionCardFrame(
                       child: ListTile(

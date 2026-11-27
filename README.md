@@ -247,6 +247,20 @@ lib/
 tools/schemas/                        générateur des schémas d'exercices (Node)
 ```
 
+### Par où commencer pour lire le code
+
+Le code est commenté en français. Ordre de lecture conseillé :
+
+1. `lib/main.dart` : démarrage de l'appli.
+2. `lib/widgets/bar/bottom_navbar.dart` : les 5 onglets et le bouton flottant.
+3. `lib/models/models.dart` : les objets manipulés (séance, exercice…).
+4. `lib/services/session_store.dart` : la mémoire de l'appli, utilisée par
+   tous les écrans.
+5. `lib/data/tennis_repository.dart` puis `lib/data/database.dart` : la base
+   SQLite.
+6. Un écran simple, par exemple `lib/screens/session/sessions_screen.dart`,
+   puis le formulaire `lib/screens/session/session_form_screen.dart`.
+
 ## Tests
 
 ```bash

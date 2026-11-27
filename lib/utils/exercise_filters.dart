@@ -8,6 +8,7 @@ List<Exercise> filterExercises(
   int? categoryId,
   int? ballColorId,
 }) {
+  // Recherche insensible à la casse : tout est comparé en minuscules.
   final text = query.trim().toLowerCase();
 
   return exercises.where((exercise) {
@@ -18,6 +19,7 @@ List<Exercise> filterExercises(
       ...exercise.categories.map((category) => category.nom),
     ].join(' ').toLowerCase();
 
+    // Un exercice est gardé s'il passe les trois filtres à la fois.
     return (text.isEmpty || searchable.contains(text)) &&
         (categoryId == null ||
             exercise.categories.any((item) => item.id == categoryId)) &&

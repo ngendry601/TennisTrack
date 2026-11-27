@@ -13,6 +13,9 @@ import '../../widgets/exercise_widgets.dart';
 ///
 /// La validation enregistre directement l'exercice et renvoie sa version
 /// enregistrée. Une modification s'applique à toutes ses séances.
+// FICHE D'EXERCICE (création ou modification). À la validation, l'exercice
+// est enregistré tout de suite dans la bibliothèque, puis renvoyé à l'écran
+// qui l'a ouvert (pop).
 class ExerciseFormScreen extends StatefulWidget {
   const ExerciseFormScreen({
     super.key,
@@ -54,6 +57,7 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
     _name = TextEditingController(text: exercise?.name ?? '');
     _duration = TextEditingController(
         text: exercise?.durationMinutes?.toString() ?? '');
+    // Redessine à chaque chiffre tapé pour mettre à jour l'aide « 1h15min ».
     _duration.addListener(() => setState(() {}));
     _points = TextEditingController(text: exercise?.pointsToWork ?? '');
     _execution = TextEditingController(text: exercise?.execution ?? '');
@@ -76,6 +80,8 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
     super.dispose();
   }
 
+  // Choix d'une image dans la galerie, réduite à 1600 px et compressée
+  // (qualité 80) pour ne pas alourdir la base.
   Future<void> _pickImage() async {
     try {
       final picked = await _picker.pickImage(
@@ -108,6 +114,7 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
       _showMessage('Donne un nom à l’exercice.');
       return;
     }
+    // Durée facultative : champ vide = pas de durée. Sinon, de 1 à 240 min.
     final durationText = _duration.text.trim();
     final duration = int.tryParse(durationText);
     if (durationText.isNotEmpty &&
@@ -207,6 +214,7 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
           TextField(
             controller: _duration,
             keyboardType: TextInputType.number,
+            // N'autorise que les chiffres dans le champ.
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
               labelText: 'Durée (facultatif)',

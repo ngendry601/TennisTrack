@@ -214,6 +214,8 @@ class MonthBreakdownCard extends StatelessWidget {
   }
 }
 
+// Anneau de progression de la catégorie la plus travaillée du mois, avec
+// son pourcentage au centre.
 class _CategoryRing extends StatelessWidget {
   const _CategoryRing({required this.share});
 
@@ -226,6 +228,7 @@ class _CategoryRing extends StatelessWidget {
     return SizedBox.square(
       dimension: 132,
       child: CustomPaint(
+        // clamp borne la valeur entre 0 et 100 ; / 100 la ramène entre 0 et 1.
         painter: _RingPainter(share.percent.clamp(0, 100) / 100),
         child: Padding(
           padding: const EdgeInsets.all(22),
@@ -253,6 +256,8 @@ class _CategoryRing extends StatelessWidget {
   }
 }
 
+// CustomPainter dessine « à la main » sur un canevas : ici un cercle de fond
+// puis un arc dont la longueur dépend du pourcentage.
 class _RingPainter extends CustomPainter {
   const _RingPainter(this.value);
 
@@ -274,6 +279,7 @@ class _RingPainter extends CustomPainter {
   }
 
   @override
+  // Redessine seulement si le pourcentage a changé.
   bool shouldRepaint(_RingPainter oldDelegate) => oldDelegate.value != value;
 }
 

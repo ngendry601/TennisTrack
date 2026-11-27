@@ -111,6 +111,8 @@ class SessionDetailScreen extends StatelessWidget {
   }
 }
 
+// Carte du haut : date, horaires du cours, durée, préparation/rangement,
+// temps sur place, intensité et couleur de balle.
 class _SessionSummary extends StatelessWidget {
   const _SessionSummary({required this.session});
 
@@ -247,6 +249,8 @@ class _CategoryChips extends StatelessWidget {
   }
 }
 
+// Un exercice en lecture seule : image (appui = plein écran), nom, durée,
+// points à travailler et déroulement.
 class _ExerciseDetails extends StatelessWidget {
   const _ExerciseDetails({required this.exercise});
 
@@ -357,6 +361,7 @@ class _ExerciseLabel extends StatelessWidget {
   }
 }
 
+// Image en plein écran, zoomable.
 class _FullImageScreen extends StatelessWidget {
   const _FullImageScreen({required this.image, required this.title});
 
@@ -373,6 +378,7 @@ class _FullImageScreen extends StatelessWidget {
         title: Text(title),
       ),
       body: Center(
+        // InteractiveViewer permet de zoomer avec deux doigts et de déplacer l'image.
         child: InteractiveViewer(
           minScale: 0.5,
           maxScale: 4,

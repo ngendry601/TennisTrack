@@ -33,6 +33,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
     final initial = widget.initialDate ?? DateTime.now();
+    // DateTime(année, mois) sans jour = le 1er du mois à minuit.
     _visibleMonth = DateTime(initial.year, initial.month);
     _selectedDay = DateTime(initial.year, initial.month, initial.day);
   }
@@ -54,11 +55,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   /// Regroupe les séances par jour et les trie par heure de début.
+  // Dictionnaire « jour → séances du jour ». Les jours sont ramenés à minuit
+  // pour que toutes les séances d'un même jour tombent sous la même clé.
   Map<DateTime, List<TrainingSession>> _sessionsByDay() {
     final byDay = <DateTime, List<TrainingSession>>{};
     for (final session in widget.store.sessions) {
       final day =
           DateTime(session.date.year, session.date.month, session.date.day);
+      // putIfAbsent crée la liste du jour si elle n'existe pas encore.
       byDay.putIfAbsent(day, () => []).add(session);
     }
     for (final sessions in byDay.values) {
@@ -66,6 +70,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final startA = a.startTime;
         final startB = b.startTime;
         if (startA == null && startB == null) return b.id.compareTo(a.id);
+        // Séances sans heure de début : placées après celles qui en ont une.
         if (startA == null) return 1;
         if (startB == null) return -1;
         return (startA.hour * 60 + startA.minute)
@@ -75,6 +80,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return byDay;
   }
 
+  // Flèches mois précédent / suivant (delta = -1 ou +1). Le jour sélectionné
+  // devient le premier jour du mois qui a une séance, sinon le 1er.
+  // DateTime gère seul le passage d'année (mois 13 = janvier suivant).
   void _changeMonth(int delta, Map<DateTime, List<TrainingSession>> byDay) {
     final next = DateTime(_visibleMonth.year, _visibleMonth.month + delta);
     final daysWithSessions = byDay.keys
@@ -110,6 +118,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 session.date.year == _visibleMonth.year &&
                 session.date.month == _visibleMonth.month)
             .toList();
+        // Total du mois affiché, préparation et rangement compris.
         final monthMinutes =
             monthSessions.fold(0, (sum, session) => sum + session.totalMinutes);
 
@@ -252,6 +261,7 @@ class _WeekdayHeader extends StatelessWidget {
   }
 }
 
+// Grille du mois : 7 colonnes (lundi → dimanche), une case par jour.
 class _MonthGrid extends StatelessWidget {
   const _MonthGrid({
     required this.month,
@@ -268,13 +278,17 @@ class _MonthGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final firstDay = DateTime(month.year, month.month);
+    // Astuce : le « jour 0 » du mois suivant est le dernier jour de ce mois,
+    // ce qui donne le nombre de jours (28, 29, 30 ou 31).
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
     // La semaine commence le lundi : weekday == 1 pour lundi.
     final leadingEmptyCells = firstDay.weekday - DateTime.monday;
+    // Nombre de cases arrondi à des semaines complètes. `~/` = division entière.
     final totalCells = ((leadingEmptyCells + daysInMonth + 6) ~/ 7) * 7;
 
     return GridView.builder(
       shrinkWrap: true,
+      // La grille ne défile pas elle-même : c'est toute la page qui défile.
       physics: const NeverScrollableScrollPhysics(),
       itemCount: totalCells,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -282,6 +296,7 @@ class _MonthGrid extends StatelessWidget {
         childAspectRatio: 1,
       ),
       itemBuilder: (context, index) {
+        // Les cases avant le 1er (et après le dernier jour) restent vides.
         final dayNumber = index - leadingEmptyCells + 1;
         if (dayNumber < 1 || dayNumber > daysInMonth) {
           return const SizedBox.shrink();
@@ -379,6 +394,8 @@ class _DayCell extends StatelessWidget {
   }
 }
 
+// Sous la grille : les séances du jour sélectionné, leur total et le bouton
+// « Ajouter » qui crée une séance à cette date.
 class _DayDetails extends StatelessWidget {
   const _DayDetails({
     required this.dayLabel,

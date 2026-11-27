@@ -35,8 +35,10 @@ class ExercisePickerScreen extends StatefulWidget {
 
 class _ExercisePickerScreenState extends State<ExercisePickerScreen> {
   final _search = TextEditingController();
+  // Ids des exercices cochés. Un Set ne contient jamais deux fois le même id.
   final Set<int> _selectedIds = {};
   int? _categoryId;
+  // Filtre de couleur : démarre sur la balle de la séance.
   late int? _ballColorId = widget.ballColorId;
 
   @override
@@ -57,6 +59,8 @@ class _ExercisePickerScreenState extends State<ExercisePickerScreen> {
 
   void _toggle(int id) {
     setState(() {
+      // Coche / décoche : remove renvoie false si l'id n'était pas coché, et
+      // dans ce cas on l'ajoute.
       if (!_selectedIds.remove(id)) _selectedIds.add(id);
     });
   }
@@ -72,10 +76,13 @@ class _ExercisePickerScreenState extends State<ExercisePickerScreen> {
       ),
     );
     if (created != null && mounted) {
+      // Un exercice créé depuis cet écran est coché automatiquement.
       setState(() => _selectedIds.add(created.id));
     }
   }
 
+  // pop(liste) referme l'écran et renvoie les exercices cochés au formulaire
+  // de séance, qui les attendait avec `await`.
   void _confirm() {
     Navigator.of(context).pop(
       widget.store.exercises

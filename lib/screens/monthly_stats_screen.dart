@@ -16,6 +16,7 @@ class MonthlyStatsScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: store,
       builder: (context, _) {
+        // Une carte par mois, du plus récent au plus ancien.
         final months = _groupByMonth(store.sessions);
 
         if (months.isEmpty) {
@@ -104,6 +105,7 @@ class _MonthData {
 
   String get key => '$year-${month.toString().padLeft(2, '0')}';
 
+  // Heures du mois : préparation + cours + rangement de chaque séance.
   int get totalMinutes =>
       sessions.fold(0, (sum, session) => sum + session.totalMinutes);
 
@@ -115,6 +117,8 @@ class _MonthData {
         totals['Sans catégorie'] =
             (totals['Sans catégorie'] ?? 0) + session.totalMinutes;
       }
+      // Une séance à plusieurs catégories compte en entier dans chacune : la
+      // somme des catégories peut donc dépasser le total du mois.
       for (final category in session.categories) {
         totals[category.nom] =
             (totals[category.nom] ?? 0) + session.totalMinutes;

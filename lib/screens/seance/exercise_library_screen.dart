@@ -13,6 +13,8 @@ import '../../widgets/session_card_frame.dart';
 import 'exercise_form_screen.dart';
 
 /// Onglet « Exercices » : tous les exercices, avec recherche et filtres.
+// ONGLET EXERCICES : la bibliothèque, avec recherche, filtres et menu ⋮
+// (copier la liste pour Claude, importer les images des schémas).
 class ExerciseLibraryScreen extends StatefulWidget {
   const ExerciseLibraryScreen({
     super.key,
@@ -71,6 +73,8 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
   }
 
   Future<void> _delete(Exercise exercise) async {
+    // Nombre de séances qui utilisent l'exercice, pour prévenir avant de
+    // supprimer.
     final usage = widget.store.exerciseSessionCount(exercise.id);
     final confirmed = await showDialog<bool>(
       context: context,
@@ -114,6 +118,8 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
   }
 
   /// Copie la bibliothèque (sans images) pour l'envoyer à Claude.
+  // Copie dans le presse-papiers un texte JSON décrivant les exercices
+  // (sans les images), à coller dans la conversation avec Claude.
   Future<void> _copyList() async {
     final exercises = widget.store.exercises;
     if (exercises.isEmpty) {
@@ -129,6 +135,9 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
   }
 
   /// Importe le fichier d'images préparé par Claude, après confirmation.
+  // Étapes : 1) choisir le fichier, 2) le lire, 3) associer chaque image à un
+  // exercice (lib/utils/exercise_transfer.dart), 4) montrer un résumé,
+  // 5) enregistrer si l'utilisateur confirme.
   Future<void> _importImages() async {
     final Uint8List? bytes;
     try {
@@ -142,6 +151,7 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
     final ImageImportPlan plan;
     try {
       final imports = parseImagesJson(utf8.decode(bytes));
+      // Rien n'est encore écrit : le « plan » dit seulement ce qui va se passer.
       plan = planImageImport(widget.store.exercises, imports);
     } on ImageImportException catch (error) {
       _showMessage(error.message);
@@ -282,6 +292,8 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
 }
 
 /// Résumé de l'import, avant de l'appliquer.
+// Boîte de résumé avant import : nombre d'images, remplacements, et
+// exercices introuvables.
 class _ImportDialog extends StatelessWidget {
   const _ImportDialog({required this.plan});
 

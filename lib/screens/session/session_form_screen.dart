@@ -8,6 +8,9 @@ import '../../utils/session_times.dart';
 import '../seance/exercise_form_screen.dart';
 import '../seance/exercise_picker_screen.dart';
 
+// FORMULAIRE DE SÉANCE, pour créer (session == null) ou modifier une séance.
+// Les valeurs saisies vivent dans le State ci-dessous ; rien n'est écrit en
+// base avant l'appui sur « Enregistrer » (_save).
 class SessionFormScreen extends StatefulWidget {
   const SessionFormScreen({
     super.key,
@@ -28,10 +31,13 @@ class SessionFormScreen extends StatefulWidget {
 }
 
 class _SessionFormScreenState extends State<SessionFormScreen> {
+  // `late` : la variable sera remplie dans initState, avant le premier build.
   late DateTime _date;
   late TimeOfDay? _startTime;
   late Set<int> _categoryIds;
   late int? _ballColorId;
+  // Les curseurs (Slider) travaillent avec des nombres à virgule : on
+  // arrondit avec .round() au moment d'enregistrer.
   late double _duration;
   late double _setup;
   late double _packUp;
@@ -57,6 +63,8 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
     _duration = (session?.durationMinutes ?? 60).toDouble();
     // Nouvelle séance : même préparation et rangement que la dernière
     // séance enregistrée.
+    // Modification : on reprend les valeurs de la séance. Création : celles de
+    // la dernière séance enregistrée (pratique quand on a ses habitudes).
     final model = session ?? lastEnteredSession(widget.store.sessions);
     _setup = _sliderValue(model?.setupMinutes ?? 0);
     _packUp = _sliderValue(model?.packUpMinutes ?? 0);
@@ -65,6 +73,8 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
   }
 
   /// Propose de choisir un exercice existant ou d'en créer un nouveau.
+  // Ajout d'un exercice : un panneau en bas propose la bibliothèque ou un
+  // nouvel exercice. pop(true/false) referme le panneau en renvoyant le choix.
   Future<void> _addExercise() async {
     final fromLibrary = await showModalBottomSheet<bool>(
       context: context,
@@ -90,10 +100,13 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
     if (fromLibrary == null || !mounted) return;
 
     if (fromLibrary) {
+      // L'écran de choix renvoie la liste des exercices cochés quand il se
+      // ferme ; `await` attend ce retour.
       final picked = await Navigator.of(context).push<List<Exercise>>(
         MaterialPageRoute(
           builder: (_) => ExercisePickerScreen(
             store: widget.store,
+            // Les exercices déjà dans la séance ne sont pas reproposés.
             excludedIds: {..._exercises.map((exercise) => exercise.id)},
             ballColorId: _ballColorId,
             categoryIds: _categoryIds,
@@ -177,6 +190,8 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
         packUpMinutes: _packUp.round(),
       );
 
+  // Enregistrement : vérifications, construction de la séance, puis écriture
+  // via le store. Navigator.pop referme le formulaire.
   Future<void> _save() async {
     if (_categoryIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -204,6 +219,8 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
         .toList();
 
     await widget.store.upsert(TrainingSession(
+      // `?.` : si widget.session est null, l'expression vaut null, puis `??`
+      // la remplace par 0 (= nouvelle séance pour la base).
       id: widget.session?.id ?? 0,
       date: _date,
       durationMinutes: _duration.round(),

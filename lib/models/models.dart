@@ -14,6 +14,8 @@ class TrainingCategory {
   final int id;
   final String nom;
 
+  // fromMap fabrique l'objet à partir d'une ligne lue dans SQLite
+  // ({'id': 3, 'nom': 'Revers'}). On retrouve ce même schéma dans chaque modèle.
   factory TrainingCategory.fromMap(Map<String, Object?> map) =>
       TrainingCategory(
         id: map['id'] as int,
@@ -237,6 +239,9 @@ class TrainingSession {
     return TimeOfDay(hour: total ~/ 60, minute: total % 60);
   }
 
+  // copyWith renvoie une COPIE modifiée : les modèles sont immuables (champs
+  // « final »). Ex. : session.copyWith(durationMinutes: 90) garde tout le
+  // reste identique. Un paramètre absent (null) garde l'ancienne valeur.
   TrainingSession copyWith({
     int? id,
     DateTime? date,

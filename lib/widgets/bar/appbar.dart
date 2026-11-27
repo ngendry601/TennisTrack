@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../theme/app_theme.dart';
 
+// Barre du haut personnalisée : dégradé indigo, logo à gauche, titre au
+// centre. `PreferredSizeWidget` indique sa hauteur au Scaffold.
 class AppBar_Perso extends StatefulWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget> actions;
@@ -39,6 +41,7 @@ class _AppBar_PersoState extends State<AppBar_Perso> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      // Le dégradé de fond est défini dans AppColors (lib/theme/app_theme.dart).
       flexibleSpace: const DecoratedBox(
         decoration: BoxDecoration(gradient: AppColors.headerGradient),
       ),
@@ -59,6 +62,7 @@ class _AppBar_PersoState extends State<AppBar_Perso> {
       title: Text(widget.title),
       actions: <Widget>[
         IconButton(
+          // Bouton profil : prévu pour plus tard, il ne fait encore rien.
           icon: const Icon(Icons.account_circle),
           onPressed: widget.onProfilePressed,
         ),
