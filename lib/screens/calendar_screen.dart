@@ -4,6 +4,7 @@ import '../models/models.dart';
 import '../services/session_store.dart';
 import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
+import '../utils/session_times.dart';
 import 'session/session_detail_screen.dart';
 import 'session/session_form_screen.dart';
 
@@ -109,8 +110,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 session.date.year == _visibleMonth.year &&
                 session.date.month == _visibleMonth.month)
             .toList();
-        final monthMinutes = monthSessions.fold(
-            0, (sum, session) => sum + session.durationMinutes);
+        final monthMinutes =
+            monthSessions.fold(0, (sum, session) => sum + session.totalMinutes);
 
         return ListView(
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
@@ -395,7 +396,7 @@ class _DayDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final totalMinutes =
-        sessions.fold(0, (sum, session) => sum + session.durationMinutes);
+        sessions.fold(0, (sum, session) => sum + session.totalMinutes);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -502,6 +503,10 @@ class _SessionCard extends StatelessWidget {
                   Text(session.ballColor.nom, style: theme.textTheme.bodySmall),
                 ],
               ),
+              if (formatOnSite(session) case final onSite?) ...[
+                const SizedBox(height: 2),
+                Text(onSite, style: theme.textTheme.bodySmall),
+              ],
               const SizedBox(height: 8),
               Wrap(
                 spacing: 6,

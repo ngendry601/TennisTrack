@@ -4,6 +4,7 @@ import '../../models/models.dart';
 import '../../services/session_store.dart';
 import '../../utils/exercise_durations.dart';
 import '../../utils/formatters.dart';
+import '../../utils/session_times.dart';
 import '../seance/exercise_form_screen.dart';
 import '../seance/exercise_picker_screen.dart';
 
@@ -32,6 +33,8 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
   late Set<int> _categoryIds;
   late int? _ballColorId;
   late double _duration;
+  late double _setup;
+  late double _packUp;
   late double _intensity;
   late List<Exercise> _exercises;
 
@@ -52,6 +55,11 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
             ? null
             : widget.store.ballColors.first.id);
     _duration = (session?.durationMinutes ?? 60).toDouble();
+    // Nouvelle séance : même préparation et rangement que la dernière
+    // séance enregistrée.
+    final model = session ?? lastEnteredSession(widget.store.sessions);
+    _setup = _sliderValue(model?.setupMinutes ?? 0);
+    _packUp = _sliderValue(model?.packUpMinutes ?? 0);
     _intensity = (session?.intensity ?? 3).toDouble();
     _exercises = [...?session?.exercises];
   }
@@ -149,6 +157,10 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
     if (picked != null) setState(() => _startTime = picked);
   }
 
+  /// Valeur ramenée dans les bornes du curseur (0 à 60 min).
+  static double _sliderValue(int minutes) =>
+      minutes.clamp(0, kMaxSetupPackUpMinutes).toDouble();
+
   /// Heure de fin calculée avec la durée actuellement choisie.
   TimeOfDay? get _endTime {
     final start = _startTime;
@@ -156,6 +168,14 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
     final total = start.hour * 60 + start.minute + _duration.round();
     return TimeOfDay(hour: (total ~/ 60) % 24, minute: total % 60);
   }
+
+  /// « Sur place 9h00 – 10h45 · 1h45min » avec les valeurs du formulaire.
+  String? get _onSite => formatOnSiteFor(
+        startTime: _startTime,
+        setupMinutes: _setup.round(),
+        durationMinutes: _duration.round(),
+        packUpMinutes: _packUp.round(),
+      );
 
   Future<void> _save() async {
     if (_categoryIds.isEmpty) {
@@ -187,6 +207,8 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
       id: widget.session?.id ?? 0,
       date: _date,
       durationMinutes: _duration.round(),
+      setupMinutes: _setup.round(),
+      packUpMinutes: _packUp.round(),
       intensity: _intensity.round(),
       ballColor: ballColor,
       categories: categories,
@@ -224,7 +246,10 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
             subtitle: Text(
               _startTime == null
                   ? 'Appuie pour indiquer l’heure de début (facultatif)'
-                  : 'Durée : ${formatDuration(_duration.round())}',
+                  : [
+                      'Durée : ${formatDuration(_duration.round())}',
+                      if (_onSite case final onSite?) onSite,
+                    ].join('\n'),
             ),
             trailing: _startTime == null
                 ? null
@@ -286,6 +311,25 @@ class _SessionFormScreenState extends State<SessionFormScreen> {
               max: 240,
               divisions: 45,
               onChanged: (value) => setState(() => _duration = value)),
+          Text('Préparation avant le cours : '
+              '${formatDuration(_setup.round())}'),
+          Slider(
+              value: _setup,
+              max: kMaxSetupPackUpMinutes.toDouble(),
+              divisions: kMaxSetupPackUpMinutes ~/ 5,
+              onChanged: (value) => setState(() => _setup = value)),
+          Text('Rangement après le cours : '
+              '${formatDuration(_packUp.round())}'),
+          Slider(
+              value: _packUp,
+              max: kMaxSetupPackUpMinutes.toDouble(),
+              divisions: kMaxSetupPackUpMinutes ~/ 5,
+              onChanged: (value) => setState(() => _packUp = value)),
+          if (_onSite case final onSite?)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(onSite, style: Theme.of(context).textTheme.bodySmall),
+            ),
           Text('Intensité : ${_intensity.round()} / 5'),
           Slider(
               value: _intensity,

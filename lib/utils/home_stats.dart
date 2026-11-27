@@ -22,7 +22,7 @@ class CategoryShare {
 /// la somme des pourcentages peut donc dépasser 100.
 List<CategoryShare> categoryShares(List<TrainingSession> sessions) {
   final total =
-      sessions.fold<int>(0, (sum, session) => sum + session.durationMinutes);
+      sessions.fold<int>(0, (sum, session) => sum + session.totalMinutes);
   if (total == 0) return const [];
 
   final minutesByName = <String, int>{};
@@ -31,8 +31,7 @@ List<CategoryShare> categoryShares(List<TrainingSession> sessions) {
         ? const ['Sans catégorie']
         : session.categories.map((category) => category.nom);
     for (final name in names) {
-      minutesByName[name] =
-          (minutesByName[name] ?? 0) + session.durationMinutes;
+      minutesByName[name] = (minutesByName[name] ?? 0) + session.totalMinutes;
     }
   }
 
@@ -50,23 +49,28 @@ List<CategoryShare> categoryShares(List<TrainingSession> sessions) {
   return shares;
 }
 
-/// Dernière séance jouée jusqu'au jour de [reference] inclus.
-/// Les séances datées dans le futur sont ignorées.
-TrainingSession? latestSession(
+/// Séances du dernier jour joué jusqu'au jour de [reference] inclus, dans
+/// l'ordre de la journée (séances sans heure en premier). Les séances datées
+/// dans le futur sont ignorées. Liste vide s'il n'y a aucune séance passée.
+List<TrainingSession> latestSessionDay(
   List<TrainingSession> sessions,
   DateTime reference,
 ) {
   final lastDay = DateTime(reference.year, reference.month, reference.day);
-  TrainingSession? latest;
+  DateTime? latest;
 
   for (final session in sessions) {
-    final day =
-        DateTime(session.date.year, session.date.month, session.date.day);
+    final day = _day(session.date);
     if (day.isAfter(lastDay)) continue;
-    if (latest == null || _isAfter(session, latest)) latest = session;
+    if (latest == null || day.isAfter(latest)) latest = day;
   }
-  return latest;
+  if (latest == null) return const [];
+
+  return sessions.where((session) => _day(session.date) == latest).toList()
+    ..sort((a, b) => _isAfter(a, b) ? 1 : -1);
 }
+
+DateTime _day(DateTime date) => DateTime(date.year, date.month, date.day);
 
 bool _isAfter(TrainingSession a, TrainingSession b) {
   final dayA = DateTime(a.date.year, a.date.month, a.date.day);

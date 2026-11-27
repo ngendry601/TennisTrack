@@ -12,8 +12,15 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
 
 ### Séances
 
-- Date, **heure de début facultative**, durée, intensité (1 à 5), plusieurs
-  catégories et couleur de balle.
+- Date, **heure de début facultative**, durée du cours, intensité (1 à 5),
+  plusieurs catégories et couleur de balle.
+- **Préparation et rangement** (0 à 60 min chacun) : le temps d'installation
+  avant le cours et de rangement après. Une nouvelle séance reprend les
+  valeurs de la dernière séance enregistrée. Les détails et le calendrier
+  affichent le temps sur place : `Sur place 9h00 – 10h45 · 1h45min` pour un
+  cours de 9h15 à 10h30. **Toutes les statistiques** (heures du mois, totaux,
+  heures par catégorie, total d'un jour) comptent préparation + cours +
+  rangement.
 - Durées affichées au format **`1h15min`** (jamais `1,3 h`), plages horaires
   au format `18h00 – 19h30`.
 - **Détails d'une séance** : un appui sur une séance (accueil, liste ou
@@ -63,7 +70,9 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
     aujourd'hui repéré par un point) ;
   - répartition du mois par catégorie (« Les plus travaillées ») et
     comparaison avec le mois précédent (`+2h30min par rapport à octobre`) ;
-  - dernière séance jouée (les séances futures sont ignorées) ;
+  - **dernier jour** joué : toutes les séances de ce jour (tous les groupes),
+    dans l'ordre de la journée, avec leurs thèmes et exercices (les séances
+    futures sont ignorées) ;
   - liste des séances de la **semaine en cours** (lundi → dimanche).
 - **Séances** : toutes les séances, avec filtres et recherche.
 - **Exercices** : la bibliothèque d'exercices.
@@ -122,7 +131,7 @@ SQLite, créée sur le téléphone.
 - **Jours** (`id` = `DateTime.weekday`, 1 = lundi) et **mois**
   (`id` = `DateTime.month`, 1 = janvier), avec nom et abréviation.
 
-## Schéma (version 6)
+## Schéma (version 7)
 
 ```text
 categorie(id, nom UNIQUE)
@@ -132,7 +141,8 @@ mois(id 1..12, nom UNIQUE, abreviation UNIQUE)
 
 seance(
   id, date 'YYYY-MM-DD', duree_minutes > 0, intensite 1..5,
-  couleur_balle_id, heure_debut 'HH:mm' NULL
+  couleur_balle_id, heure_debut 'HH:mm' NULL,
+  preparation_minutes >= 0 DEFAULT 0, rangement_minutes >= 0 DEFAULT 0
 )
 seance_categorie(seance_id, categorie_id)      -- plusieurs catégories par séance
 
@@ -179,6 +189,7 @@ INDEX sur exercice_couleur_balle(couleur_balle_id)
 | v3 → v4 | Ajout des tables `jour_semaine` et `mois` pour le calendrier. |
 | v4 → v5 | Bibliothèque d'exercices : les exercices deviennent partagés (`seance_exercice`). Les exercices au contenu strictement identique sont fusionnés ; chacun hérite des catégories et de la couleur de balle de ses séances. Ajout des catégories Attaque et Défense. |
 | v5 → v6 | Ajout de `exercice.duree_minutes` (facultative). Les exercices existants n'ont pas de durée (`NULL`). |
+| v6 → v7 | Ajout de `seance.preparation_minutes` et `seance.rangement_minutes`. Les séances existantes en ont 0. |
 
 ## Ajouter une catégorie ou une couleur
 
@@ -215,6 +226,7 @@ lib/
 │   │                                 comparaison avec le mois précédent
 │   ├── exercise_filters.dart         filtre texte / thème / couleur de balle
 │   ├── exercise_durations.dart       total des durées des exercices d'une séance
+│   ├── session_times.dart            préparation, rangement, temps sur place
 │   └── exercise_transfer.dart        export de la liste d'exercices, lecture
 │                                     et association des images importées
 ├── widgets/
@@ -261,8 +273,11 @@ Les tests utilisent une base SQLite en mémoire (`sqflite_common_ffi`).
 - `test/formatters_test.dart` : format `1h15min` et plages horaires.
 - `test/date_ranges_test.dart` : bornes de la semaine (lundi → dimanche) et
   du mois.
-- `test/home_stats_test.dart` : répartition par catégorie, dernière séance,
-  comparaison avec le mois précédent.
+- `test/home_stats_test.dart` : répartition par catégorie, séances du
+  dernier jour, comparaison avec le mois précédent.
+- `test/session_setup_test.dart` : préparation et rangement (arrivée,
+  départ, textes, statistiques, valeurs reprises de la dernière séance,
+  base, détails), séances du dernier jour sur l'accueil, migration `v6 → v7`.
 - `test/screens_test.dart` et `test/widget_test.dart` : stats et liste de la
   semaine sur l'accueil, heures par mois, détail d'un jour du calendrier,
   détails puis modification d'une séance, suppression depuis l'onglet

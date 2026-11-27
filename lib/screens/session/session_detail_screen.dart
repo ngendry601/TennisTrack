@@ -7,6 +7,7 @@ import '../../services/session_store.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/exercise_durations.dart';
 import '../../utils/formatters.dart';
+import '../../utils/session_times.dart';
 import 'session_form_screen.dart';
 
 /// Détails en lecture seule d'une séance.
@@ -149,8 +150,17 @@ class _SessionSummary extends StatelessWidget {
             const SizedBox(height: 8),
             _InfoRow(
               icon: Icons.timer_outlined,
-              label: 'Durée : ${formatDuration(session.durationMinutes)}',
+              label: 'Durée du cours : '
+                  '${formatDuration(session.durationMinutes)}',
             ),
+            if (formatSetupPackUp(session) case final extra?) ...[
+              const SizedBox(height: 8),
+              _InfoRow(icon: Icons.handyman_outlined, label: extra),
+            ],
+            if (formatOnSite(session) case final onSite?) ...[
+              const SizedBox(height: 8),
+              _InfoRow(icon: Icons.place_outlined, label: onSite),
+            ],
             const SizedBox(height: 8),
             Row(
               children: [

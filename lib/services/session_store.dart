@@ -63,7 +63,7 @@ class SessionStore extends ChangeNotifier {
       .length;
 
   int get totalMinutes =>
-      _sessions.fold(0, (sum, session) => sum + session.durationMinutes);
+      _sessions.fold(0, (sum, session) => sum + session.totalMinutes);
 
   /// Ouvre la base, charge les catégories, les couleurs et les séances.
   /// À appeler une seule fois, avant `runApp`.

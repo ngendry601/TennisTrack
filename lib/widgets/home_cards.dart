@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
+import '../utils/session_times.dart';
 import '../utils/home_stats.dart';
 
 /// Ligne L M M J V S D : jours joués en jaune sur indigo, aujourd'hui repéré
@@ -276,17 +277,16 @@ class _RingPainter extends CustomPainter {
   bool shouldRepaint(_RingPainter oldDelegate) => oldDelegate.value != value;
 }
 
-/// Grande carte de la dernière séance. Un appui ouvre ses détails.
+/// Carte d'une séance du dernier jour joué : horaires, thèmes et
+/// exercices. Un appui ouvre ses détails.
 class LastSessionCard extends StatelessWidget {
   const LastSessionCard({
     super.key,
     required this.session,
-    required this.dateLabel,
     required this.onTap,
   });
 
   final TrainingSession session;
-  final String dateLabel;
   final VoidCallback onTap;
 
   @override
@@ -313,16 +313,19 @@ class LastSessionCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(dateLabel, style: theme.textTheme.titleMedium),
+                    child: Text(
+                      formatTimeRange(
+                          session.startTime, session.durationMinutes),
+                      style: theme.textTheme.titleMedium,
+                    ),
                   ),
                   const Icon(Icons.chevron_right, color: AppColors.indigo),
                 ],
               ),
-              const SizedBox(height: 2),
-              Text(
-                formatTimeRange(session.startTime, session.durationMinutes),
-                style: theme.textTheme.bodyMedium,
-              ),
+              if (formatOnSite(session) case final onSite?) ...[
+                const SizedBox(height: 2),
+                Text(onSite, style: theme.textTheme.bodySmall),
+              ],
               const SizedBox(height: 10),
               _LabelWrap(labels: themes),
               if (session.exercises.isNotEmpty) ...[

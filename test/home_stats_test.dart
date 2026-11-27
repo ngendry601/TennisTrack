@@ -43,18 +43,21 @@ void main() {
     expect(shares.map((share) => share.percent), [100, 100]);
   });
 
-  test('la dernière séance ignore le futur et départage par heure', () {
-    final morning = _session(1, DateTime(2026, 11, 20), 60, [_service],
-        start: const TimeOfDay(hour: 9, minute: 0));
+  test('le dernier jour regroupe ses séances dans l’ordre de la journée', () {
+    final older = _session(1, DateTime(2026, 11, 18), 60, [_service]);
     final evening = _session(2, DateTime(2026, 11, 20), 60, [_service],
         start: const TimeOfDay(hour: 18, minute: 0));
-    final future = _session(3, DateTime(2026, 11, 28), 60, [_service]);
+    final morning = _session(3, DateTime(2026, 11, 20), 60, [_service],
+        start: const TimeOfDay(hour: 9, minute: 0));
+    final noTime = _session(4, DateTime(2026, 11, 20), 60, [_service]);
+    final future = _session(5, DateTime(2026, 11, 28), 60, [_service]);
 
     expect(
-      latestSession([morning, future, evening], DateTime(2026, 11, 23)),
-      same(evening),
+      latestSessionDay(
+          [older, evening, future, morning, noTime], DateTime(2026, 11, 23)),
+      [noTime, morning, evening],
     );
-    expect(latestSession([future], DateTime(2026, 11, 23)), isNull);
+    expect(latestSessionDay([future], DateTime(2026, 11, 23)), isEmpty);
   });
 
   test('formate la comparaison avec le mois précédent', () {

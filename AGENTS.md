@@ -9,7 +9,7 @@ Le détail fonctionnel et le schéma complet sont dans [README.md](README.md).
 - Cibles : **Android et iOS**. Windows/Linux servent au développement
   (`sqflite_common_ffi`).
 - Données : **SQLite locale** (`sqflite`), base `tennistrack.db`, version
-  actuelle du schéma : **6** (`kDatabaseVersion` dans `lib/data/database.dart`).
+  actuelle du schéma : **7** (`kDatabaseVersion` dans `lib/data/database.dart`).
 - Pas de backend, pas de synchronisation, pas de `shared_preferences`.
 - Dépendances : `sqflite`, `sqflite_common_ffi`, `path`, `image_picker`,
   `file_picker` (import du fichier d'images), `flutter_localizations`. N'en ajoute pas sans raison claire.
@@ -60,6 +60,15 @@ SQLite (data/database.dart)   schéma, données de départ, migrations
 - La semaine va du **lundi au dimanche** (`lib/utils/date_ranges.dart`).
 - Une séance a **plusieurs catégories**, une couleur de balle, une intensité
   de 1 à 5.
+- Une séance a une **préparation** et un **rangement** (`setupMinutes`,
+  `packUpMinutes`, 0 à 60 min) autour du cours (`durationMinutes`).
+  `totalMinutes` = prépa + cours + rangement : c'est ce total que comptent
+  **toutes les statistiques**. Les horaires affichés restent ceux du cours ;
+  le temps sur place s'affiche en plus (`lib/utils/session_times.dart`).
+  Une nouvelle séance reprend la prépa/le rangement de la dernière séance
+  enregistrée.
+- L'accueil montre toutes les séances du **dernier jour** joué
+  (`latestSessionDay`), pas seulement la dernière séance.
 - Les exercices sont **partagés** (bibliothèque) : modifier un exercice le
   modifie dans toutes ses séances. Supprimer une séance garde ses exercices ;
   supprimer un exercice le retire de toutes les séances.

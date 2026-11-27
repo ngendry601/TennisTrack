@@ -154,6 +154,7 @@ void main() {
             for (final sql in const [
               "CREATE TABLE exercice (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT NOT NULL, points_travailles TEXT NOT NULL DEFAULT '', deroulement TEXT NOT NULL DEFAULT '', image BLOB)",
               'CREATE TABLE categorie (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT NOT NULL UNIQUE)',
+              'CREATE TABLE seance (id INTEGER PRIMARY KEY AUTOINCREMENT, date TEXT NOT NULL, duree_minutes INTEGER NOT NULL, intensite INTEGER NOT NULL, couleur_balle_id INTEGER NOT NULL, heure_debut TEXT)',
               'CREATE TABLE couleur_balle (id INTEGER PRIMARY KEY AUTOINCREMENT, nom TEXT NOT NULL UNIQUE)',
               'CREATE TABLE exercice_categorie (exercice_id INTEGER NOT NULL, categorie_id INTEGER NOT NULL, PRIMARY KEY (exercice_id, categorie_id))',
               'CREATE TABLE exercice_couleur_balle (exercice_id INTEGER NOT NULL, couleur_balle_id INTEGER NOT NULL, PRIMARY KEY (exercice_id, couleur_balle_id))',

@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Version du schéma. À incrémenter à chaque changement de structure,
 /// puis ajouter la migration correspondante dans [onUpgrade].
-const int kDatabaseVersion = 6;
+const int kDatabaseVersion = 7;
 
 const String _databaseName = 'tennistrack.db';
 
@@ -145,6 +145,7 @@ Future<Database> openAppDatabase({String? path}) async {
         await _createCalendarTables(db);
         await _createExerciseTables(db);
         await _addExerciseDuration(db);
+        await _addSessionSetupAndPackUp(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         // v1 -> v2 : ajout de l'heure de début (facultative) pour le
@@ -178,6 +179,12 @@ Future<Database> openAppDatabase({String? path}) async {
         // existants n'ont pas de durée (`NULL`).
         if (oldVersion < 6) {
           await _addExerciseDuration(db);
+        }
+
+        // v6 -> v7 : temps de préparation et de rangement des séances.
+        // Les séances existantes en ont 0.
+        if (oldVersion < 7) {
+          await _addSessionSetupAndPackUp(db);
         }
       },
     ),
@@ -243,6 +250,19 @@ Future<void> _createExerciseTables(Database db) async {
       'CREATE INDEX idx_exercice_couleur_couleur ON exercice_couleur_balle(couleur_balle_id)');
 
   await batch.commit(noResult: true);
+}
+
+/// Ajoute le temps de préparation (avant le cours) et de rangement (après),
+/// en minutes. Ils s'ajoutent à la durée du cours dans les statistiques.
+Future<void> _addSessionSetupAndPackUp(Database db) async {
+  await db.execute(
+    'ALTER TABLE seance ADD COLUMN preparation_minutes INTEGER NOT NULL '
+    'DEFAULT 0 CHECK (preparation_minutes >= 0)',
+  );
+  await db.execute(
+    'ALTER TABLE seance ADD COLUMN rangement_minutes INTEGER NOT NULL '
+    'DEFAULT 0 CHECK (rangement_minutes >= 0)',
+  );
 }
 
 /// Ajoute la durée de l'exercice, en minutes (facultative).

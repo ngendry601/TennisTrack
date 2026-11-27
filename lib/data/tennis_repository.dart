@@ -121,6 +121,7 @@ class TennisRepository {
   Future<List<TrainingSession>> getSessions() async {
     final rows = await db.rawQuery('''
       SELECT s.id, s.date, s.duree_minutes, s.intensite, s.heure_debut,
+             s.preparation_minutes, s.rangement_minutes,
              c.id AS couleur_id, c.nom AS couleur_nom
       FROM seance s
       JOIN couleur_balle c ON c.id = s.couleur_balle_id
@@ -173,6 +174,8 @@ class TennisRepository {
         categories: categoriesBySession[id] ?? const [],
         startTime: _parseTime(row['heure_debut']),
         exercises: exercisesBySession[id] ?? const [],
+        setupMinutes: row['preparation_minutes'] as int,
+        packUpMinutes: row['rangement_minutes'] as int,
       );
     }).toList();
   }
@@ -279,6 +282,8 @@ class TennisRepository {
   Map<String, Object?> _sessionValues(TrainingSession session) => {
         'date': _dateKey(session.date),
         'duree_minutes': session.durationMinutes,
+        'preparation_minutes': session.setupMinutes,
+        'rangement_minutes': session.packUpMinutes,
         'intensite': session.intensity,
         'couleur_balle_id': session.ballColor.id,
         'heure_debut': _timeKey(session.startTime),

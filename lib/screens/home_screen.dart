@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .where((session) => isInSameMonth(session.date, reference))
             .toList();
         final monthMinutes = monthSessions.fold<int>(
-            0, (sum, session) => sum + session.durationMinutes);
+            0, (sum, session) => sum + session.totalMinutes);
 
         // Liste principale : uniquement la semaine en cours (lundi → dimanche).
         final weekSessions = all
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final previousMonth = DateTime(reference.year, reference.month - 1);
         final previousMinutes = all
             .where((session) => isInSameMonth(session.date, previousMonth))
-            .fold<int>(0, (sum, session) => sum + session.durationMinutes);
+            .fold<int>(0, (sum, session) => sum + session.totalMinutes);
         final comparison = monthMinutes == 0 && previousMinutes == 0
             ? null
             : formatMonthComparison(
@@ -74,7 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 previousMonthName:
                     widget.store.monthNameLower(previousMonth.month),
               );
-        final lastSession = latestSession(all, reference);
+        final lastDay = latestSessionDay(all, reference);
+        final lastDayMinutes =
+            lastDay.fold<int>(0, (sum, session) => sum + session.totalMinutes);
 
         // Plus de Scaffold/AppBar ici : c'est MainShell qui les fournit,
         // ainsi que le bouton d'ajout de séance global.
@@ -124,16 +126,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   comparison: comparison,
                 ),
               ),
-              if (lastSession != null) ...[
-                const _SectionTitle('Dernière séance'),
+              if (lastDay.isNotEmpty) ...[
+                _SectionTitle(
+                  'Dernier jour',
+                  trailing: '${lastDay.length} séance'
+                      '${lastDay.length > 1 ? 's' : ''} · '
+                      '${formatDuration(lastDayMinutes)}',
+                ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: LastSessionCard(
-                    session: lastSession,
-                    dateLabel: widget.store.fullDateLabel(lastSession.date),
-                    onTap: () => _openDetails(lastSession),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Text(
+                    widget.store.fullDateLabel(lastDay.first.date),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
+                for (final session in lastDay)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: LastSessionCard(
+                      session: session,
+                      onTap: () => _openDetails(session),
+                    ),
+                  ),
               ],
               _SectionTitle(
                 'Cette semaine',

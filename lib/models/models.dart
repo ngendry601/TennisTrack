@@ -187,11 +187,25 @@ class TrainingSession {
     required this.categories,
     this.startTime,
     this.exercises = const [],
+    this.setupMinutes = 0,
+    this.packUpMinutes = 0,
   });
 
   final int id;
   final DateTime date;
+
+  /// Durée du cours lui-même.
   final int durationMinutes;
+
+  /// Préparation et installation avant le cours (arrivée plus tôt).
+  final int setupMinutes;
+
+  /// Rangement après le cours (départ plus tard).
+  final int packUpMinutes;
+
+  /// Temps total sur place : préparation + cours + rangement.
+  /// C'est cette durée qui compte dans les statistiques.
+  int get totalMinutes => setupMinutes + durationMinutes + packUpMinutes;
   final int intensity; // 1 à 5
   final BallColor ballColor;
   final List<TrainingCategory> categories; // une séance a plusieurs catégories
@@ -211,6 +225,18 @@ class TrainingSession {
     return TimeOfDay(hour: (total ~/ 60) % 24, minute: total % 60);
   }
 
+  /// Heure d'arrivée : début du cours moins la préparation.
+  TimeOfDay? get arrivalTime => _shift(startTime, -setupMinutes);
+
+  /// Heure de départ : fin du cours plus le rangement.
+  TimeOfDay? get departureTime => _shift(endTime, packUpMinutes);
+
+  static TimeOfDay? _shift(TimeOfDay? time, int minutes) {
+    if (time == null) return null;
+    final total = (time.hour * 60 + time.minute + minutes) % (24 * 60);
+    return TimeOfDay(hour: total ~/ 60, minute: total % 60);
+  }
+
   TrainingSession copyWith({
     int? id,
     DateTime? date,
@@ -220,6 +246,8 @@ class TrainingSession {
     List<TrainingCategory>? categories,
     TimeOfDay? startTime,
     List<Exercise>? exercises,
+    int? setupMinutes,
+    int? packUpMinutes,
   }) {
     return TrainingSession(
       id: id ?? this.id,
@@ -230,6 +258,8 @@ class TrainingSession {
       categories: categories ?? this.categories,
       startTime: startTime ?? this.startTime,
       exercises: exercises ?? this.exercises,
+      setupMinutes: setupMinutes ?? this.setupMinutes,
+      packUpMinutes: packUpMinutes ?? this.packUpMinutes,
     );
   }
 }

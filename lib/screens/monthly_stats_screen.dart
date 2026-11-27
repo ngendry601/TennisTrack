@@ -105,7 +105,7 @@ class _MonthData {
   String get key => '$year-${month.toString().padLeft(2, '0')}';
 
   int get totalMinutes =>
-      sessions.fold(0, (sum, session) => sum + session.durationMinutes);
+      sessions.fold(0, (sum, session) => sum + session.totalMinutes);
 
   /// Total de minutes par nom de catégorie pour ce mois.
   Map<String, int> get minutesByCategory {
@@ -113,11 +113,11 @@ class _MonthData {
     for (final session in sessions) {
       if (session.categories.isEmpty) {
         totals['Sans catégorie'] =
-            (totals['Sans catégorie'] ?? 0) + session.durationMinutes;
+            (totals['Sans catégorie'] ?? 0) + session.totalMinutes;
       }
       for (final category in session.categories) {
         totals[category.nom] =
-            (totals[category.nom] ?? 0) + session.durationMinutes;
+            (totals[category.nom] ?? 0) + session.totalMinutes;
       }
     }
     return totals;
