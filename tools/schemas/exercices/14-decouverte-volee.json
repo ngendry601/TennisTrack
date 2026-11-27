@@ -1,0 +1,124 @@
+{
+  "exercice": {
+    "id": 14,
+    "nom": "Découverte volée"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.9,
+  "plots": [
+    [
+      -1.5,
+      -3.0
+    ],
+    [
+      1.5,
+      -3.0
+    ],
+    [
+      -1.5,
+      3.0
+    ],
+    [
+      1.5,
+      3.0
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        3.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        -3.0
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        3.0
+      ],
+      "a": [
+        1.4,
+        -2.5
+      ],
+      "courbe": 0.1,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 14
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0,
+        -3.0
+      ],
+      "a": [
+        1.05,
+        -2.9
+      ],
+      "courbe": -0.6,
+      "numero": 2,
+      "posNumero": 0.6,
+      "ecartDebut": 22,
+      "ecartFin": 16
+    }
+  ],
+  "etapes": [
+    "A lance la balle à la main vers un des 2 plots d’en face",
+    "B se déplace et attrape la balle avant le rebond"
+  ],
+  "notes": [
+    "Jeu de jambes en continu",
+    "Puis on inverse les rôles"
+  ]
+}

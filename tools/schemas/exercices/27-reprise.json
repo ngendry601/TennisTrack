@@ -1,0 +1,81 @@
+{
+  "exercice": {
+    "id": 27,
+    "nom": "Reprise"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "lignes": [
+    {
+      "de": [
+        -4.115,
+        0.3
+      ],
+      "a": [
+        4.115,
+        0.3
+      ],
+      "couleur": "#E53935",
+      "legende": "Fil à 1 m"
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        2.4,
+        11.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -2.4,
+        -11.0
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        2.4,
+        11.0
+      ],
+      "a": [
+        -2.4,
+        -10.4
+      ],
+      "courbe": 0.06,
+      "numero": 1,
+      "posNumero": 0.75
+    }
+  ],
+  "etapes": [
+    "Échanges en diagonale au-dessus du fil (1 m au-dessus du filet)",
+    "Après 5 à 8 échanges selon le niveau, on joue le point"
+  ],
+  "notes": [
+    "Changer de diagonale au bout de 10 min"
+  ]
+}

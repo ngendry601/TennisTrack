@@ -1,0 +1,175 @@
+{
+  "exercice": {
+    "id": 2,
+    "nom": "Gamme"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "languettes": [
+    [
+      [
+        0,
+        -11.885
+      ],
+      [
+        0,
+        -6.4
+      ]
+    ],
+    [
+      [
+        0,
+        6.4
+      ],
+      [
+        0,
+        11.885
+      ]
+    ]
+  ],
+  "textes": [
+    {
+      "pos": [
+        -2.06,
+        -9.4
+      ],
+      "texte": "GAUCHE",
+      "taille": 20,
+      "espacement": 2,
+      "opacite": 0.7
+    },
+    {
+      "pos": [
+        2.06,
+        -9.4
+      ],
+      "texte": "DROITE",
+      "taille": 20,
+      "espacement": 2,
+      "opacite": 0.7
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        11.3
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        -11.3
+      ]
+    },
+    {
+      "nom": "A",
+      "pos": [
+        1.3,
+        10.2
+      ],
+      "fantome": true
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -1.3,
+        10.2
+      ],
+      "fantome": true
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        11.3
+      ],
+      "a": [
+        2.6,
+        -7.6
+      ],
+      "courbe": -0.03,
+      "numero": 1,
+      "posNumero": 0.8,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        0,
+        11.3
+      ],
+      "a": [
+        -2.6,
+        -7.6
+      ],
+      "courbe": 0.03,
+      "numero": 2,
+      "posNumero": 0.8,
+      "ecartFin": 10
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0,
+        11.3
+      ],
+      "a": [
+        1.3,
+        10.2
+      ],
+      "courbe": 0.35,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartDebut": 22,
+      "ecartFin": 22
+    },
+    {
+      "de": [
+        0,
+        11.3
+      ],
+      "a": [
+        -1.3,
+        10.2
+      ],
+      "courbe": -0.35,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartDebut": 22,
+      "ecartFin": 22
+    }
+  ],
+  "etapes": [
+    "Balle dans la zone droite : replacement un peu plus à droite",
+    "Balle dans la zone gauche : replacement un peu plus à gauche"
+  ],
+  "notes": [
+    "Actif entre les frappes",
+    "Même règle pour B"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "exercice": {
+    "id": 35,
+    "nom": "Tour du monde"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.75,
+  "pastilles": [
+    [
+      0.0,
+      1.2
+    ],
+    [
+      1.41,
+      1.66
+    ],
+    [
+      2.28,
+      2.86
+    ],
+    [
+      2.28,
+      4.34
+    ],
+    [
+      1.41,
+      5.54
+    ],
+    [
+      0.0,
+      6.0
+    ],
+    [
+      -1.41,
+      5.54
+    ],
+    [
+      -2.28,
+      4.34
+    ],
+    [
+      -2.28,
+      2.86
+    ],
+    [
+      -1.41,
+      1.66
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        3.6
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        2.28,
+        4.34
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        3.6
+      ],
+      "a": [
+        2.28,
+        4.34
+      ],
+      "courbe": 0.15,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 20
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        2.28,
+        4.34
+      ],
+      "a": [
+        1.41,
+        5.54
+      ],
+      "courbe": -0.3,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartDebut": 20,
+      "ecartFin": 24
+    }
+  ],
+  "etapes": [
+    "A, au centre, renvoie le ballon violet à la raquette",
+    "B se déplace d’une seule pastille, à gauche ou à droite"
+  ],
+  "notes": [
+    "8 à 10 pastilles en rond autour de A"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "exercice": {
+    "id": 4,
+    "nom": "Feu tricolore"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        5.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        -5.0
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        0,
+        -8.6
+      ]
+    }
+  ],
+  "plots": [
+    [
+      -3.9,
+      3.2,
+      "bleu"
+    ],
+    [
+      3.9,
+      3.2,
+      "rouge"
+    ],
+    [
+      -0.9,
+      -9.6,
+      "bleu"
+    ],
+    [
+      0.9,
+      -9.6,
+      "rouge"
+    ]
+  ],
+  "textes": [
+    {
+      "pos": [
+        0,
+        -11.1
+      ],
+      "texte": "C lève un plot",
+      "taille": 18,
+      "espacement": 1,
+      "opacite": 0.9
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        -5.0
+      ],
+      "a": [
+        0.3,
+        4.3
+      ],
+      "courbe": 0.05,
+      "numero": 1,
+      "posNumero": 0.6,
+      "ecartFin": 16
+    }
+  ],
+  "etapes": [
+    "B envoie la balle à A",
+    "C, derrière B, lève un plot : bleu → A fait un revers, rouge → A fait un coup droit"
+  ],
+  "notes": [
+    "Plus facile : un contrôle avant la frappe",
+    "Plus difficile : viser une zone précise"
+  ]
+}

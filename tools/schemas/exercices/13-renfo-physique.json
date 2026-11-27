@@ -1,0 +1,119 @@
+{
+  "exercice": {
+    "id": 13,
+    "nom": "Renfo physique"
+  },
+  "tailleSymboles": 0.85,
+  "plots": [
+    [
+      -2.8,
+      11.3
+    ],
+    [
+      -2.8,
+      9.8
+    ],
+    [
+      -2.8,
+      7.3
+    ],
+    [
+      -2.8,
+      3.3
+    ],
+    [
+      0,
+      11.3
+    ],
+    [
+      0,
+      9.8
+    ],
+    [
+      0,
+      7.3
+    ],
+    [
+      0,
+      3.3
+    ],
+    [
+      2.8,
+      11.3
+    ],
+    [
+      2.8,
+      9.8
+    ],
+    [
+      2.8,
+      7.3
+    ],
+    [
+      2.8,
+      3.3
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        -2.8,
+        12.7
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        12.7
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        2.8,
+        12.7
+      ]
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        -2.8,
+        12.7
+      ],
+      "a": [
+        -2.8,
+        7.8
+      ],
+      "courbe": -0.12,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        -2.8,
+        7.8
+      ],
+      "a": [
+        -2.8,
+        12.2
+      ],
+      "courbe": -0.25,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartDebut": 18,
+      "ecartFin": 18
+    }
+  ],
+  "etapes": [
+    "Sprint jusqu’au plot, le contourner",
+    "Revenir au départ en marche arrière"
+  ],
+  "notes": [
+    "Un plot plus loin à chaque passage",
+    "Une fois fini, taper dans la main de l’équipier, qui part"
+  ]
+}

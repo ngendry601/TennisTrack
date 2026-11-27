@@ -1,0 +1,133 @@
+{
+  "exercice": {
+    "id": 1,
+    "nom": "Gamme"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        2.4,
+        11.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -2.4,
+        -11.0
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        -2.4,
+        11.0
+      ]
+    },
+    {
+      "nom": "D",
+      "pos": [
+        2.4,
+        -11.0
+      ]
+    },
+    {
+      "nom": "A",
+      "pos": [
+        1.1,
+        10.2
+      ],
+      "fantome": true
+    },
+    {
+      "nom": "C",
+      "pos": [
+        -1.1,
+        10.2
+      ],
+      "fantome": true
+    }
+  ],
+  "textes": [
+    {
+      "pos": [
+        -2.6,
+        -2.4
+      ],
+      "texte": "DIAG. CD",
+      "taille": 17,
+      "espacement": 1,
+      "opacite": 0.8
+    },
+    {
+      "pos": [
+        2.6,
+        -2.4
+      ],
+      "texte": "DIAG. R",
+      "taille": 17,
+      "espacement": 1,
+      "opacite": 0.8
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        2.4,
+        11.0
+      ],
+      "a": [
+        -2.4,
+        -10.4
+      ],
+      "courbe": 0.03,
+      "numero": 1,
+      "posNumero": 0.25
+    },
+    {
+      "de": [
+        -2.4,
+        11.0
+      ],
+      "a": [
+        2.4,
+        -10.4
+      ],
+      "courbe": -0.03,
+      "numero": 2,
+      "posNumero": 0.25
+    }
+  ],
+  "etapes": [
+    "Diagonale coup droit : A et B",
+    "Diagonale revers : C et D"
+  ],
+  "notes": [
+    "Être replacé et prêt quand l’adversaire frappe",
+    "Replacement un peu à droite du centre en diagonale CD, un peu à gauche en diagonale R"
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "exercice": {
+    "id": 26,
+    "nom": "Engagement contrôle"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.9,
+  "zones": [
+    {
+      "de": [
+        -3.6,
+        -1.4
+      ],
+      "a": [
+        -0.8,
+        -4.6
+      ]
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        1.0,
+        5.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -1.0,
+        -5.0
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        1.0,
+        5.0
+      ],
+      "a": [
+        -2.2,
+        -3.0
+      ],
+      "courbe": 0.08,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        -2.2,
+        -3.4
+      ],
+      "a": [
+        1.0,
+        4.4
+      ],
+      "courbe": 0.08,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartDebut": 14,
+      "ecartFin": 18
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        -1.0,
+        -5.0
+      ],
+      "a": [
+        -2.0,
+        -3.9
+      ],
+      "courbe": 0.3,
+      "ecartFin": 10
+    }
+  ],
+  "etapes": [
+    "A engage à la cuillère dans la zone",
+    "B contrôle avec la raquette, puis renvoie"
+  ],
+  "notes": [
+    "Semaine 1 : B contrôle, puis c’est lui qui engage",
+    "Semaine 2 : B contrôle, frappe et on joue l’échange",
+    "Semaine 3 : échanges classiques"
+  ]
+}

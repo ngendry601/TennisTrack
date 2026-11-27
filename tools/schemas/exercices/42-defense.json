@@ -1,0 +1,109 @@
+{
+  "exercice": {
+    "id": 42,
+    "nom": "Défense"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "legendeZone": "Zone de renvoi",
+  "zones": [
+    {
+      "de": [
+        -4.115,
+        -6.7
+      ],
+      "a": [
+        4.115,
+        -11.8
+      ],
+      "texte": "Renvoi haut et profond"
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "E",
+      "pos": [
+        0.5,
+        -4.0
+      ],
+      "role": "entraineur"
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.6,
+        11.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        11.3
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        2.6,
+        11.0
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0.5,
+        -4.0
+      ],
+      "a": [
+        -2.4,
+        10.3
+      ],
+      "courbe": 0.03,
+      "numero": 1,
+      "posNumero": 0.4,
+      "ecartFin": 16
+    },
+    {
+      "de": [
+        -2.6,
+        11.0
+      ],
+      "a": [
+        -1.0,
+        -9.5
+      ],
+      "courbe": -0.18,
+      "numero": 2,
+      "posNumero": 0.5
+    }
+  ],
+  "etapes": [
+    "L’entraîneur attaque",
+    "Le joueur renvoie la balle haut et derrière les carrés de service"
+  ],
+  "notes": [
+    "2 à 3 joueurs contre l’entraîneur"
+  ]
+}

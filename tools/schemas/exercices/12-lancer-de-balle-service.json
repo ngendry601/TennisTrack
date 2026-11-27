@@ -1,0 +1,75 @@
+{
+  "exercice": {
+    "id": 12,
+    "nom": "Lancer de balle service"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.9,
+  "pastilles": [
+    [
+      1.3,
+      11.3
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0.9,
+        12.3
+      ]
+    }
+  ],
+  "textes": [
+    {
+      "pos": [
+        2.2,
+        9.6
+      ],
+      "texte": "La balle retombe ici",
+      "taille": 15,
+      "espacement": 1,
+      "opacite": 0.9
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0.9,
+        12.3
+      ],
+      "a": [
+        -2.0,
+        -4.0
+      ],
+      "courbe": 0.03,
+      "numero": 2,
+      "posNumero": 0.4
+    }
+  ],
+  "etapes": [
+    "Lancer de balle : +1 point si elle retombe sur la pastille",
+    "Au bout de 10 points, le joueur peut servir"
+  ]
+}

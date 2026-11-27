@@ -1,0 +1,131 @@
+{
+  "exercice": {
+    "id": 40,
+    "nom": "Attaque CD"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "legendeZone": "Zone d'attaque",
+  "zones": [
+    {
+      "de": [
+        -4.115,
+        -0.15
+      ],
+      "a": [
+        4.115,
+        -3.2
+      ]
+    },
+    {
+      "de": [
+        -4.115,
+        0.15
+      ],
+      "a": [
+        4.115,
+        3.2
+      ]
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0.5,
+        11.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -0.5,
+        -11.0
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0.5,
+        11.0
+      ],
+      "a": [
+        -0.5,
+        -10.4
+      ],
+      "courbe": -0.12,
+      "numero": 1,
+      "posNumero": 0.75
+    },
+    {
+      "de": [
+        -0.5,
+        -11.0
+      ],
+      "a": [
+        1.8,
+        2.0
+      ],
+      "courbe": -0.1,
+      "numero": 2,
+      "posNumero": 0.3,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        1.6,
+        3.0
+      ],
+      "a": [
+        -3.2,
+        -9.5
+      ],
+      "courbe": -0.05,
+      "numero": 4,
+      "posNumero": 0.5,
+      "ecartDebut": 22
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0.5,
+        11.0
+      ],
+      "a": [
+        1.6,
+        3.4
+      ],
+      "courbe": 0.12,
+      "numero": 3,
+      "posNumero": 0.55
+    }
+  ],
+  "etapes": [
+    "5 échanges obligatoires avant de jouer le point",
+    "La balle tombe entre le filet et le milieu des carrés de service",
+    "A avance vers la balle",
+    "A est obligé d’attaquer en coup droit"
+  ]
+}

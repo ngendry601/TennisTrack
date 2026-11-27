@@ -1,0 +1,127 @@
+{
+  "exercice": {
+    "id": 29,
+    "nom": "Reprise"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "joueurs": [
+    {
+      "nom": "E",
+      "pos": [
+        0,
+        -2.0
+      ],
+      "role": "entraineur"
+    },
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        9.0
+      ]
+    },
+    {
+      "nom": "A",
+      "pos": [
+        2.1,
+        8.4
+      ],
+      "fantome": true
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.1,
+        8.4
+      ],
+      "fantome": true
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        -2.0
+      ],
+      "a": [
+        2.2,
+        7.5
+      ],
+      "courbe": 0.04,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 14
+    },
+    {
+      "de": [
+        0,
+        -2.0
+      ],
+      "a": [
+        -2.2,
+        7.5
+      ],
+      "courbe": -0.04,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartFin": 14
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0,
+        9.0
+      ],
+      "a": [
+        2.1,
+        8.4
+      ],
+      "courbe": -0.3,
+      "ecartDebut": 22,
+      "ecartFin": 22
+    },
+    {
+      "de": [
+        2.1,
+        8.4
+      ],
+      "a": [
+        -2.1,
+        8.4
+      ],
+      "courbe": -0.25,
+      "ecartDebut": 22,
+      "ecartFin": 22
+    }
+  ],
+  "etapes": [
+    "L’entraîneur lance côté coup droit",
+    "Tout de suite après, côté revers"
+  ],
+  "notes": [
+    "Se déplacer vite et faire un saut d’allégement en arrivant"
+  ]
+}

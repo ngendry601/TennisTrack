@@ -1,0 +1,172 @@
+{
+  "exercice": {
+    "id": 41,
+    "nom": "Sceau + jeu volée"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.8,
+  "zones": [
+    {
+      "de": [
+        0.2,
+        -1.0
+      ],
+      "a": [
+        1.6,
+        -5.4
+      ]
+    },
+    {
+      "de": [
+        2.6,
+        -1.0
+      ],
+      "a": [
+        4.0,
+        -5.4
+      ]
+    }
+  ],
+  "textes": [
+    {
+      "pos": [
+        -2.06,
+        -9.5
+      ],
+      "texte": "VOLÉE",
+      "taille": 18,
+      "espacement": 2,
+      "opacite": 0.7
+    },
+    {
+      "pos": [
+        2.06,
+        -9.5
+      ],
+      "texte": "JEU",
+      "taille": 18,
+      "espacement": 2,
+      "opacite": 0.7
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "E",
+      "pos": [
+        -2.06,
+        -6.8
+      ],
+      "role": "entraineur"
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.06,
+        2.2
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        2.06,
+        11.0
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        2.06,
+        -11.0
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        -2.06,
+        -6.8
+      ],
+      "a": [
+        -2.06,
+        1.6
+      ],
+      "courbe": 0.03,
+      "ecartFin": 16
+    },
+    {
+      "de": [
+        2.06,
+        -11.0
+      ],
+      "a": [
+        2.4,
+        4.2
+      ],
+      "courbe": 0.02,
+      "numero": 1,
+      "posNumero": 0.6,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        2.4,
+        3.0
+      ],
+      "a": [
+        3.3,
+        -3.4
+      ],
+      "courbe": 0.1,
+      "numero": 3,
+      "posNumero": 0.5,
+      "ecartDebut": 18,
+      "ecartFin": 10
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        2.06,
+        11.0
+      ],
+      "a": [
+        2.4,
+        3.4
+      ],
+      "courbe": 0.1,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartFin": 18
+    }
+  ],
+  "etapes": [
+    "C joue court : la balle tombe dans le carré de service",
+    "B monte à la volée",
+    "B vise une zone à gauche ou à droite dans le carré"
+  ],
+  "notes": [
+    "Demi-terrain gauche : l’entraîneur envoie à la raquette à A et corrige sa volée",
+    "Volée : bas du corps en mouvement, haut du corps gainé, pas de préparation"
+  ]
+}

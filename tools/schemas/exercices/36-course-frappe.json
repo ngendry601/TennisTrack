@@ -1,0 +1,103 @@
+{
+  "exercice": {
+    "id": 36,
+    "nom": "Course frappe"
+  },
+  "tailleSymboles": 0.85,
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        -4.8,
+        2.6
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -4.8,
+        5.6
+      ]
+    }
+  ],
+  "plots": [
+    [
+      -1.2,
+      2.6
+    ],
+    [
+      -1.2,
+      5.6
+    ]
+  ],
+  "ballesPosees": [
+    [
+      -1.2,
+      2.6
+    ],
+    [
+      -1.2,
+      5.6
+    ]
+  ],
+  "deplacements": [
+    {
+      "de": [
+        -4.8,
+        2.6
+      ],
+      "a": [
+        -1.6,
+        2.6
+      ],
+      "courbe": 0.15,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 22
+    },
+    {
+      "de": [
+        -4.8,
+        5.6
+      ],
+      "a": [
+        -1.6,
+        5.6
+      ],
+      "courbe": 0.15,
+      "ecartFin": 22
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        -1.2,
+        2.6
+      ],
+      "a": [
+        -0.4,
+        -4.5
+      ],
+      "courbe": 0.05,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartDebut": 22
+    },
+    {
+      "de": [
+        -1.2,
+        5.6
+      ],
+      "a": [
+        1.2,
+        -5.5
+      ],
+      "courbe": 0.05,
+      "ecartDebut": 22
+    }
+  ],
+  "etapes": [
+    "Départ dans le couloir : course jusqu’au plot",
+    "Poser le ballon violet ou la balle rouge et frapper de l’autre côté"
+  ]
+}

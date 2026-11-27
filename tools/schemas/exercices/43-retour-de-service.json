@@ -1,0 +1,128 @@
+{
+  "exercice": {
+    "id": 43,
+    "nom": "Retour de service"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "zones": [
+    {
+      "de": [
+        -1.4,
+        -8.8
+      ],
+      "a": [
+        1.4,
+        -11.8
+      ],
+      "texte": "1ʳᵉ"
+    },
+    {
+      "de": [
+        -4.115,
+        -4.5
+      ],
+      "a": [
+        -2.9,
+        -9.5
+      ],
+      "texte": "2ᵉ"
+    },
+    {
+      "de": [
+        2.9,
+        -4.5
+      ],
+      "a": [
+        4.115,
+        -9.5
+      ],
+      "texte": "2ᵉ"
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "B",
+      "pos": [
+        -0.6,
+        -12.3
+      ]
+    },
+    {
+      "nom": "A",
+      "pos": [
+        3.2,
+        11.8
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        -0.6,
+        -12.3
+      ],
+      "a": [
+        2.3,
+        4.8
+      ],
+      "courbe": 0.02,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        3.2,
+        11.8
+      ],
+      "a": [
+        0,
+        -10.3
+      ],
+      "courbe": 0.03,
+      "numero": 1,
+      "posNumero": 0.5
+    },
+    {
+      "de": [
+        3.2,
+        11.8
+      ],
+      "a": [
+        -3.5,
+        -7.0
+      ],
+      "courbe": 0.05,
+      "numero": 2,
+      "posNumero": 0.6,
+      "ecartFin": 10
+    }
+  ],
+  "etapes": [
+    "1ʳᵉ balle de service : retour profond au centre",
+    "2ᵉ balle : le retourneur attaque vers une zone extérieure"
+  ],
+  "notes": [
+    "B sert, A retourne"
+  ]
+}

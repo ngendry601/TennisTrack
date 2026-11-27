@@ -33,7 +33,19 @@ const COULEURS = {
   balle: '#E9FF00',
   deplacement: '#FFFFFF',
   encre: '#24234F',
-  joueurs: ['#E53935', '#8E24AA', '#00897B', '#F4511E'],
+  joueurs: ['#E53935', '#8E24AA', '#3949AB', '#F4511E'],
+  entraineur: '#00897B',
+  zone: '#FFEB3B',
+  // Couleur fixe par lettre : un joueur garde sa couleur, fantôme compris.
+  parNom: { A: '#E53935', B: '#8E24AA', C: '#3949AB', D: '#F4511E', R: '#6D4C41' },
+  // Couleurs des plots de couleur : [x, y, "bleu"].
+  plots: {
+    orange: '#FF7A00',
+    bleu: '#1E88E5',
+    rouge: '#E53935',
+    jaune: '#FDD835',
+    vert: '#43A047',
+  },
 };
 
 const LARGEUR = (2 * DEMI_L + 2 * RECUL) * S;
@@ -70,9 +82,10 @@ function terrain() {
 
 // --- Symboles -------------------------------------------------------------
 
-const plot = (cx, cy) => `
+const plot = (cx, cy, couleur = 'orange') => `
   <g transform="translate(${cx} ${cy})">
-    <circle r="${15 * K}" fill="${COULEURS.plot}" stroke="#7A3A00" stroke-width="3"/>
+    <circle r="${15 * K}" fill="${COULEURS.plots[couleur] ?? COULEURS.plot}"
+            stroke="#1B1B1B" stroke-opacity="0.6" stroke-width="3"/>
     <circle r="${6 * K}" fill="#FFFFFF" opacity="0.9"/>
   </g>`;
 
@@ -185,11 +198,47 @@ function fleche({ de, a, courbe = 0, couleur, pointilles, numero, posNumero = 0.
   ${numero != null ? badge(mx, my, numero) : ''}`;
 }
 
+// Zone à viser : rectangle jaune translucide à bord pointillé.
+// Hachures jaunes (définies une fois dans <defs>) : lisibles sur le bleu.
+const zone = (x1, y1, x2, y2) => `
+  <rect x="${Math.min(x1, x2)}" y="${Math.min(y1, y2)}" width="${Math.abs(x2 - x1)}"
+        height="${Math.abs(y2 - y1)}" fill="url(#hachures)"
+        stroke="${COULEURS.zone}" stroke-width="3" stroke-dasharray="10 6"/>`;
+
+const DEFS = `<defs>
+  <pattern id="hachures" width="14" height="14" patternUnits="userSpaceOnUse"
+           patternTransform="rotate(45)">
+    <rect width="14" height="14" fill="${'#FFEB3B'}" fill-opacity="0.18"/>
+    <rect width="6" height="14" fill="${'#FFEB3B'}" fill-opacity="0.75"/>
+  </pattern>
+</defs>`;
+
+const echapper = (t) =>
+  String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/// Coupe un texte en lignes d'au plus [max] caractères, aux espaces.
+function couper(texte, max = 46) {
+  const lignes = [];
+  let ligne = '';
+  for (const mot of String(texte).split(' ')) {
+    if (ligne && (ligne + ' ' + mot).length > max) {
+      lignes.push(ligne);
+      ligne = mot;
+    } else {
+      ligne = ligne ? `${ligne} ${mot}` : mot;
+    }
+  }
+  if (ligne) lignes.push(ligne);
+  return lignes;
+}
+
 // --- Légende --------------------------------------------------------------
 
 function legende(spec) {
   const items = [];
-  if (spec.joueurs?.length) items.push(['joueur', 'Joueur']);
+  const joueurs = spec.joueurs ?? [];
+  if (joueurs.some((j) => j.role !== 'entraineur' && !j.fantome)) items.push(['joueur', 'Joueur']);
+  if (joueurs.some((j) => j.role === 'entraineur')) items.push(['entraineur', 'Entraîneur']);
   if (spec.joueurs?.some((j) => j.fantome)) items.push(['fantome', 'Placement visé']);
   if (spec.plots?.length) items.push(['plot', 'Plot']);
   if (spec.pastilles?.length) items.push(['pastille', 'Pastille']);
@@ -197,15 +246,33 @@ function legende(spec) {
   if (spec.portes?.length) items.push(['porte', 'Porte']);
   if (spec.balles?.length) items.push(['balle', 'Balle']);
   if (spec.deplacements?.length) items.push(['deplacement', 'Déplacement']);
+  if (spec.zones?.length) items.push(['zone', spec.legendeZone ?? 'Zone à viser']);
+  if (spec.ballesPosees?.length) items.push(['ballePosee', 'Balle posée']);
+  for (const l of spec.lignes ?? []) {
+    if (l.legende) items.push([`ligne:${l.couleur ?? '#E53935'}`, l.legende]);
+  }
+
+  // Textes longs coupés en plusieurs lignes (environ 44 caractères).
+  const etapes = (spec.etapes ?? []).map((t) => couper(t));
+  const notes = (spec.notes ?? []).map((t) => couper(`• ${t}`));
+  const nbLignesTexte =
+    etapes.reduce((n, l) => n + l.length, 0) + notes.reduce((n, l) => n + l.length, 0);
 
   const colonnes = 2;
   const hLigne = 56;
   const lignes = Math.ceil(items.length / colonnes);
-  const hauteur = 40 + lignes * hLigne + (spec.etapes?.length ? 24 + spec.etapes.length * 40 : 0) + 20;
+  const hauteur = 40 + lignes * hLigne + (nbLignesTexte ? 24 + nbLignesTexte * 34 : 0) + 20;
 
   const symbole = (type, x, y) => {
+    if (type.startsWith('ligne:')) {
+      return `<line x1="${x - 30}" y1="${y}" x2="${x + 30}" y2="${y}"
+          stroke="${type.slice(6)}" stroke-width="6" stroke-linecap="round"/>`;
+    }
     switch (type) {
       case 'joueur': return joueur(x, y, 'A', COULEURS.joueurs[0]);
+      case 'entraineur': return joueur(x, y, 'E', COULEURS.entraineur);
+      case 'zone': return zone(x - 28, y - 16, x + 28, y + 16);
+      case 'ballePosee': return balleIcone(x, y);
       case 'fantome': return joueur(x, y, 'A', COULEURS.joueurs[0], true);
       case 'plot': return plot(x, y);
       case 'pastille': return pastille(x, y, 19);
@@ -234,12 +301,19 @@ function legende(spec) {
     svg += `<text x="${x + 56}" y="${y + 8}" font-size="23" fill="${COULEURS.encre}">${texte}</text>`;
   });
 
-  if (spec.etapes?.length) {
-    let y = 40 + lignes * hLigne + 14;
-    spec.etapes.forEach((etape, i) => {
-      svg += badge(70, y, i + 1);
-      svg += `<text x="100" y="${y + 8}" font-size="23" fill="${COULEURS.encre}">${etape}</text>`;
-      y += 40;
+  let y = 40 + lignes * hLigne + 14;
+  etapes.forEach((lignesEtape, i) => {
+    svg += badge(70, y, i + 1);
+    for (const ligne of lignesEtape) {
+      svg += `<text x="100" y="${y + 8}" font-size="22" fill="${COULEURS.encre}">${echapper(ligne)}</text>`;
+      y += 34;
+    }
+  });
+  for (const lignesNote of notes) {
+    lignesNote.forEach((ligne, i) => {
+      svg += `<text x="${i === 0 ? 58 : 76}" y="${y + 8}" font-size="21" font-style="italic"
+                fill="${COULEURS.encre}" opacity="0.8">${echapper(ligne)}</text>`;
+      y += 34;
     });
   }
   return { svg, hauteur };
@@ -249,7 +323,8 @@ function legende(spec) {
 
 function construireSvg(spec) {
   K = spec.tailleSymboles ?? 1;
-  const couleurJoueur = (j, i) => j.couleur ?? COULEURS.joueurs[i % COULEURS.joueurs.length];
+  const couleurJoueur = (j, i) =>
+    j.couleur ?? COULEURS.parNom[j.nom] ?? COULEURS.joueurs[i % COULEURS.joueurs.length];
   let corps = terrain();
 
   for (const [[x1, y1], [x2, y2]] of spec.languettes ?? []) {
@@ -260,6 +335,20 @@ function construireSvg(spec) {
     corps += `<rect x="${px(Math.min(x1, x2))}" y="${py(Math.min(y1, y2))}"
       width="${Math.abs(x2 - x1) * S}" height="${Math.abs(y2 - y1) * S}"
       fill="#0B1530" opacity="0.5"/>`;
+  }
+  // Zones à viser : { de: [x, y], a: [x, y], texte?: "..." }.
+  for (const z of spec.zones ?? []) {
+    corps += zone(px(z.de[0]), py(z.de[1]), px(z.a[0]), py(z.a[1]));
+    if (z.texte) {
+      corps += `<text x="${px((z.de[0] + z.a[0]) / 2)}" y="${py((z.de[1] + z.a[1]) / 2)}"
+        text-anchor="middle" dominant-baseline="middle" font-size="${z.taille ?? 16}"
+        font-weight="700" fill="#FFFFFF">${echapper(z.texte)}</text>`;
+    }
+  }
+  // Lignes droites (fil au-dessus du filet…) : { de, a, couleur?, legende? }.
+  for (const l of spec.lignes ?? []) {
+    corps += `<line x1="${px(l.de[0])}" y1="${py(l.de[1])}" x2="${px(l.a[0])}" y2="${py(l.a[1])}"
+      stroke="${l.couleur ?? '#E53935'}" stroke-width="${l.epaisseur ?? 6}" stroke-linecap="round"/>`;
   }
   // Textes posés sur le terrain (noms de zones…).
   for (const t of spec.textes ?? []) {
@@ -274,10 +363,12 @@ function construireSvg(spec) {
   for (const d of spec.deplacements ?? []) {
     corps += fleche({ ...d, couleur: COULEURS.deplacement });
   }
-  for (const [x, y] of spec.plots ?? []) corps += plot(px(x), py(y));
+  for (const [x, y, couleur] of spec.plots ?? []) corps += plot(px(x), py(y), couleur);
+  for (const [x, y] of spec.ballesPosees ?? []) corps += balleIcone(px(x), py(y) - 4);
   for (const [x, y, angle] of spec.portes ?? []) corps += porte(px(x), py(y), angle);
   (spec.joueurs ?? []).forEach((j, i) => {
-    corps += joueur(px(j.pos[0]), py(j.pos[1]), j.nom, couleurJoueur(j, i), j.fantome);
+    const couleur = j.role === 'entraineur' ? (j.couleur ?? COULEURS.entraineur) : couleurJoueur(j, i);
+    corps += joueur(px(j.pos[0]), py(j.pos[1]), j.nom, couleur, j.fantome);
   });
   for (const b of spec.balles ?? []) {
     if (b.icone) corps += balleIcone(px(b.icone[0]), py(b.icone[1]));
@@ -288,6 +379,7 @@ function construireSvg(spec) {
   const hauteurTotale = HAUTEUR_TERRAIN + hauteur;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${LARGEUR}" height="${hauteurTotale}"
       viewBox="0 0 ${LARGEUR} ${hauteurTotale}" font-family="DejaVu Sans, Liberation Sans, sans-serif">
+    ${DEFS}
     ${corps}
     <g transform="translate(0 ${HAUTEUR_TERRAIN})">${svgLegende}</g>
   </svg>`;

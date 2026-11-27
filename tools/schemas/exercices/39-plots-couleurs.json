@@ -1,0 +1,197 @@
+{
+  "exercice": {
+    "id": 39,
+    "nom": "Plots couleurs"
+  },
+  "tailleSymboles": 0.85,
+  "masques": [
+    [
+      [
+        -6.885,
+        0
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        0
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        0
+      ]
+    ]
+  ],
+  "plots": [
+    [
+      -3.3,
+      -1.8,
+      "rouge"
+    ],
+    [
+      -1.2,
+      -1.8,
+      "bleu"
+    ],
+    [
+      1.2,
+      -1.8,
+      "jaune"
+    ],
+    [
+      3.3,
+      -1.8,
+      "vert"
+    ],
+    [
+      -3.3,
+      -3.7,
+      "bleu"
+    ],
+    [
+      -1.2,
+      -3.7,
+      "vert"
+    ],
+    [
+      1.2,
+      -3.7,
+      "rouge"
+    ],
+    [
+      3.3,
+      -3.7,
+      "jaune"
+    ],
+    [
+      -3.3,
+      -5.6,
+      "jaune"
+    ],
+    [
+      -1.2,
+      -5.6,
+      "rouge"
+    ],
+    [
+      1.2,
+      -5.6,
+      "vert"
+    ],
+    [
+      3.3,
+      -5.6,
+      "bleu"
+    ]
+  ],
+  "ballesPosees": [
+    [
+      -3.3,
+      -1.8
+    ],
+    [
+      1.2,
+      -1.8
+    ],
+    [
+      -1.2,
+      -3.7
+    ],
+    [
+      3.3,
+      -3.7
+    ],
+    [
+      -3.3,
+      -5.6
+    ],
+    [
+      3.3,
+      -5.6
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        -2.0,
+        -8.6
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        -8.6
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        2.0,
+        -8.6
+      ]
+    },
+    {
+      "nom": "E",
+      "pos": [
+        -5.6,
+        -4.0
+      ],
+      "role": "entraineur"
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        -2.0,
+        -8.6
+      ],
+      "a": [
+        -3.3,
+        -1.9
+      ],
+      "courbe": 0.15,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        -3.3,
+        -1.9
+      ],
+      "a": [
+        -1.2,
+        -3.5
+      ],
+      "courbe": 0.3,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartDebut": 18,
+      "ecartFin": 18
+    }
+  ],
+  "etapes": [
+    "Courir sur un plot de la 1ʳᵉ couleur annoncée qui a une balle",
+    "Puis sur un plot de la 2ᵉ couleur qui n’a pas de balle"
+  ],
+  "notes": [
+    "L’adulte annonce 2 couleurs (ex. « rouge, bleu »)",
+    "3 plots de chaque couleur dans les carrés de service"
+  ]
+}

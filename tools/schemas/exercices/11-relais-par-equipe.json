@@ -1,0 +1,189 @@
+{
+  "exercice": {
+    "id": 11,
+    "nom": "Relais par équipe"
+  },
+  "tailleSymboles": 0.85,
+  "plots": [
+    [
+      -2.8,
+      11.3
+    ],
+    [
+      -2.8,
+      9.8
+    ],
+    [
+      -2.8,
+      7.3
+    ],
+    [
+      -2.8,
+      3.3
+    ],
+    [
+      0,
+      11.3
+    ],
+    [
+      0,
+      9.8
+    ],
+    [
+      0,
+      7.3
+    ],
+    [
+      0,
+      3.3
+    ],
+    [
+      2.8,
+      11.3
+    ],
+    [
+      2.8,
+      9.8
+    ],
+    [
+      2.8,
+      7.3
+    ],
+    [
+      2.8,
+      3.3
+    ]
+  ],
+  "ballesPosees": [
+    [
+      -2.8,
+      9.8
+    ],
+    [
+      -2.8,
+      7.3
+    ],
+    [
+      -2.8,
+      3.3
+    ],
+    [
+      0,
+      9.8
+    ],
+    [
+      0,
+      7.3
+    ],
+    [
+      0,
+      3.3
+    ],
+    [
+      2.8,
+      9.8
+    ],
+    [
+      2.8,
+      7.3
+    ],
+    [
+      2.8,
+      3.3
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        -2.8,
+        12.7
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        12.7
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        2.8,
+        12.7
+      ]
+    }
+  ],
+  "textes": [
+    {
+      "pos": [
+        -1.4,
+        10.55
+      ],
+      "texte": "court",
+      "taille": 13,
+      "espacement": 1,
+      "opacite": 0.8
+    },
+    {
+      "pos": [
+        -1.4,
+        8.55
+      ],
+      "texte": "moyen",
+      "taille": 13,
+      "espacement": 1,
+      "opacite": 0.8
+    },
+    {
+      "pos": [
+        -1.4,
+        5.3
+      ],
+      "texte": "long",
+      "taille": 13,
+      "espacement": 1,
+      "opacite": 0.8
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        -2.8,
+        12.7
+      ],
+      "a": [
+        -2.8,
+        3.8
+      ],
+      "courbe": -0.08,
+      "numero": 1,
+      "posNumero": 0.6,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        -2.8,
+        3.8
+      ],
+      "a": [
+        -2.8,
+        11.7
+      ],
+      "courbe": -0.08,
+      "numero": 2,
+      "posNumero": 0.4,
+      "ecartDebut": 18,
+      "ecartFin": 18
+    }
+  ],
+  "etapes": [
+    "Aller chercher une balle sur un plot",
+    "La ramener au départ, puis la suivante"
+  ],
+  "notes": [
+    "Une fois fini, taper dans la main de l’équipier : il replace les balles une par une",
+    "Une ligne de 4 plots par équipe"
+  ]
+}

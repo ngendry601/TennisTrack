@@ -1,0 +1,128 @@
+{
+  "exercice": {
+    "id": 24,
+    "nom": "Placement/Replacement"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.9,
+  "pastilles": [
+    [
+      0,
+      4.8
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        4.8
+      ]
+    },
+    {
+      "nom": "E",
+      "pos": [
+        0,
+        -2.2
+      ],
+      "role": "entraineur"
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        -2.2
+      ],
+      "a": [
+        2.1,
+        3.6
+      ],
+      "courbe": 0.05,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 12
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0,
+        4.8
+      ],
+      "a": [
+        1.9,
+        4.0
+      ],
+      "courbe": -0.45,
+      "numero": 2,
+      "posNumero": 0.5
+    },
+    {
+      "de": [
+        1.9,
+        4.0
+      ],
+      "a": [
+        0,
+        4.8
+      ],
+      "courbe": -0.45,
+      "numero": 3,
+      "posNumero": 0.5,
+      "ecartDebut": 18,
+      "ecartFin": 34
+    }
+  ],
+  "etapes": [
+    "L’adulte lance la balle à la main",
+    "Le joueur se déplace et frappe",
+    "Il revient sur la pastille"
+  ],
+  "notes": [
+    "Semaine 1 : frappe à l’arrêt",
+    "Semaine 2 : replacement après la frappe",
+    "Semaine 3 : jeu de jambes + saut d’allégement entre les frappes"
+  ]
+}

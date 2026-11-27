@@ -1,0 +1,116 @@
+{
+  "exercice": {
+    "id": 38,
+    "nom": "Réaction"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.9,
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        3.8
+      ]
+    },
+    {
+      "nom": "E",
+      "pos": [
+        0,
+        5.8
+      ],
+      "role": "entraineur"
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        5.8
+      ],
+      "a": [
+        -1.5,
+        3.0
+      ],
+      "courbe": 0.15,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        0,
+        5.8
+      ],
+      "a": [
+        1.5,
+        3.0
+      ],
+      "courbe": -0.15,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        -1.4,
+        2.8
+      ],
+      "a": [
+        -0.5,
+        -4.5
+      ],
+      "courbe": 0.04,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartDebut": 14
+    }
+  ],
+  "etapes": [
+    "Derrière le joueur, l’adulte envoie la balle au sol à gauche ou à droite",
+    "Le joueur arrête la balle au plus vite et l’envoie de l’autre côté"
+  ],
+  "notes": [
+    "Joueur en position d’attention, face au terrain",
+    "Trop facile : l’adulte envoie avec rebond"
+  ]
+}

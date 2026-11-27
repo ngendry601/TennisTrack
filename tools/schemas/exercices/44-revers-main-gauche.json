@@ -1,0 +1,199 @@
+{
+  "exercice": {
+    "id": 44,
+    "nom": "Revers - main gauche"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.8,
+  "portes": [
+    [
+      2.0,
+      -11.6,
+      0
+    ],
+    [
+      3.9,
+      -9.1,
+      90
+    ],
+    [
+      3.9,
+      -3.2,
+      90
+    ]
+  ],
+  "textes": [
+    {
+      "pos": [
+        2.0,
+        -10.6
+      ],
+      "texte": "1",
+      "taille": 22,
+      "opacite": 0.95
+    },
+    {
+      "pos": [
+        3.0,
+        -9.1
+      ],
+      "texte": "2",
+      "taille": 22,
+      "opacite": 0.95
+    },
+    {
+      "pos": [
+        3.0,
+        -3.2
+      ],
+      "texte": "3",
+      "taille": 22,
+      "opacite": 0.95
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "E",
+      "pos": [
+        -1.5,
+        -9.5
+      ],
+      "role": "entraineur"
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.2,
+        10.8
+      ]
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.4,
+        8.3
+      ],
+      "fantome": true
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.6,
+        4.6
+      ],
+      "fantome": true
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        -1.5,
+        -9.5
+      ],
+      "a": [
+        -2.1,
+        10.0
+      ],
+      "courbe": -0.02,
+      "epaisseur": 3,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        -1.5,
+        -9.5
+      ],
+      "a": [
+        -2.3,
+        7.6
+      ],
+      "courbe": -0.04,
+      "epaisseur": 3,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        -1.5,
+        -9.5
+      ],
+      "a": [
+        -2.5,
+        3.9
+      ],
+      "courbe": -0.06,
+      "epaisseur": 3,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        -2.2,
+        10.8
+      ],
+      "a": [
+        1.9,
+        -11.0
+      ],
+      "courbe": 0.03,
+      "numero": 1,
+      "posNumero": 0.55,
+      "ecartFin": 16
+    },
+    {
+      "de": [
+        -2.4,
+        8.3
+      ],
+      "a": [
+        3.7,
+        -9.1
+      ],
+      "courbe": 0.03,
+      "numero": 2,
+      "posNumero": 0.45,
+      "ecartFin": 16
+    },
+    {
+      "de": [
+        -2.6,
+        4.6
+      ],
+      "a": [
+        3.7,
+        -3.6
+      ],
+      "courbe": 0.04,
+      "numero": 3,
+      "posNumero": 0.4,
+      "ecartFin": 16
+    }
+  ],
+  "etapes": [
+    "Balle en fond de court : viser la porte 1 (ligne de fond)",
+    "Balle au milieu du terrain : viser la porte 2 (couloir, fond)",
+    "Balle dans les carrés de service : viser la porte 3 (couloir, carré)"
+  ],
+  "notes": [
+    "Plus le joueur avance dans le terrain, plus la main gauche est importante"
+  ]
+}

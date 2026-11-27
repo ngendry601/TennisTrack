@@ -56,6 +56,12 @@ origine au centre du filet, terrain vu du dessus et vertical :
 | `deplacements` | flèches | trait blanc |
 | `masques` | `[[[x1, y1], [x2, y2]], …]` | assombrit une partie non utilisée (ex. l'autre demi-terrain) |
 | `tailleSymboles` | nombre (1 par défaut) | réduit les symboles pour un espace étroit (ex. 0.75) |
+| `joueurs[].role` | `"entraineur"` | jeton vert « E », légende « Entraîneur » |
+| `plots` (couleur) | `[x, y, "bleu"]` (orange, bleu, rouge, jaune, vert) | plot de couleur |
+| `zones` | `[{ "de": [x, y], "a": [x, y], "texte"?: "…" }]` | zone hachurée jaune ; légende `legendeZone` (défaut « Zone à viser ») |
+| `lignes` | `[{ "de", "a", "couleur"?, "legende"? }]` | trait plein (ex. fil au-dessus du filet) |
+| `ballesPosees` | `[[x, y], …]` | balle posée (sur un plot…) |
+| `notes` | `["texte", …]` | lignes non numérotées sous les étapes (variantes) |
 | `exercice` | `{ "id": 12, "nom": "…" }` | lie le schéma à un exercice de l'appli (pour `paquet.js`) |
 | `etapes` | `["texte", …]` | liste numérotée sous la légende |
 

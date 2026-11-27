@@ -1,0 +1,156 @@
+{
+  "exercice": {
+    "id": 3,
+    "nom": "Jeu de jambes au sceau"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "pastilles": [
+    [
+      0,
+      8.6
+    ]
+  ],
+  "joueurs": [
+    {
+      "nom": "E",
+      "pos": [
+        0,
+        -2.0
+      ],
+      "role": "entraineur"
+    },
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        8.6
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -1.2,
+        12.6
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        1.2,
+        12.6
+      ]
+    },
+    {
+      "nom": "R",
+      "pos": [
+        -3.0,
+        -9.5
+      ]
+    },
+    {
+      "nom": "A",
+      "pos": [
+        2.0,
+        8.0
+      ],
+      "fantome": true
+    },
+    {
+      "nom": "A",
+      "pos": [
+        -2.0,
+        8.0
+      ],
+      "fantome": true
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        -2.0
+      ],
+      "a": [
+        2.0,
+        7.4
+      ],
+      "courbe": 0.04,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 12
+    },
+    {
+      "de": [
+        0,
+        -2.0
+      ],
+      "a": [
+        -2.0,
+        7.4
+      ],
+      "courbe": -0.04,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartFin": 12
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0,
+        8.6
+      ],
+      "a": [
+        2.0,
+        8.0
+      ],
+      "courbe": -0.3,
+      "ecartDebut": 24,
+      "ecartFin": 24
+    },
+    {
+      "de": [
+        0,
+        8.6
+      ],
+      "a": [
+        -2.0,
+        8.0
+      ],
+      "courbe": 0.3,
+      "ecartDebut": 24,
+      "ecartFin": 24
+    }
+  ],
+  "etapes": [
+    "L’entraîneur lance à la main côté coup droit",
+    "Puis côté revers (il alterne)"
+  ],
+  "notes": [
+    "Replacement sur la pastille et jeu de jambes entre chaque frappe",
+    "5 frappes par joueur, puis on tourne (B, C attendent)",
+    "R ramasse les balles"
+  ]
+}

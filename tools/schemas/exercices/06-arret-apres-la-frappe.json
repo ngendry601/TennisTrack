@@ -1,0 +1,139 @@
+{
+  "exercice": {
+    "id": 6,
+    "nom": "Arrêt après la frappe"
+  },
+  "tailleSymboles": 0.8,
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        0,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -4.115,
+        -13.285
+      ],
+      [
+        0,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -4.115,
+        6.4
+      ],
+      [
+        0,
+        13.285
+      ]
+    ]
+  ],
+  "zones": [
+    {
+      "de": [
+        -4.0,
+        -6.3
+      ],
+      "a": [
+        -2.9,
+        -4.9
+      ]
+    },
+    {
+      "de": [
+        -1.2,
+        -6.3
+      ],
+      "a": [
+        -0.1,
+        -4.9
+      ]
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        -2.06,
+        5.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -2.06,
+        -1.6
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        -2.06,
+        -1.6
+      ],
+      "a": [
+        -2.06,
+        4.4
+      ],
+      "courbe": 0.15,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        -2.06,
+        5.0
+      ],
+      "a": [
+        -3.45,
+        -5.6
+      ],
+      "courbe": -0.05,
+      "numero": 2,
+      "posNumero": 0.6,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        -2.06,
+        5.0
+      ],
+      "a": [
+        -0.65,
+        -5.6
+      ],
+      "courbe": 0.05,
+      "ecartFin": 10
+    }
+  ],
+  "etapes": [
+    "B lance la balle à la main vers A",
+    "A frappe en visant une des deux zones",
+    "Après la frappe, A reste en équilibre"
+  ],
+  "notes": [
+    "Plus facile : laisser plusieurs rebonds",
+    "Plus difficile : B envoie à la raquette",
+    "Plus difficile : les 2 joueurs jouent"
+  ]
+}

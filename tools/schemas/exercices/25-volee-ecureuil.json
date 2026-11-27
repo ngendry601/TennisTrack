@@ -1,0 +1,103 @@
+{
+  "exercice": {
+    "id": 25,
+    "nom": "Volée écureuil"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.9,
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0,
+        1.8
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        0,
+        -1.8
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        0,
+        1.8
+      ],
+      "a": [
+        0,
+        -1.8
+      ],
+      "courbe": 0.6,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartDebut": 22,
+      "ecartFin": 22
+    },
+    {
+      "de": [
+        0,
+        -1.8
+      ],
+      "a": [
+        0,
+        1.8
+      ],
+      "courbe": 0.6,
+      "ecartDebut": 22,
+      "ecartFin": 22
+    }
+  ],
+  "etapes": [
+    "Échanges face à face près du filet, sans faire tomber la balle"
+  ],
+  "notes": [
+    "Semaine 1 : lancer à la main, l’autre rattrape dans un plot",
+    "Semaine 2 : échanges au ballon violet",
+    "Semaine 3 : échanges en balle rouge"
+  ]
+}

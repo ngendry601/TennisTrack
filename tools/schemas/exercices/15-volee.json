@@ -1,0 +1,118 @@
+{
+  "exercice": {
+    "id": 15,
+    "nom": "Volée"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "legendeZone": "Zone « filet »",
+  "tailleSymboles": 0.9,
+  "zones": [
+    {
+      "de": [
+        -4.115,
+        -0.15
+      ],
+      "a": [
+        4.115,
+        -3.2
+      ]
+    },
+    {
+      "de": [
+        -4.115,
+        0.15
+      ],
+      "a": [
+        4.115,
+        3.2
+      ]
+    }
+  ],
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0.8,
+        11.0
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -0.8,
+        -11.0
+      ]
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        -0.8,
+        -11.0
+      ],
+      "a": [
+        1.6,
+        2.0
+      ],
+      "courbe": 0.03,
+      "numero": 1,
+      "posNumero": 0.35,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        1.4,
+        2.6
+      ],
+      "a": [
+        -2.5,
+        -8.0
+      ],
+      "courbe": -0.05,
+      "numero": 3,
+      "posNumero": 0.5,
+      "ecartDebut": 22
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        0.8,
+        11.0
+      ],
+      "a": [
+        1.4,
+        3.2
+      ],
+      "courbe": 0.1,
+      "numero": 2,
+      "posNumero": 0.55
+    }
+  ],
+  "etapes": [
+    "La balle tombe entre le filet et le milieu des carrés de service",
+    "Le joueur de ce côté doit monter à la volée",
+    "Il joue la volée"
+  ]
+}

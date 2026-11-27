@@ -1,0 +1,133 @@
+{
+  "exercice": {
+    "id": 28,
+    "nom": "Engagement puis course"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        -4.115,
+        13.285
+      ]
+    ],
+    [
+      [
+        4.115,
+        -13.285
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        -1.0,
+        11.2
+      ]
+    },
+    {
+      "nom": "B",
+      "pos": [
+        -2.06,
+        -11.2
+      ]
+    },
+    {
+      "nom": "C",
+      "pos": [
+        1.0,
+        -11.2
+      ]
+    },
+    {
+      "nom": "D",
+      "pos": [
+        2.06,
+        11.2
+      ]
+    },
+    {
+      "nom": "E",
+      "pos": [
+        6.0,
+        0.7
+      ],
+      "role": "entraineur"
+    }
+  ],
+  "balles": [
+    {
+      "de": [
+        6.0,
+        0.7
+      ],
+      "a": [
+        -3.6,
+        7.2
+      ],
+      "courbe": 0.08,
+      "numero": 1,
+      "posNumero": 0.3,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        6.0,
+        0.7
+      ],
+      "a": [
+        3.6,
+        -7.2
+      ],
+      "courbe": 0.15,
+      "ecartFin": 10
+    },
+    {
+      "de": [
+        -3.3,
+        8.0
+      ],
+      "a": [
+        -2.06,
+        -10.6
+      ],
+      "courbe": 0.04,
+      "numero": 3,
+      "posNumero": 0.5,
+      "ecartDebut": 18
+    }
+  ],
+  "deplacements": [
+    {
+      "de": [
+        -1.0,
+        11.2
+      ],
+      "a": [
+        -3.2,
+        8.3
+      ],
+      "courbe": 0.2,
+      "numero": 2,
+      "posNumero": 0.5,
+      "ecartFin": 12
+    }
+  ],
+  "etapes": [
+    "L’entraîneur engage loin du joueur",
+    "Le joueur se déplace vite pour aller frapper",
+    "Les deux joueurs jouent le point"
+  ],
+  "notes": [
+    "Même chose sur l’autre demi-terrain"
+  ]
+}

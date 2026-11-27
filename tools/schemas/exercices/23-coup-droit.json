@@ -1,0 +1,135 @@
+{
+  "exercice": {
+    "id": 23,
+    "nom": "Coup droit"
+  },
+  "masques": [
+    [
+      [
+        -6.885,
+        -13.285
+      ],
+      [
+        6.885,
+        -6.4
+      ]
+    ],
+    [
+      [
+        -6.885,
+        6.4
+      ],
+      [
+        6.885,
+        13.285
+      ]
+    ],
+    [
+      [
+        -6.885,
+        -6.4
+      ],
+      [
+        -4.115,
+        6.4
+      ]
+    ],
+    [
+      [
+        4.115,
+        -6.4
+      ],
+      [
+        6.885,
+        6.4
+      ]
+    ]
+  ],
+  "tailleSymboles": 0.85,
+  "joueurs": [
+    {
+      "nom": "A",
+      "pos": [
+        0.8,
+        4.8
+      ]
+    },
+    {
+      "nom": "E",
+      "pos": [
+        2.6,
+        2.4
+      ],
+      "role": "entraineur"
+    }
+  ],
+  "portes": [
+    [
+      1.2,
+      -3.0,
+      0
+    ]
+  ],
+  "plots": [
+    [
+      -2.6,
+      -5.2
+    ],
+    [
+      2.9,
+      -5.2
+    ]
+  ],
+  "balles": [
+    {
+      "de": [
+        2.6,
+        2.4
+      ],
+      "a": [
+        1.5,
+        4.4
+      ],
+      "courbe": 0.2,
+      "numero": 1,
+      "posNumero": 0.5,
+      "ecartFin": 14
+    },
+    {
+      "de": [
+        0.8,
+        4.8
+      ],
+      "a": [
+        1.2,
+        -2.4
+      ],
+      "courbe": 0.02,
+      "numero": 2,
+      "posNumero": 0.45,
+      "ecartFin": 18
+    },
+    {
+      "de": [
+        0.8,
+        4.8
+      ],
+      "a": [
+        -2.5,
+        -4.7
+      ],
+      "courbe": 0.05,
+      "numero": 3,
+      "posNumero": 0.6,
+      "ecartFin": 18
+    }
+  ],
+  "etapes": [
+    "L’adulte lance la balle à la main",
+    "Semaine 1 : la balle doit passer la porte",
+    "Semaine 2 : le joueur vise les plots"
+  ],
+  "notes": [
+    "Semaine 3 : focus sur la préparation et la prise"
+  ]
+}
