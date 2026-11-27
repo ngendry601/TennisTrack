@@ -27,7 +27,7 @@ class MonthlyStatsScreen extends StatelessWidget {
         }
 
         return ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 160),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
           children: [
             Card(
               color: Theme.of(context).colorScheme.primary,

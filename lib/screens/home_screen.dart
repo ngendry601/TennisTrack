@@ -11,6 +11,7 @@ import '../widgets/confirm_delete_session.dart';
 import '../widgets/extra_hours_tile.dart';
 import '../widgets/home_cards.dart';
 import '../widgets/session_card_frame.dart';
+import 'extra_hours_form_screen.dart';
 import 'session/session_detail_screen.dart';
 
 // ÉCRAN D'ACCUEIL, de haut en bas : stats du mois, bande de la semaine,
@@ -105,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // ainsi que le bouton d'ajout de séance global.
         // Toute la page défile d'un bloc ; la Column empile les sections.
         return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 16, bottom: 160),
+          padding: const EdgeInsets.only(top: 16, bottom: 96),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -123,6 +124,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: 'Heures ce mois',
                         value: hours),
                   ],
+                ),
+              ),
+              // Petit lien discret (peu utilisé) pour ajouter des heures hors
+              // séances : championnat, aide coach…
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: TextButton.icon(
+                    onPressed: () =>
+                        Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => ExtraHoursFormScreen(store: widget.store),
+                    )),
+                    style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      textStyle: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    icon: const Icon(Icons.more_time, size: 16),
+                    label: const Text('Ajouter des heures hors séance'),
+                  ),
                 ),
               ),
               const _SectionTitle('Ma semaine'),

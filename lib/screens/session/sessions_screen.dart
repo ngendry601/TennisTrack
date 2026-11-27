@@ -148,7 +148,7 @@ class _SessionsScreenState extends State<SessionsScreen> {
                   // ListView.builder ne construit que les cartes visibles à l'écran :
                   // la liste reste fluide même avec des centaines de séances.
                   : ListView.builder(
-                      padding: const EdgeInsets.only(bottom: 160),
+                      padding: const EdgeInsets.only(bottom: 96),
                       itemCount: sessions.length,
                       itemBuilder: (context, index) {
                         final session = sessions[index];

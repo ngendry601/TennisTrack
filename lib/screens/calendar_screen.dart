@@ -173,7 +173,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 hours.date.month == _visibleMonth.month));
 
         return ListView(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 160),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
           children: [
             _MonthHeader(
               label: widget.store.monthYearLabel(_visibleMonth),

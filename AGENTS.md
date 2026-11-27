@@ -70,7 +70,9 @@ SQLite (data/database.dart)   schéma, données de départ, migrations
 - **Heures hors séances** (`ExtraHours`, table `activite`) : date, durée,
   commentaire (championnat, aide coach…). Elles comptent dans **toutes les
   heures** (part « Hors séances » dans les répartitions), jamais dans le
-  nombre de séances. Bouton flottant « Heures » et « Ajouter » du calendrier.
+  nombre de séances. On les ajoute par un **lien discret** sur l'accueil
+  (pas de bouton flottant : l'utilisateur s'en sert peu) ou par « Ajouter »
+  dans le calendrier.
 - L'accueil montre toutes les séances du **dernier jour** joué
   (`latestSessionDay`), pas seulement la dernière séance.
 - Les exercices sont **partagés** (bibliothèque) : modifier un exercice le

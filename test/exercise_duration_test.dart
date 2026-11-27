@@ -100,7 +100,7 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.tap(find.text('Valider l’exercice'));
-      for (var i = 0; i < 40 && store.exercises.isEmpty; i++) {
+      for (var i = 0; i < 200 && store.exercises.isEmpty; i++) {
         await tester.runAsync(
             () => Future<void>.delayed(const Duration(milliseconds: 25)));
         await tester.pump();

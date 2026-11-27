@@ -32,8 +32,9 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
 
 ### Heures hors séances
 
-- Bouton flottant **« Heures »** (au-dessus de « Séance », sauf sur l'onglet
-  Exercices), ou bouton « Ajouter » d'un jour du calendrier : ajoute des
+- Petit lien discret **« Ajouter des heures hors séance »** sur l'accueil
+  (sous les chiffres du mois), ou bouton « Ajouter » d'un jour du
+  calendrier : ajoute des
   heures passées hors des séances (voir jouer ses joueurs en championnat,
   aider un coach…) avec une **date**, une **durée** (15 min à 12h) et un
   **commentaire** libre. Des commentaires sont proposés : les derniers
@@ -312,7 +313,7 @@ Les tests utilisent une base SQLite en mémoire (`sqflite_common_ffi`).
 - `test/home_stats_test.dart` : répartition par catégorie, séances du
   dernier jour, comparaison avec le mois précédent.
 - `test/extra_hours_test.dart` : heures hors séances (libellé, suggestions,
-  répartition, base, bouton « Heures », calendrier, stats), migration
+  répartition, base, lien de l'accueil, calendrier, stats), migration
   `v7 → v8`.
 - `test/session_setup_test.dart` : préparation et rangement (arrivée,
   départ, textes, statistiques, valeurs reprises de la dernière séance,

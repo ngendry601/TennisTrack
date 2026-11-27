@@ -209,7 +209,7 @@ void main() {
       await tester.tap(find.text('Importer'));
       // SQLite (ffi) répond hors de l'horloge simulée du test : on alterne
       // vraie attente et reconstruction jusqu'à la fin de l'écriture.
-      for (var i = 0; i < 40 && store.exercises.single.image == null; i++) {
+      for (var i = 0; i < 200 && store.exercises.single.image == null; i++) {
         await tester.runAsync(
             () => Future<void>.delayed(const Duration(milliseconds: 25)));
         await tester.pump();

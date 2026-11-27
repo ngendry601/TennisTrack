@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../services/session_store.dart';
 import '../../screens/calendar_screen.dart';
-import '../../screens/extra_hours_form_screen.dart';
 import '../../screens/home_screen.dart';
 import '../../screens/monthly_stats_screen.dart';
 import '../../screens/seance/exercise_form_screen.dart';
@@ -66,12 +65,6 @@ class _MainShellState extends State<MainShell> {
     ));
   }
 
-  void _openExtraHours() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => ExtraHoursFormScreen(store: widget.store),
-    ));
-  }
-
   void _openNewExercise() {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => ExerciseFormScreen(store: widget.store),
@@ -95,30 +88,10 @@ class _MainShellState extends State<MainShell> {
       // la recherche ou les filtres d'un onglet sont conservés quand on revient.
       body: IndexedStack(index: _selectedIndex, children: _pages),
       // Bouton flottant global, visible sur tous les onglets.
-      // Deux boutons empilés : « Heures » (heures hors séances, sauf sur
-      // l'onglet Exercices) au-dessus du bouton principal.
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!onExercises) ...[
-            FloatingActionButton.extended(
-              // Deux boutons flottants sur un même écran doivent avoir des
-              // heroTag différents, sinon Flutter signale une erreur.
-              heroTag: 'heures',
-              onPressed: _openExtraHours,
-              icon: const Icon(Icons.more_time),
-              label: const Text('Heures'),
-            ),
-            const SizedBox(height: 12),
-          ],
-          FloatingActionButton.extended(
-            heroTag: 'principal',
-            onPressed: onExercises ? _openNewExercise : _openNewSession,
-            icon: const Icon(Icons.add),
-            label: Text(onExercises ? 'Exercice' : 'Séance'),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: onExercises ? _openNewExercise : _openNewSession,
+        icon: const Icon(Icons.add),
+        label: Text(onExercises ? 'Exercice' : 'Séance'),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,

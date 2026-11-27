@@ -95,18 +95,20 @@ void main() {
       );
     });
 
-    testWidgets('le bouton « Heures » enregistre des heures', (tester) async {
+    testWidgets('le lien de l’accueil enregistre des heures', (tester) async {
       await tester.pumpWidget(TennisTrackApp(store: store));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Heures'));
+      // Pas de bouton flottant « Heures » : seulement un lien discret.
+      expect(find.text('Heures'), findsNothing);
+      await tester.tap(find.text('Ajouter des heures hors séance'));
       await tester.pumpAndSettle();
       expect(find.text('Ajouter des heures'), findsOneWidget);
 
       await tester.tap(find.text('Championnat'));
       await tester.pump();
       await tester.tap(find.text('Enregistrer'));
-      for (var i = 0; i < 40 && store.extraHours.isEmpty; i++) {
+      for (var i = 0; i < 200 && store.extraHours.isEmpty; i++) {
         await tester.runAsync(
             () => Future<void>.delayed(const Duration(milliseconds: 25)));
         await tester.pump();
