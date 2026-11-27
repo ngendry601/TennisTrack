@@ -16,13 +16,23 @@ class CategoryShare {
   final int percent;
 }
 
+/// Nom de la part des heures hors séances dans la répartition.
+const String kExtraHoursShareName = 'Hors séances';
+
 /// Catégories triées de la plus travaillée à la moins travaillée.
 ///
 /// Une séance avec plusieurs catégories compte entièrement dans chacune :
 /// la somme des pourcentages peut donc dépasser 100.
-List<CategoryShare> categoryShares(List<TrainingSession> sessions) {
+///
+/// [extraMinutes] (heures hors séances : championnat, aide coach…) apparaît
+/// comme une part à part, « Hors séances », et compte dans le total.
+List<CategoryShare> categoryShares(
+  List<TrainingSession> sessions, {
+  int extraMinutes = 0,
+}) {
   final total =
-      sessions.fold<int>(0, (sum, session) => sum + session.totalMinutes);
+      sessions.fold<int>(0, (sum, session) => sum + session.totalMinutes) +
+          extraMinutes;
   if (total == 0) return const [];
 
   final minutesByName = <String, int>{};
@@ -34,6 +44,7 @@ List<CategoryShare> categoryShares(List<TrainingSession> sessions) {
       minutesByName[name] = (minutesByName[name] ?? 0) + session.totalMinutes;
     }
   }
+  if (extraMinutes > 0) minutesByName[kExtraHoursShareName] = extraMinutes;
 
   final shares = minutesByName.entries
       .map((entry) => CategoryShare(

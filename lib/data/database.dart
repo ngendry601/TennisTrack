@@ -3,7 +3,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Version du schéma. À incrémenter à chaque changement de structure,
 /// puis ajouter la migration correspondante dans [onUpgrade].
-const int kDatabaseVersion = 7;
+const int kDatabaseVersion = 8;
 
 const String _databaseName = 'tennistrack.db';
 
@@ -153,6 +153,7 @@ Future<Database> openAppDatabase({String? path}) async {
         await _createExerciseTables(db);
         await _addExerciseDuration(db);
         await _addSessionSetupAndPackUp(db);
+        await _createExtraHoursTable(db);
       },
       // onUpgrade est appelé quand l'appli mise à jour attend une version de base
       // plus récente que celle du téléphone (kDatabaseVersion). Chaque bloc
@@ -196,6 +197,11 @@ Future<Database> openAppDatabase({String? path}) async {
         // Les séances existantes en ont 0.
         if (oldVersion < 7) {
           await _addSessionSetupAndPackUp(db);
+        }
+
+        // v7 -> v8 : heures hors séances (championnat, aide coach…).
+        if (oldVersion < 8) {
+          await _createExtraHoursTable(db);
         }
       },
     ),
@@ -261,6 +267,22 @@ Future<void> _createExerciseTables(Database db) async {
       'CREATE INDEX idx_exercice_couleur_couleur ON exercice_couleur_balle(couleur_balle_id)');
 
   await batch.commit(noResult: true);
+}
+
+/// Heures passées hors des séances (voir jouer ses joueurs en championnat,
+/// aider un coach…) : une date, une durée et un commentaire libre.
+/// Elles comptent dans les statistiques d'heures, pas dans le nombre de
+/// séances.
+Future<void> _createExtraHoursTable(Database db) async {
+  await db.execute('''
+    CREATE TABLE activite (
+      id             INTEGER PRIMARY KEY AUTOINCREMENT,
+      date           TEXT NOT NULL,
+      duree_minutes  INTEGER NOT NULL CHECK (duree_minutes > 0),
+      commentaire    TEXT NOT NULL DEFAULT ''
+    )
+  ''');
+  await db.execute('CREATE INDEX idx_activite_date ON activite(date)');
 }
 
 /// Ajoute le temps de préparation (avant le cours) et de rangement (après),

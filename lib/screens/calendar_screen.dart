@@ -5,6 +5,9 @@ import '../services/session_store.dart';
 import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
 import '../utils/session_times.dart';
+import '../utils/extra_hours.dart';
+import '../widgets/extra_hours_tile.dart';
+import 'extra_hours_form_screen.dart';
 import 'session/session_detail_screen.dart';
 import 'session/session_form_screen.dart';
 
@@ -36,6 +39,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
     // DateTime(année, mois) sans jour = le 1er du mois à minuit.
     _visibleMonth = DateTime(initial.year, initial.month);
     _selectedDay = DateTime(initial.year, initial.month, initial.day);
+  }
+
+  /// Bouton « Ajouter » du jour : propose une séance ou des heures hors
+  /// séance (championnat, aide coach…), à la date sélectionnée.
+  Future<void> _addOnDay(DateTime day) async {
+    final extra = await showModalBottomSheet<bool>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.sports_tennis),
+              title: const Text('Une séance'),
+              onTap: () => Navigator.of(sheetContext).pop(false),
+            ),
+            ListTile(
+              leading: const Icon(Icons.more_time),
+              title: const Text('Des heures hors séance'),
+              subtitle: const Text('Championnat, aide coach…'),
+              onTap: () => Navigator.of(sheetContext).pop(true),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (extra == null || !mounted) return;
+    if (extra) {
+      await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) =>
+            ExtraHoursFormScreen(store: widget.store, initialDate: day),
+      ));
+    } else {
+      await _openForm(date: day);
+    }
   }
 
   Future<void> _openForm({DateTime? date}) async {
@@ -113,17 +152,28 @@ class _CalendarScreenState extends State<CalendarScreen> {
       listenable: widget.store,
       builder: (context, _) {
         final byDay = _sessionsByDay();
+        // Heures hors séances regroupées par jour, comme les séances.
+        final extraByDay = <DateTime, List<ExtraHours>>{};
+        for (final hours in widget.store.extraHours) {
+          final day =
+              DateTime(hours.date.year, hours.date.month, hours.date.day);
+          extraByDay.putIfAbsent(day, () => []).add(hours);
+        }
         final monthSessions = widget.store.sessions
             .where((session) =>
                 session.date.year == _visibleMonth.year &&
                 session.date.month == _visibleMonth.month)
             .toList();
-        // Total du mois affiché, préparation et rangement compris.
-        final monthMinutes =
-            monthSessions.fold(0, (sum, session) => sum + session.totalMinutes);
+        // Total du mois affiché : séances (préparation et rangement compris)
+        // et heures hors séances.
+        final monthMinutes = monthSessions.fold(
+                0, (sum, session) => sum + session.totalMinutes) +
+            extraHoursMinutes(widget.store.extraHours.where((hours) =>
+                hours.date.year == _visibleMonth.year &&
+                hours.date.month == _visibleMonth.month));
 
         return ListView(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 96),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 160),
           children: [
             _MonthHeader(
               label: widget.store.monthYearLabel(_visibleMonth),
@@ -140,14 +190,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
               month: _visibleMonth,
               selectedDay: _selectedDay,
               sessionsByDay: byDay,
+              extraHoursByDay: extraByDay,
               onSelectDay: _selectDay,
             ),
             const SizedBox(height: 20),
             _DayDetails(
               dayLabel: widget.store.fullDateLabel(_selectedDay),
               sessions: byDay[_selectedDay] ?? const [],
+              extraHours: extraByDay[_selectedDay] ?? const [],
+              store: widget.store,
               onOpen: _openDetails,
-              onAdd: () => _openForm(date: _selectedDay),
+              onAdd: () => _addOnDay(_selectedDay),
             ),
           ],
         );
@@ -203,7 +256,9 @@ class _MonthHeader extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        sessionCount == 0
+                        // Un mois sans séance peut avoir des heures hors
+                        // séances : on affiche alors quand même le total.
+                        sessionCount == 0 && totalMinutes == 0
                             ? 'Aucune séance ce mois'
                             : '$sessionCount séance${sessionCount > 1 ? 's' : ''}'
                                 ' · ${formatDuration(totalMinutes)}',
@@ -267,12 +322,14 @@ class _MonthGrid extends StatelessWidget {
     required this.month,
     required this.selectedDay,
     required this.sessionsByDay,
+    required this.extraHoursByDay,
     required this.onSelectDay,
   });
 
   final DateTime month;
   final DateTime selectedDay;
   final Map<DateTime, List<TrainingSession>> sessionsByDay;
+  final Map<DateTime, List<ExtraHours>> extraHoursByDay;
   final ValueChanged<DateTime> onSelectDay;
 
   @override
@@ -308,7 +365,8 @@ class _MonthGrid extends StatelessWidget {
         return _DayCell(
           key: Key('calendar-day-${month.year}-${month.month}-$dayNumber'),
           day: day,
-          sessionCount: sessions.length,
+          // Les heures hors séances ajoutent aussi un point sous le jour.
+          sessionCount: sessions.length + (extraHoursByDay[day]?.length ?? 0),
           selected: _isSameDay(day, selectedDay),
           isToday: _isSameDay(day, DateTime.now()),
           onTap: () => onSelectDay(day),
@@ -400,12 +458,16 @@ class _DayDetails extends StatelessWidget {
   const _DayDetails({
     required this.dayLabel,
     required this.sessions,
+    required this.extraHours,
+    required this.store,
     required this.onOpen,
     required this.onAdd,
   });
 
   final String dayLabel;
   final List<TrainingSession> sessions;
+  final List<ExtraHours> extraHours;
+  final SessionStore store;
   final ValueChanged<TrainingSession> onOpen;
   final VoidCallback onAdd;
 
@@ -413,7 +475,9 @@ class _DayDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final totalMinutes =
-        sessions.fold(0, (sum, session) => sum + session.totalMinutes);
+        sessions.fold(0, (sum, session) => sum + session.totalMinutes) +
+            extraHoursMinutes(extraHours);
+    final isEmpty = sessions.isEmpty && extraHours.isEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -430,11 +494,17 @@ class _DayDetails extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    sessions.isEmpty
+                    isEmpty
                         ? 'Aucune séance ce jour-là'
-                        : '${sessions.length} séance'
-                            '${sessions.length > 1 ? 's' : ''} · '
+                        : [
+                            if (sessions.isNotEmpty)
+                              '${sessions.length} séance'
+                                  '${sessions.length > 1 ? 's' : ''}',
+                            if (extraHours.isNotEmpty)
+                              '${extraHours.length} hors séance'
+                                  '${extraHours.length > 1 ? 's' : ''}',
                             '${formatDuration(totalMinutes)} au total',
+                          ].join(' · '),
                     style: theme.textTheme.bodyMedium,
                   ),
                 ],
@@ -448,7 +518,7 @@ class _DayDetails extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        if (sessions.isEmpty)
+        if (isEmpty)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -462,11 +532,14 @@ class _DayDetails extends StatelessWidget {
               ),
             ),
           )
-        else
+        else ...[
           for (final session in sessions) ...[
             _SessionCard(session: session, onTap: () => onOpen(session)),
             const SizedBox(height: 8),
           ],
+          for (final hours in extraHours)
+            ExtraHoursTile(store: store, hours: hours, showDate: false),
+        ],
       ],
     );
   }

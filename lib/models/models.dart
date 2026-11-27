@@ -268,3 +268,35 @@ class TrainingSession {
     );
   }
 }
+
+/// Heures passées hors des séances : championnat, aide coach, réunion…
+/// Elles comptent dans les heures (stats, calendrier), pas dans le nombre
+/// de séances.
+///
+/// `id == 0` signifie « pas encore enregistrée ».
+class ExtraHours {
+  const ExtraHours({
+    required this.id,
+    required this.date,
+    required this.durationMinutes,
+    this.comment = '',
+  });
+
+  final int id;
+  final DateTime date;
+  final int durationMinutes;
+
+  /// Commentaire libre, par exemple « Championnat » ou « Aide coach ».
+  final String comment;
+
+  /// Texte affiché : le commentaire, ou « Autres heures » s'il est vide.
+  String get label => comment.trim().isEmpty ? 'Autres heures' : comment;
+
+  // Lecture d'une ligne de la table `activite`.
+  factory ExtraHours.fromMap(Map<String, Object?> map) => ExtraHours(
+        id: map['id'] as int,
+        date: DateTime.parse(map['date'] as String),
+        durationMinutes: map['duree_minutes'] as int,
+        comment: map['commentaire'] as String? ?? '',
+      );
+}

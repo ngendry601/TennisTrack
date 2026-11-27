@@ -27,6 +27,7 @@ class SessionStore extends ChangeNotifier {
   List<CalendarWeekday> _weekdays = const [];
   List<CalendarMonth> _months = const [];
   List<Exercise> _exercises = const [];
+  List<ExtraHours> _extraHours = const [];
 
   /// Jours du calendrier lus en base, du lundi au dimanche.
   List<CalendarWeekday> get weekdays => List.unmodifiable(_weekdays);
@@ -64,16 +65,21 @@ class SessionStore extends ChangeNotifier {
   /// Bibliothèque d'exercices, triée par nom.
   List<Exercise> get exercises => List.unmodifiable(_exercises);
 
+  /// Heures hors séances (championnat, aide coach…), les plus récentes
+  /// d'abord.
+  List<ExtraHours> get extraHours => List.unmodifiable(_extraHours);
+
   /// Nombre de séances qui utilisent cet exercice.
   int exerciseSessionCount(int exerciseId) => _sessions
       .where((session) =>
           session.exercises.any((exercise) => exercise.id == exerciseId))
       .length;
 
-  // Temps total de toutes les séances (préparation + cours + rangement).
-  // fold additionne : on part de 0 et on ajoute chaque séance.
+  // Temps total : séances (préparation + cours + rangement) + heures hors
+  // séances. fold additionne : on part de 0 et on ajoute chaque élément.
   int get totalMinutes =>
-      _sessions.fold(0, (sum, session) => sum + session.totalMinutes);
+      _sessions.fold(0, (sum, session) => sum + session.totalMinutes) +
+      _extraHours.fold(0, (sum, hours) => sum + hours.durationMinutes);
 
   /// Ouvre la base, charge les catégories, les couleurs et les séances.
   /// À appeler une seule fois, avant `runApp`.
@@ -91,6 +97,27 @@ class SessionStore extends ChangeNotifier {
     _weekdays = await repository.getWeekdays();
     _months = await repository.getMonths();
     await _reloadExercisesAndSessions(repository);
+    _extraHours = await repository.getExtraHours();
+    notifyListeners();
+  }
+
+  /// Crée les heures hors séance si `hours.id == 0`, sinon les met à jour.
+  Future<void> saveExtraHours(ExtraHours hours) async {
+    final repository = _requireRepository();
+    if (hours.id == 0) {
+      await repository.insertExtraHours(hours);
+    } else {
+      await repository.updateExtraHours(hours);
+    }
+    _extraHours = await repository.getExtraHours();
+    notifyListeners();
+  }
+
+  /// Supprime des heures hors séance.
+  Future<void> removeExtraHours(int id) async {
+    final repository = _requireRepository();
+    await repository.deleteExtraHours(id);
+    _extraHours = await repository.getExtraHours();
     notifyListeners();
   }
 

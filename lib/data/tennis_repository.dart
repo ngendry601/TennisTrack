@@ -234,6 +234,34 @@ class TennisRepository {
     });
   }
 
+  // --- Heures hors séances (table `activite`) ---------------------------
+
+  /// Toutes les heures hors séances, les plus récentes d'abord.
+  Future<List<ExtraHours>> getExtraHours() async {
+    final rows = await db.query('activite', orderBy: 'date DESC, id DESC');
+    return rows.map(ExtraHours.fromMap).toList();
+  }
+
+  /// Ajoute des heures et renvoie l'id attribué par SQLite.
+  Future<int> insertExtraHours(ExtraHours hours) =>
+      db.insert('activite', _extraHoursValues(hours));
+
+  Future<void> updateExtraHours(ExtraHours hours) => db.update(
+        'activite',
+        _extraHoursValues(hours),
+        where: 'id = ?',
+        whereArgs: [hours.id],
+      );
+
+  Future<void> deleteExtraHours(int id) =>
+      db.delete('activite', where: 'id = ?', whereArgs: [id]);
+
+  Map<String, Object?> _extraHoursValues(ExtraHours hours) => {
+        'date': _dateKey(hours.date),
+        'duree_minutes': hours.durationMinutes,
+        'commentaire': hours.comment.trim(),
+      };
+
   /// Les liens de catégories sont supprimés automatiquement par
   /// ON DELETE CASCADE (les clés étrangères sont activées à l'ouverture).
   Future<void> deleteSession(int id) =>

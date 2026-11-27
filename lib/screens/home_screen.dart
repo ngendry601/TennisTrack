@@ -5,8 +5,10 @@ import '../services/session_store.dart';
 import '../theme/app_theme.dart';
 import '../utils/date_ranges.dart';
 import '../utils/formatters.dart';
+import '../utils/extra_hours.dart';
 import '../utils/home_stats.dart';
 import '../widgets/confirm_delete_session.dart';
+import '../widgets/extra_hours_tile.dart';
 import '../widgets/home_cards.dart';
 import '../widgets/session_card_frame.dart';
 import 'session/session_detail_screen.dart';
@@ -55,12 +57,20 @@ class _HomeScreenState extends State<HomeScreen> {
         final monthSessions = all
             .where((session) => isInSameMonth(session.date, reference))
             .toList();
+        // Heures hors séances (championnat, aide coach…) du mois : elles
+        // comptent dans les heures, pas dans le nombre de séances.
+        final monthExtra = extraHoursMinutes(widget.store.extraHours
+            .where((hours) => isInSameMonth(hours.date, reference)));
         final monthMinutes = monthSessions.fold<int>(
-            0, (sum, session) => sum + session.totalMinutes);
+                0, (sum, session) => sum + session.totalMinutes) +
+            monthExtra;
 
         // Liste principale : uniquement la semaine en cours (lundi → dimanche).
         final weekSessions = all
             .where((session) => isInSameWeek(session.date, reference))
+            .toList();
+        final weekExtras = widget.store.extraHours
+            .where((hours) => isInSameWeek(hours.date, reference))
             .toList();
         final shown = _filterCategoryId == null
             ? weekSessions
@@ -73,8 +83,10 @@ class _HomeScreenState extends State<HomeScreen> {
         // Comparaison avec le mois précédent.
         final previousMonth = DateTime(reference.year, reference.month - 1);
         final previousMinutes = all
-            .where((session) => isInSameMonth(session.date, previousMonth))
-            .fold<int>(0, (sum, session) => sum + session.totalMinutes);
+                .where((session) => isInSameMonth(session.date, previousMonth))
+                .fold<int>(0, (sum, session) => sum + session.totalMinutes) +
+            extraHoursMinutes(widget.store.extraHours
+                .where((hours) => isInSameMonth(hours.date, previousMonth)));
         final comparison = monthMinutes == 0 && previousMinutes == 0
             ? null
             : formatMonthComparison(
@@ -93,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
         // ainsi que le bouton d'ajout de séance global.
         // Toute la page défile d'un bloc ; la Column empile les sections.
         return SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 16, bottom: 96),
+          padding: const EdgeInsets.only(top: 16, bottom: 160),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -133,7 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: MonthBreakdownCard(
-                  shares: categoryShares(monthSessions),
+                  shares:
+                      categoryShares(monthSessions, extraMinutes: monthExtra),
                   deltaMinutes: monthMinutes - previousMinutes,
                   comparison: comparison,
                 ),
@@ -260,6 +273,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+              // Heures hors séances de la semaine, sous les séances (masquées
+              // quand on filtre par catégorie : elles n'en ont pas).
+              if (_filterCategoryId == null)
+                for (final hours in weekExtras)
+                  ExtraHoursTile(store: widget.store, hours: hours),
             ],
           ),
         );

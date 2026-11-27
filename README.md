@@ -30,6 +30,21 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
   ou glissement vers la gauche (avec confirmation également).
 - Filtres par catégorie, intensité et durée, recherche libre.
 
+### Heures hors séances
+
+- Bouton flottant **« Heures »** (au-dessus de « Séance », sauf sur l'onglet
+  Exercices), ou bouton « Ajouter » d'un jour du calendrier : ajoute des
+  heures passées hors des séances (voir jouer ses joueurs en championnat,
+  aider un coach…) avec une **date**, une **durée** (15 min à 12h) et un
+  **commentaire** libre. Des commentaires sont proposés : les derniers
+  utilisés, puis Championnat, Tournoi, Aide coach, Réunion, Formation.
+- Elles **comptent dans toutes les heures** (accueil, calendrier, stats), et
+  apparaissent comme « Hors séances » dans la répartition par catégorie. Elles
+  ne comptent pas dans le **nombre** de séances.
+- Visibles sur l'accueil (semaine en cours), dans le détail d'un jour du
+  calendrier et dans la carte du mois des stats. Un appui ouvre le
+  formulaire pour les modifier ou les supprimer.
+
 ### Bibliothèque d'exercices
 
 - Un exercice existe **une seule fois** et peut être utilisé dans plusieurs
@@ -131,7 +146,7 @@ SQLite, créée sur le téléphone.
 - **Jours** (`id` = `DateTime.weekday`, 1 = lundi) et **mois**
   (`id` = `DateTime.month`, 1 = janvier), avec nom et abréviation.
 
-## Schéma (version 7)
+## Schéma (version 8)
 
 ```text
 categorie(id, nom UNIQUE)
@@ -145,6 +160,9 @@ seance(
   preparation_minutes >= 0 DEFAULT 0, rangement_minutes >= 0 DEFAULT 0
 )
 seance_categorie(seance_id, categorie_id)      -- plusieurs catégories par séance
+
+activite(id, date 'YYYY-MM-DD', duree_minutes > 0, commentaire)
+                                               -- heures hors séances
 
 exercice(
   id, nom, points_travailles, deroulement, image BLOB NULL,
@@ -190,6 +208,7 @@ INDEX sur exercice_couleur_balle(couleur_balle_id)
 | v4 → v5 | Bibliothèque d'exercices : les exercices deviennent partagés (`seance_exercice`). Les exercices au contenu strictement identique sont fusionnés ; chacun hérite des catégories et de la couleur de balle de ses séances. Ajout des catégories Attaque et Défense. |
 | v5 → v6 | Ajout de `exercice.duree_minutes` (facultative). Les exercices existants n'ont pas de durée (`NULL`). |
 | v6 → v7 | Ajout de `seance.preparation_minutes` et `seance.rangement_minutes`. Les séances existantes en ont 0. |
+| v7 → v8 | Ajout de la table `activite` (heures hors séances : championnat, aide coach…). |
 
 ## Ajouter une catégorie ou une couleur
 
@@ -227,6 +246,7 @@ lib/
 │   ├── exercise_filters.dart         filtre texte / thème / couleur de balle
 │   ├── exercise_durations.dart       total des durées des exercices d'une séance
 │   ├── session_times.dart            préparation, rangement, temps sur place
+│   ├── extra_hours.dart              heures hors séances : total, suggestions
 │   └── exercise_transfer.dart        export de la liste d'exercices, lecture
 │                                     et association des images importées
 ├── widgets/
@@ -234,12 +254,14 @@ lib/
 │   ├── bar/appbar.dart               barre du haut
 │   ├── home_cards.dart               cartes de l'accueil
 │   ├── exercise_widgets.dart         affichage commun des exercices
+│   ├── extra_hours_tile.dart         carte d'une entrée « Autres heures »
 │   ├── session_card_frame.dart       cadre des cartes de séance
 │   └── confirm_delete_session.dart   boîte de confirmation de suppression
 └── screens/
     ├── home_screen.dart              accueil
     ├── calendar_screen.dart          calendrier mensuel
     ├── monthly_stats_screen.dart     statistiques
+    ├── extra_hours_form_screen.dart  formulaire « Autres heures »
     ├── session/                      liste, détails et formulaire de séance
     └── seance/                       bibliothèque, choix et formulaire
                                       d'exercice
@@ -289,6 +311,9 @@ Les tests utilisent une base SQLite en mémoire (`sqflite_common_ffi`).
   du mois.
 - `test/home_stats_test.dart` : répartition par catégorie, séances du
   dernier jour, comparaison avec le mois précédent.
+- `test/extra_hours_test.dart` : heures hors séances (libellé, suggestions,
+  répartition, base, bouton « Heures », calendrier, stats), migration
+  `v7 → v8`.
 - `test/session_setup_test.dart` : préparation et rangement (arrivée,
   départ, textes, statistiques, valeurs reprises de la dernière séance,
   base, détails), séances du dernier jour sur l'accueil, migration `v6 → v7`.

@@ -9,7 +9,7 @@ Le détail fonctionnel et le schéma complet sont dans [README.md](README.md).
 - Cibles : **Android et iOS**. Windows/Linux servent au développement
   (`sqflite_common_ffi`).
 - Données : **SQLite locale** (`sqflite`), base `tennistrack.db`, version
-  actuelle du schéma : **7** (`kDatabaseVersion` dans `lib/data/database.dart`).
+  actuelle du schéma : **8** (`kDatabaseVersion` dans `lib/data/database.dart`).
 - Pas de backend, pas de synchronisation, pas de `shared_preferences`.
 - Dépendances : `sqflite`, `sqflite_common_ffi`, `path`, `image_picker`,
   `file_picker` (import du fichier d'images), `flutter_localizations`. N'en ajoute pas sans raison claire.
@@ -67,6 +67,10 @@ SQLite (data/database.dart)   schéma, données de départ, migrations
   le temps sur place s'affiche en plus (`lib/utils/session_times.dart`).
   Une nouvelle séance reprend la prépa/le rangement de la dernière séance
   enregistrée.
+- **Heures hors séances** (`ExtraHours`, table `activite`) : date, durée,
+  commentaire (championnat, aide coach…). Elles comptent dans **toutes les
+  heures** (part « Hors séances » dans les répartitions), jamais dans le
+  nombre de séances. Bouton flottant « Heures » et « Ajouter » du calendrier.
 - L'accueil montre toutes les séances du **dernier jour** joué
   (`latestSessionDay`), pas seulement la dernière séance.
 - Les exercices sont **partagés** (bibliothèque) : modifier un exercice le
