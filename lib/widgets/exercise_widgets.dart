@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 import '../utils/formatters.dart';
+import 'exercise_image.dart';
 
 /// Deux lignes de filtres : couleur de balle, puis catégorie.
 class ExerciseFilterBar extends StatelessWidget {
@@ -128,14 +129,18 @@ class ExerciseThumbnail extends StatelessWidget {
     if (image == null) {
       return const CircleAvatar(child: Icon(Icons.fitness_center));
     }
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Image.memory(
-        image,
-        width: 44,
-        height: 44,
-        fit: BoxFit.cover,
-        gaplessPlayback: true,
+    // Un appui sur la miniature ouvre l'image entière en plein écran.
+    return GestureDetector(
+      onTap: () => openFullImage(context, image: image, title: exercise.name),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.memory(
+          image,
+          width: 44,
+          height: 44,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+        ),
       ),
     );
   }

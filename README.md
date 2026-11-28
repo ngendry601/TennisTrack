@@ -64,6 +64,10 @@ Il n'y a plus de liste de séances écrite en dur dans le code ni de
     durs ;
   - **Créer un nouvel exercice** : les thèmes de la séance sont pré-cochés,
     et l'exercice rejoint la bibliothèque.
+- **Affichage des images** : l'aperçu (fiche d'exercice, détails d'une
+  séance) montre l'image **en entier**, sans la rogner. Un appui sur
+  l'aperçu, ou sur la miniature dans la bibliothèque, l'ouvre en plein écran
+  avec zoom à deux doigts (`lib/widgets/exercise_image.dart`).
 - **Schémas illustratifs en lot** : menu **⋮** de l'onglet Exercices.
   « Copier la liste des exercices » copie la bibliothèque (sans les images)
   pour l'envoyer à Claude ; « Importer les images » lit le fichier `.json`
@@ -256,6 +260,7 @@ lib/
 │   ├── home_cards.dart               cartes de l'accueil
 │   ├── exercise_widgets.dart         affichage commun des exercices
 │   ├── extra_hours_tile.dart         carte d'une entrée « Autres heures »
+│   ├── exercise_image.dart           aperçu entier + plein écran des images
 │   ├── session_card_frame.dart       cadre des cartes de séance
 │   └── confirm_delete_session.dart   boîte de confirmation de suppression
 └── screens/

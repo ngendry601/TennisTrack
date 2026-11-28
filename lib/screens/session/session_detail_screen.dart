@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
 import '../../models/models.dart';
@@ -8,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../utils/exercise_durations.dart';
 import '../../utils/formatters.dart';
 import '../../utils/session_times.dart';
+import '../../widgets/exercise_image.dart';
 import 'session_form_screen.dart';
 
 /// Détails en lecture seule d'une séance.
@@ -256,14 +255,6 @@ class _ExerciseDetails extends StatelessWidget {
 
   final Exercise exercise;
 
-  void _showImage(BuildContext context) {
-    final image = exercise.image;
-    if (image == null) return;
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => _FullImageScreen(image: image, title: exercise.name),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -273,31 +264,12 @@ class _ExerciseDetails extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Image entière ; un appui l'ouvre en plein écran.
           if (exercise.image != null)
-            InkWell(
-              onTap: () => _showImage(context),
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  Image.memory(
-                    exercise.image!,
-                    height: 190,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    gaplessPlayback: true,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.zoom_in,
-                        size: 20, color: Colors.white),
-                  ),
-                ],
-              ),
+            ExerciseImagePreview(
+              image: exercise.image!,
+              title: exercise.name,
+              borderRadius: 0,
             ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -357,34 +329,6 @@ class _ExerciseLabel extends StatelessWidget {
           .textTheme
           .labelMedium
           ?.copyWith(color: Theme.of(context).colorScheme.primary),
-    );
-  }
-}
-
-// Image en plein écran, zoomable.
-class _FullImageScreen extends StatelessWidget {
-  const _FullImageScreen({required this.image, required this.title});
-
-  final Uint8List image;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        title: Text(title),
-      ),
-      body: Center(
-        // InteractiveViewer permet de zoomer avec deux doigts et de déplacer l'image.
-        child: InteractiveViewer(
-          minScale: 0.5,
-          maxScale: 4,
-          child: Image.memory(image),
-        ),
-      ),
     );
   }
 }

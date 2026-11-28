@@ -6,6 +6,7 @@ import '../../models/models.dart';
 import '../../services/session_store.dart';
 import '../../utils/exercise_durations.dart';
 import '../../utils/formatters.dart';
+import '../../widgets/exercise_image.dart';
 import '../../widgets/exercise_widgets.dart';
 
 /// Formulaire d'un exercice de la bibliothèque : nom, thèmes, couleurs de
@@ -294,15 +295,10 @@ class _ExerciseFormScreenState extends State<ExerciseFormScreen> {
               label: const Text('Importer une image'),
             )
           else ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.memory(
-                _image!,
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                gaplessPlayback: true,
-              ),
+            // Image entière ; un appui l'ouvre en plein écran.
+            ExerciseImagePreview(
+              image: _image!,
+              title: _name.text.trim().isEmpty ? 'Image' : _name.text.trim(),
             ),
             const SizedBox(height: 8),
             Row(
